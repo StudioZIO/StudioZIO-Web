@@ -1,7 +1,13 @@
 import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderHome, renderMasteringSuite, renderNotFound, renderProducts } from '../src/site.mjs';
+import {
+  renderHome,
+  renderMasteringSuite,
+  renderMixRack,
+  renderNotFound,
+  renderProducts
+} from '../src/site.mjs';
 import { validateSource } from './validate.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -14,6 +20,7 @@ const outputs = new Map([
   ['index.html', renderHome()],
   ['products/index.html', renderProducts()],
   ['products/mastering-suite/index.html', renderMasteringSuite()],
+  ['products/mixrack/index.html', renderMixRack()],
   ['404.html', renderNotFound()]
 ]);
 

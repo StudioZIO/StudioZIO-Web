@@ -1,4 +1,9 @@
-import { getProduct, products, RELEASE_REPOSITORY_URL } from './catalog.mjs';
+import {
+  getProduct,
+  products,
+  MASTERING_SUITE_WEBSITE,
+  RELEASE_REPOSITORY_URL
+} from './catalog.mjs';
 
 const stylesheet = '/assets/styles.css';
 
@@ -15,7 +20,7 @@ function formatList(items) {
   return items.map((item) => escapeHtml(item)).join(' · ');
 }
 
-function shell({ title, description, current, content }) {
+function shell({ title, description, canonical, current, content }) {
   const navigation = [
     ['Home', '/', 'home'],
     ['Products', '/products/', 'products']
@@ -40,6 +45,8 @@ function shell({ title, description, current, content }) {
   <meta property="og:site_name" content="StudioZIO">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
+  ${canonical ? `<meta property="og:url" content="${escapeHtml(canonical)}">
+  <link rel="canonical" href="${escapeHtml(canonical)}">` : ''}
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
@@ -77,17 +84,27 @@ function shell({ title, description, current, content }) {
 }
 
 function productCard(product) {
-  return `<article class="product-card">
+  const isUpcoming = product.availability === 'Coming soon';
+  const detailsLabel = product.externalDetails ? 'Visit product site' : 'Product details';
+  const detailsArrow = product.externalDetails ? ' <span aria-hidden="true">↗</span>' : '';
+  const secondaryAction = product.releaseUrl
+    ? `<a class="text-link" href="${escapeHtml(product.releaseUrl)}">Release notes <span aria-hidden="true">↗</span></a>`
+    : isUpcoming
+      ? '<span class="status-label">Coming Soon</span>'
+      : '';
+
+  return `<article class="product-card${isUpcoming ? ' is-upcoming' : ''}">
     <div class="product-card-topline">
       <span class="status-dot" aria-hidden="true"></span>
-      <span>${escapeHtml(product.availability)}</span>
-      <span>v${escapeHtml(product.version)}</span>
+      <span class="status-copy">${escapeHtml(product.availability)}</span>
+      ${product.version ? `<span class="product-version">v${escapeHtml(product.version)}</span>` : ''}
     </div>
     <h3>${escapeHtml(product.name)}</h3>
     <p class="product-meta">${escapeHtml(product.platform)} · ${escapeHtml(product.compactFormats)}</p>
+    <p class="product-description">${escapeHtml(product.description)}</p>
     <div class="product-card-actions">
-      <a class="button button-primary" href="/products/${escapeHtml(product.slug)}/">Product details</a>
-      <a class="text-link" href="${escapeHtml(product.releaseUrl)}">Release notes <span aria-hidden="true">↗</span></a>
+      <a class="button ${isUpcoming ? 'button-secondary' : 'button-primary'}" href="${escapeHtml(product.detailsUrl)}">${detailsLabel}${detailsArrow}</a>
+      ${secondaryAction}
     </div>
   </article>`;
 }
@@ -116,7 +133,8 @@ export function renderHome() {
   return shell({
     title: 'StudioZIO — Professional Audio Software',
     description:
-      'StudioZIO creates professional audio software with clear product information and verified public downloads.',
+      'Explore StudioZIO Mastering Suite, StudioZIO Tempo Delay, and the upcoming ZIO MixRack for macOS.',
+    canonical: 'https://studiozio.vercel.app/',
     current: 'home',
     content: `<section class="hero">
       <div class="hero-copy">
@@ -159,12 +177,14 @@ export function renderHome() {
 export function renderProducts() {
   return shell({
     title: 'Products — StudioZIO',
-    description: 'Browse current StudioZIO professional audio software releases.',
+    description:
+      'Browse StudioZIO Mastering Suite and Tempo Delay, available now, plus ZIO MixRack, coming soon.',
+    canonical: 'https://studiozio.vercel.app/products/',
     current: 'products',
     content: `<section class="page-hero">
       <p class="eyebrow">StudioZIO catalog</p>
       <h1>Products</h1>
-      <p>Current StudioZIO software, with direct access to versioned public releases.</p>
+      <p>Available and upcoming StudioZIO software, with clear product status and verified public links.</p>
     </section>
     <section class="section-block product-catalog" aria-label="StudioZIO products">
       <div class="product-grid">${products.map(productCard).join('')}</div>
@@ -177,6 +197,7 @@ export function renderMasteringSuite() {
   return shell({
     title: `${product.name} ${product.version} — StudioZIO`,
     description: `${product.name} ${product.version} for macOS in AU, VST3, and Standalone formats. Developer ID signed and Apple notarized.`,
+    canonical: MASTERING_SUITE_WEBSITE,
     current: 'products',
     content: `<section class="product-hero">
       <div class="product-hero-copy">
@@ -207,6 +228,44 @@ export function renderMasteringSuite() {
         <p>The installer is distributed from StudioZIO's public binary-release registry. The download button is pinned to this exact release rather than a moving “latest” link.</p>
         <a class="text-link" href="${escapeHtml(product.releaseUrl)}">View the v${escapeHtml(product.version)} release record <span aria-hidden="true">↗</span></a>
       </div>
+    </section>`
+  });
+}
+
+export function renderMixRack() {
+  const product = getProduct('mixrack');
+  return shell({
+    title: 'ZIO MixRack — Coming Soon | StudioZIO',
+    description:
+      'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
+    canonical: 'https://studiozio.vercel.app/products/mixrack/',
+    current: 'products',
+    content: `<section class="product-hero mixrack-hero">
+      <div class="product-hero-copy">
+        <p class="eyebrow">StudioZIO software · Coming Soon</p>
+        <h1>${escapeHtml(product.shortName)}</h1>
+        <p class="product-lede">Modular mixing, one focused rack.</p>
+        <p class="product-description detail-description">${escapeHtml(product.description)} Build a signal chain from StudioZIO processing modules and shape a mix from one unified interface.</p>
+        <div class="format-row" aria-label="Planned formats">
+          ${product.formats.map((format) => `<span>${escapeHtml(format)}</span>`).join('')}
+        </div>
+      </div>
+      <div class="product-visual rack-visual" aria-hidden="true">
+        <div class="rack-slot rack-slot-a"><span></span><span></span><span></span></div>
+        <div class="rack-slot rack-slot-b"><span></span><span></span><span></span></div>
+        <div class="rack-slot rack-slot-c"><span></span><span></span><span></span></div>
+      </div>
+    </section>
+    <section class="fact-strip" aria-label="Product facts">
+      <div><span>Manufacturer</span><strong>${escapeHtml(product.manufacturer)}</strong></div>
+      <div><span>Platform</span><strong>${escapeHtml(product.platform)}</strong></div>
+      <div><span>Status</span><strong>Coming Soon</strong></div>
+      <div><span>Formats</span><strong>${escapeHtml(product.compactFormats)}</strong></div>
+    </section>
+    <section class="coming-soon-panel" aria-labelledby="mixrack-status-title">
+      <p class="eyebrow">Product status</p>
+      <h2 id="mixrack-status-title">Coming Soon</h2>
+      <p>ZIO MixRack is in development. Release details will be published when they are available.</p>
     </section>`
   });
 }

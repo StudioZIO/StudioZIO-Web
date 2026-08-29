@@ -1,6 +1,12 @@
 export const RELEASE_REPOSITORY_URL =
   'https://github.com/StudioZIO/StudioZIO-Releases';
 
+export const MASTERING_SUITE_WEBSITE =
+  'https://studioziomasteringsuite.vercel.app/';
+
+export const TEMPO_DELAY_WEBSITE =
+  'https://tempo-delay-virid.vercel.app/';
+
 export const products = Object.freeze([
   Object.freeze({
     slug: 'mastering-suite',
@@ -19,7 +25,37 @@ export const products = Object.freeze([
       'c84cce49e651451409550daaac97f358220bcf7398183369e03f55b25d51793d',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
-    availability: 'Available now'
+    availability: 'Available now',
+    description:
+      'A single macOS distribution for StudioZIO mastering software across standalone and plug-in formats.',
+    detailsUrl: '/products/mastering-suite/',
+    productWebsite: MASTERING_SUITE_WEBSITE
+  }),
+  Object.freeze({
+    slug: 'tempo-delay',
+    name: 'StudioZIO Tempo Delay',
+    shortName: 'Tempo Delay',
+    platform: 'macOS',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
+    compactFormats: 'AU / VST3 / Standalone',
+    availability: 'Available now',
+    description:
+      'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
+    detailsUrl: TEMPO_DELAY_WEBSITE,
+    externalDetails: true
+  }),
+  Object.freeze({
+    slug: 'mixrack',
+    name: 'ZIO MixRack',
+    shortName: 'ZIO MixRack',
+    manufacturer: 'StudioZIO',
+    platform: 'macOS',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
+    compactFormats: 'AU / VST3 / Standalone',
+    availability: 'Coming soon',
+    description:
+      'A modular mixing environment that brings essential processing into one focused rack.',
+    detailsUrl: '/products/mixrack/'
   })
 ]);
 
