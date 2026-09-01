@@ -10,7 +10,8 @@ import {
   renderMasteringSuite,
   renderMixRack,
   renderNotFound,
-  renderProducts
+  renderProducts,
+  renderSystem
 } from '../src/site.mjs';
 
 const expectedUrl =
@@ -89,7 +90,8 @@ export function validateSource() {
   const productsPage = renderProducts();
   const mastering = renderMasteringSuite();
   const mixRackPage = renderMixRack();
-  const pages = [home, productsPage, mastering, mixRackPage, renderNotFound()];
+  const systemPage = renderSystem();
+  const pages = [home, productsPage, mastering, mixRackPage, systemPage, renderNotFound()];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -132,12 +134,35 @@ export function validateSource() {
     }
   }
 
-  const tempoLinkMatches = pages.reduce(
-    (count, page) => count + page.split(TEMPO_DELAY_WEBSITE).length - 1,
-    0
-  );
-  if (tempoLinkMatches !== 2) {
-    throw new Error('Tempo Delay must link once from each catalog surface');
+  // The shared four-link navigation puts the Tempo Delay site in the header
+  // and footer of every page, so the old exact-count rule no longer applies.
+  // What must hold: it is reachable everywhere, and both catalog surfaces
+  // still carry it on the product card itself.
+  if (!pages.every((page) => page.includes(TEMPO_DELAY_WEBSITE))) {
+    throw new Error('Tempo Delay site must be linked from every page');
+  }
+  for (const catalogPage of [home, productsPage]) {
+    const navAndFooterLinks = 2;
+    if (catalogPage.split(TEMPO_DELAY_WEBSITE).length - 1 <= navAndFooterLinks) {
+      throw new Error('Catalog surfaces must link Tempo Delay from its product card');
+    }
+  }
+
+  // One logo lockup in the header and one in the footer of every page.
+  // (The system page also renders lockup variants inside its content, so the
+  // count is asserted per-landmark rather than per-page.)
+  for (const page of pages) {
+    const headerMarkup = page.split('</header>')[0];
+    const footerMarkup = page.split('<footer')[1] ?? '';
+    if (headerMarkup.split('class="logo"').length - 1 !== 1) {
+      throw new Error('Expected exactly one logo lockup in the header');
+    }
+    if (footerMarkup.split('class="logo"').length - 1 !== 1) {
+      throw new Error('Expected exactly one logo lockup in the footer');
+    }
+    for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<', '>System<']) {
+      if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
+    }
   }
 
   const mixRackMain = mainContent(mixRackPage);
