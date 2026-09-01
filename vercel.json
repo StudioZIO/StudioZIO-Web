@@ -36,6 +36,16 @@
           "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    },
+    {
+      "//": "Vercel has no type for .opus and falls back to application/octet-stream. With nosniff set above, a browser that trusts the header rather than the bytes will reject the Opus source and quietly drop to the AAC fallback, so the better encode goes unheard.",
+      "source": "/assets/media/(.*).opus",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "audio/ogg"
+        }
+      ]
     }
   ]
 }
