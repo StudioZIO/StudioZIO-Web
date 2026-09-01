@@ -32,7 +32,7 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
   const close = link ? '</a>' : '</span>';
   return `${open}
       <span class="logo-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" style="color: var(--primary)">
+        <svg viewBox="0 0 24 24" fill="none">
           <path d="M2 12h3l2.6-7.2L11 19l3-9 2.4 4.4H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </span>
@@ -140,8 +140,8 @@ function masteringSuiteMock() {
         <span class="chip-row">${chip('AU · VST3')}${chip('Notarized', 'signal')}</span>
       </div>
       <div class="mock-body">
-        <div style="display:grid; grid-template-columns: minmax(0,1fr) 74px; gap:0.75rem;">
-          <svg viewBox="0 0 420 150" role="presentation" style="width:100%; height:auto; border:1px solid var(--hairline); border-radius:8px; background:var(--surface-control)">
+        <div class="mock-eq">
+          <svg viewBox="0 0 420 150" role="presentation" class="mock-eq-curve">
             <path d="M0 100h420M0 60h420" stroke="var(--hairline)" stroke-width="1"/>
             <path d="M8 108C70 108 96 62 150 62s70 34 128 20 106-52 134-52" stroke="var(--primary)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
             <path d="M8 62C120 74 250 96 412 112" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="5 6" fill="none" opacity="0.75"/>
@@ -193,8 +193,8 @@ function tempoDelayMock() {
         </div>
         <div class="lane">
           <span class="lane-head"><span>Signal routing</span><span>Ping-pong</span></span>
-          <span class="lane-row"><span class="ch">L</span><span class="lane-track"><span class="lane-tap" style="left:38%"></span><span class="lane-tap" style="left:76%"></span></span></span>
-          <span class="lane-row lane-row--r"><span class="ch">R</span><span class="lane-track"><span class="lane-tap" style="left:19%"></span><span class="lane-tap" style="left:57%"></span></span></span>
+          <span class="lane-row"><span class="ch">L</span><span class="lane-track"><span class="lane-tap lane-tap--p38"></span><span class="lane-tap lane-tap--p76"></span></span></span>
+          <span class="lane-row lane-row--r"><span class="ch">R</span><span class="lane-track"><span class="lane-tap lane-tap--p19"></span><span class="lane-tap lane-tap--p57"></span></span></span>
           <span class="lane-foot"><span>Independent left and right timing</span><span>tap 2</span></span>
         </div>
       </div>
@@ -239,7 +239,7 @@ function downloadComponent(product) {
             <p class="eyebrow">Official macOS installer</p>
             <h2 id="download-title">${escapeHtml(product.shortName)} ${escapeHtml(product.version)}</h2>
             <p class="lede">Version ${escapeHtml(product.version)} · ${formatList(product.formats)}</p>
-            <div class="chip-row" style="margin-top:1rem">
+            <div class="chip-row mt-sm">
               ${chip(product.signing)}${chip(product.notarization, 'signal')}
             </div>
           </div>
@@ -248,10 +248,10 @@ function downloadComponent(product) {
             <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Try Tempo Delay</a>
           </div>
         </div>
-        <dl class="spec-grid" style="margin-top:1.5rem">
+        <dl class="spec-grid mt-md">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
-          <div><dt>SHA-256</dt><dd style="font-family:var(--font-mono); font-size:0.6875rem; overflow-wrap:anywhere">${escapeHtml(product.sha256)}</dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
         </dl>
       </div>
     </section>`;
@@ -303,7 +303,7 @@ export function renderHome() {
           <article class="panel module-card"><span class="idx">02</span><h3>A visible surface ramp</h3><p>Base, raised, overlay and control each step up in lightness and carry a hairline plus a real shadow, so panels read as objects.</p></article>
           <article class="panel module-card"><span class="idx">03</span><h3>Motion that means something</h3><p>Meters move because there is signal, knobs rotate to their value, taps travel the routing lane. Nothing animates for decoration.</p></article>
         </div>
-        <p style="margin-top:2rem"><a class="btn" href="/system/">Read the design system</a></p>
+        <p class="mt-xl"><a class="btn" href="/system/">Read the design system</a></p>
       </div>
     </section>`
   });
@@ -362,7 +362,7 @@ export function renderMasteringSuite() {
               <a class="btn btn-primary" href="#download-title">Download for macOS</a>
               <a class="btn" href="#modules-title">See the modules</a>
             </div>
-            <div class="chip-row" style="margin-top:1.5rem">
+            <div class="chip-row mt-md">
               ${chip(product.compactFormats.replaceAll(' / ', ' · '))}${chip(product.platform)}${chip(product.notarization, 'signal')}
             </div>
           </div>
@@ -413,7 +413,7 @@ export function renderMasteringSuite() {
           <h2 id="distribution-title">Public, versioned, verifiable</h2>
         </div>
         <p class="lede">The installer is distributed from the public StudioZIO binary-release registry, pinned to this exact release rather than a moving link.</p>
-        <p style="margin-top:1.5rem"><a class="btn" href="${escapeHtml(product.releaseUrl)}">View the release record</a></p>
+        <p class="mt-md"><a class="btn" href="${escapeHtml(product.releaseUrl)}">View the release record</a></p>
       </div>
     </section>`
   });
@@ -433,7 +433,7 @@ export function renderMixRack() {
           <p class="eyebrow">StudioZIO software · Coming Soon</p>
           <h1>ZIO MixRack</h1>
           <p class="lede">${escapeHtml(product.description)} Build a signal chain from StudioZIO processing modules and shape a mix from one unified interface.</p>
-          <div class="chip-row" style="margin-top:1.75rem">
+          <div class="chip-row mt-lg">
             ${chip(product.manufacturer)}${chip(product.platform)}${chip('Coming Soon', 'signal')}
           </div>
         </div>
@@ -507,11 +507,11 @@ export function renderSystem() {
         <ul class="card-grid card-grid--3">
           ${swatches
             .map(
-              ([token, note]) => `<li class="panel" style="overflow:hidden">
-            <span style="display:block; height:74px; background: var(--${token}); border-bottom:1px solid var(--hairline)"></span>
-            <span class="module-card" style="display:flex">
-              <code class="idx" style="color:var(--foreground)">${escapeHtml(token)}</code>
-              <span style="color:var(--muted-foreground); font-size:0.875rem">${escapeHtml(note)}</span>
+              ([token, note]) => `<li class="panel swatch">
+            <span class="swatch-sample swatch--${token}"></span>
+            <span class="module-card swatch-body">
+              <code class="idx">${escapeHtml(token)}</code>
+              <span class="swatch-note">${escapeHtml(note)}</span>
             </span>
           </li>`
             )

@@ -566,6 +566,57 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .site-footer nav a:hover, .site-footer nav a:focus-visible { color: var(--foreground); }
 .site-footer .copy { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.1em; color: var(--muted-foreground); }
 
+/* ---------- CSP-safe helpers -------------------------------------------
+   The site is served under `style-src 'self'` with no 'unsafe-inline', so the
+   browser drops every style="" attribute in the markup. Anything that would
+   otherwise have been an inline style has to live here instead. The build
+   validator asserts that no page ships an inline style attribute, because a
+   dropped one fails silently — the page still renders, just wrongly. */
+
+/* logo mark: the SVG paints with currentColor */
+.logo-mark svg { color: var(--primary); }
+
+/* mastering-suite mock: EQ curve beside the meter column */
+.mock-eq { display: grid; grid-template-columns: minmax(0, 1fr) 74px; gap: 0.75rem; }
+.mock-eq-curve {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: var(--surface-control);
+}
+
+/* tempo-delay mock: tap positions along the routing lane */
+.lane-tap--p19 { left: 19%; }
+.lane-tap--p38 { left: 38%; }
+.lane-tap--p57 { left: 57%; }
+.lane-tap--p76 { left: 76%; }
+
+/* spacing steps between blocks inside a section */
+.mt-sm { margin-top: 1rem; }
+.mt-md { margin-top: 1.5rem; }
+.mt-lg { margin-top: 1.75rem; }
+.mt-xl { margin-top: 2rem; }
+.mt-xxl { margin-top: 3rem; }
+
+.sha { font-family: var(--font-mono); font-size: 0.6875rem; overflow-wrap: anywhere; }
+.accent-text { color: var(--primary-text); }
+
+/* system page: colour swatches */
+.swatch { overflow: hidden; }
+.swatch-sample { display: block; height: 74px; border-bottom: 1px solid var(--hairline); }
+.swatch-body { display: flex; }
+.swatch-body .idx { color: var(--foreground); }
+.swatch-note { color: var(--muted-foreground); font-size: 0.875rem; }
+.swatch--background { background: var(--background); }
+.swatch--surface-raised { background: var(--surface-raised); }
+.swatch--surface-overlay { background: var(--surface-overlay); }
+.swatch--surface-control { background: var(--surface-control); }
+.swatch--primary { background: var(--primary); }
+.swatch--primary-deep { background: var(--primary-deep); }
+.swatch--signal { background: var(--signal); }
+.swatch--destructive { background: var(--destructive); }
+
 /* ---------- motion ------------------------------------------------------ */
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
