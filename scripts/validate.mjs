@@ -210,6 +210,32 @@ export function validateSource() {
     if (/<style[\s>]/.test(page)) {
       throw new Error(`Inline <style> element on page ${index} is blocked by the CSP`);
     }
+    // The same header has no 'unsafe-inline' for scripts either, so an inline
+    // <script> body would be dropped just as silently. Every script the site
+    // ships has to be a src= reference to a file the build actually emits.
+    const inlineScripts = page.match(/<script(?![^>]*\ssrc=)[^>]*>/g);
+    if (inlineScripts) {
+      throw new Error(
+        `Inline <script> on page ${index} is blocked by the site's own `
+        + `Content-Security-Policy; move it into a file under src/: ${inlineScripts[0]}`
+      );
+    }
+  }
+
+  // The Google tag has to be on every page, or the pages that lost it go
+  // uncounted while the reports still look healthy. Assert all three parts:
+  // the same-origin init, Google's loader with this property's measurement
+  // ID, and the consent banner that gates it in the opt-in regions.
+  for (const [index, page] of pages.entries()) {
+    for (const required of [
+      '<script src="/assets/gtag.js"></script>',
+      'https://www.googletagmanager.com/gtag/js?id=G-VL8Z542XMP',
+      '<script src="/assets/consent.js" defer></script>'
+    ]) {
+      if (!page.includes(required)) {
+        throw new Error(`Google tag missing on page ${index}: ${required}`);
+      }
+    }
   }
 }
 
