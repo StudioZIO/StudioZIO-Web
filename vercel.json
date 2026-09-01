@@ -36,6 +36,15 @@
           "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    },
+    {
+      "source": "/assets/media/(.*).opus",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "audio/ogg"
+        }
+      ]
     }
   ]
 }

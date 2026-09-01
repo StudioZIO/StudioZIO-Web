@@ -4,6 +4,7 @@ import {
   MASTERING_SUITE_WEBSITE,
   TEMPO_DELAY_WEBSITE
 } from './catalog.mjs';
+import { mediaSeconds } from './media.mjs';
 
 const stylesheet = '/assets/styles.css';
 const HUB_ORIGIN = 'https://studiozio.vercel.app';
@@ -229,6 +230,112 @@ const MOCKS = {
   'tempo-delay': tempoDelayMock
 };
 
+/* ---------- A/B listening -----------------------------------------------
+   Two renders of one passage — unprocessed, and through the plug-in — each
+   normalised to -12.0 LUFS integrated with peaks at or below -1 dBTP,
+   measured on the encodes the browser actually plays rather than on the
+   masters. At different levels the louder take always wins and the
+   comparison says nothing, so the matching is the feature.
+
+   Each card also carries a capture of the plug-in that made the render,
+   cropped to the plug-in's own window, so the sound and the surface arrive
+   together. Two sources per take: Opus for the browsers that have it, AAC
+   for the Safari releases that do not.
+
+   The behaviour lives in src/ab.js; the markup here only supplies the hooks
+   that file reads. */
+
+const AB_DEMOS = Object.freeze({
+  'mastering-suite': Object.freeze({
+    title: 'Mastering Suite · unmastered vs mastered',
+    group: 'Compare the unmastered and mastered renders',
+    processedLabel: 'Mastered',
+    dry: '/assets/media/master-dry',
+    wet: '/assets/media/master-wet',
+    shot: 'mastering-suite-ui',
+    shotWidth: 1440,
+    shotHeight: 720,
+    shotAlt:
+      'The StudioZIO Mastering Suite window: output spectrum across the top, a loudness column reading -11.5 LUFS integrated with true-peak bars and a vectorscope, and the mid/side, saturation, pink match, glue compressor, tone EQ and limiter modules below.',
+    note:
+      '“Güvercinler”, a StudioZIO production, rendered through Mastering Suite 2.0.0. Judge tone, depth and stability.'
+  }),
+  'tempo-delay': Object.freeze({
+    title: 'Tempo Delay · dry vs delayed',
+    group: 'Compare the dry and delayed renders',
+    processedLabel: 'Delayed',
+    dry: '/assets/media/delay-dry',
+    wet: '/assets/media/delay-wet',
+    shot: 'tempo-delay-ui',
+    shotWidth: 1120,
+    shotHeight: 720,
+    shotAlt:
+      'The StudioZIO Tempo Delay window: tempo sync at 120 BPM with 1/8 dotted on the left and 1/8 on the right, 40 per cent feedback on both sides, 100 per cent width, 35 per cent mix, and the tone and filters tab open.',
+    note:
+      'Rendered through Tempo Delay 4.0.1 at 44.1 kHz. Judge placement, tail and stereo spread.'
+  })
+});
+
+function abCard(key) {
+  const demo = AB_DEMOS[key];
+  const sources = (base) =>
+    `<source src="${base}.opus" type="audio/ogg; codecs=opus">
+        <source src="${base}.m4a" type="audio/mp4; codecs=mp4a.40.2">`;
+
+  // The length comes from the file, not from the browser: see src/media.mjs.
+  const seconds = mediaSeconds(demo.wet.split('/').pop());
+
+  return `<article class="panel-float ab-card" data-ab="card" data-length="${seconds.toFixed(3)}">
+      <audio data-take="dry" preload="none" loop crossorigin="anonymous">
+        ${sources(demo.dry)}
+      </audio>
+      <audio data-take="wet" preload="none" loop crossorigin="anonymous">
+        ${sources(demo.wet)}
+      </audio>
+      <div class="ab-head">
+        <span class="ab-title">${escapeHtml(demo.title)}</span>
+        <span class="ab-flag">Real render · matched −12 LUFS</span>
+      </div>
+      <img class="ab-shot" src="/assets/media/${demo.shot}.webp"
+        width="${demo.shotWidth}" height="${demo.shotHeight}" decoding="async"
+        alt="${escapeHtml(demo.shotAlt)}">
+      <div class="ab-transport">
+        <button type="button" class="btn btn-primary ab-play" data-ab="play" aria-pressed="false"><span data-ab="play-label">Hear it</span></button>
+        <div class="ab-takes" role="group" aria-label="${escapeHtml(demo.group)}">
+          <button type="button" data-ab="take" aria-pressed="false">Dry</button>
+          <button type="button" data-ab="take" aria-pressed="true">${escapeHtml(
+            demo.processedLabel
+          )}</button>
+        </div>
+        <div class="ab-readout">
+          <div class="ab-meter" data-ab="meter"><span class="ab-meter-fill" data-ab="meter-fill"></span></div>
+          <div class="ab-scale">
+            <span class="ab-key">Output</span>
+            <span class="ab-progress" data-ab="progress" role="progressbar" aria-label="Position in the passage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="ab-progress-fill" data-ab="progress-bar"></span></span>
+          </div>
+        </div>
+      </div>
+      <p class="ab-foot">${escapeHtml(demo.note)}</p>
+    </article>`;
+}
+
+function hearItFirst() {
+  return `<section class="section" id="listen" aria-labelledby="listen-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Hear it first</p>
+          <h2 id="listen-title">Both plug-ins, dry and processed</h2>
+          <p class="lede">Real renders from the plug-ins, switched instantly so the playhead never moves. Both takes in each pair are matched to −12.0 LUFS integrated with peaks at or below −1 dBTP, because at different levels the louder one always wins and the comparison tells you nothing.</p>
+        </div>
+        <div class="card-grid card-grid--2">${abCard('mastering-suite')}${abCard(
+          'tempo-delay'
+        )}</div>
+      </div>
+    </section>`;
+}
+
+const AB_SCRIPT = '<script src="/assets/ab.js" defer></script>';
+
 /* ---------- cards ------------------------------------------------------- */
 
 function productCard(product) {
@@ -335,6 +442,7 @@ export function renderHome() {
       'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU and VST3, plus the upcoming ZIO MixRack.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
+    scripts: AB_SCRIPT,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="hero-grid hero--stacked">
@@ -351,6 +459,7 @@ export function renderHome() {
         </div>
       </div>
     </section>
+    ${hearItFirst()}
     <section class="section" aria-labelledby="catalog-title">
       <div class="shell">
         <div class="section-head">

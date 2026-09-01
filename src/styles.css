@@ -824,3 +824,109 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   padding: 0.6rem 0;
 }
 .consent-reopen:hover, .consent-reopen:focus-visible { color: var(--foreground); }
+
+/* ---------- A/B listening -----------------------------------------------
+   Two renders of one passage, matched in loudness, switched instantly. The
+   card is a panel with four bands: title, the plug-in capture, the transport,
+   and the note. The capture is a real screenshot cropped to the plug-in's own
+   window, so the only frame around it is this one.
+
+   Both readouts start empty. They are written by src/ab.js on every animation
+   frame while a passage plays, and a bar with no declared width would sit at
+   full scale reporting a signal that is not there. */
+.ab-card { overflow: hidden; display: flex; flex-direction: column; }
+.ab-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1.15rem;
+  border-bottom: 1px solid var(--hairline);
+  background: color-mix(in oklab, var(--surface-overlay) 60%, transparent);
+}
+.ab-title, .ab-flag {
+  font-family: var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.ab-title { font-size: 0.6875rem; color: var(--foreground); }
+.ab-flag { font-size: 0.625rem; color: var(--muted-foreground); }
+.ab-shot { display: block; width: 100%; height: auto; background: var(--background); }
+.ab-transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem;
+}
+.ab-play { flex: none; }
+.ab-takes {
+  display: flex;
+  flex: none;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--background);
+}
+.ab-takes button {
+  border: 0;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  background: none;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.ab-takes button[aria-pressed="true"] { background: var(--surface-control); color: var(--foreground); }
+.ab-takes button:hover { color: var(--foreground); }
+.ab-readout { flex: 1 1 12rem; min-width: 0; }
+.ab-meter {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-control);
+  overflow: hidden;
+}
+.ab-meter-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 75ms linear;
+}
+.ab-scale {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.ab-key {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.ab-progress { flex: 1 1 0; max-width: 9rem; height: 1px; background: var(--border); }
+.ab-progress-fill { display: block; width: 0; height: 1px; background: var(--primary); }
+.ab-foot {
+  margin: 0;
+  padding: 0.85rem 1.15rem;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  max-width: none;
+}
+/* Playback needs a gesture and can still be refused. Say so rather than
+   leaving a dead button. */
+.ab-card.is-blocked .ab-flag::after { content: " · playback blocked"; }
+@media (prefers-reduced-motion: reduce) {
+  .ab-meter-fill, .ab-progress-fill { transition: none; }
+}
