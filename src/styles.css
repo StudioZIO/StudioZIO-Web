@@ -690,3 +690,103 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .lane-tap { opacity: 1 !important; transform: none !important; }
   .lane-runner { display: none; }
 }
+
+/* ---------- support form ------------------------------------------------
+   The only input surface on the site. Controls inherit the panel/token set
+   rather than introducing a second visual language: same radius, same
+   hairline, same focus ring as the buttons beside them. */
+.support-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
+.form-grid { display: grid; gap: 1.25rem; }
+@media (min-width: 700px) {
+  .form-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .form-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.form-row { display: grid; gap: 0.45rem; align-content: start; }
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.form-label .req { color: var(--primary-text); margin-left: 0.4rem; }
+.field {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--input);
+  border-radius: 8px;
+  background: var(--surface-control);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.field::placeholder { color: var(--muted-foreground); }
+.field:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; border-color: var(--primary); }
+.field-mono { font-family: var(--font-mono); font-size: 0.875rem; }
+.field-area { min-height: 160px; resize: vertical; line-height: 1.6; }
+.form-hint { margin: 0; font-size: 0.8125rem; color: var(--muted-foreground); }
+.form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+/* Empty until the submit says something, so it never reserves a blank line. */
+.form-status { margin: 0; font-size: 0.9375rem; color: var(--muted-foreground); }
+.form-status:empty { display: none; }
+.form-status--sent { color: var(--primary-text); }
+.form-status--error { color: var(--destructive); }
+
+.form-note { margin: 1.25rem 0 0; font-size: 0.9375rem; color: var(--muted-foreground); }
+
+/* The honeypot: reachable by a bot reading the DOM, never by a person.
+   Moved out of view rather than display:none, which some bots skip. */
+.form-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- consent banner ----------------------------------------------
+   Drawn by consent.js only for visitors who have not chosen yet. It sits
+   above the page rather than pushing it, and uses the raised surface so it
+   reads as a control layer, not as content. The buttons reuse .btn and
+   .btn-primary unchanged: the design system sizes those for AA contrast at
+   the accent fill, and shrinking them here would quietly break it. */
+.consent-banner {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--surface-raised);
+  border-top: 1px solid var(--border);
+  box-shadow: var(--shadow-float);
+}
+.consent-inner {
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding: 1.25rem var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.consent-text {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+.consent-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.consent-btn { flex: 0 0 auto; }
+
+/* The withdraw control joins the footer navigation, so it inherits that
+   list's mono/uppercase treatment rather than looking like a stray button. */
+.consent-reopen {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding: 0.6rem 0;
+}
+.consent-reopen:hover, .consent-reopen:focus-visible { color: var(--foreground); }

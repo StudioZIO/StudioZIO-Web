@@ -6,8 +6,8 @@ import {
   TEMPO_DELAY_WEBSITE
 } from '../src/catalog.mjs';
 import {
+  renderContact,
   renderHome,
-  renderMasteringSuite,
   renderMixRack,
   renderNotFound,
   renderProducts,
@@ -87,9 +87,9 @@ export function validateSource() {
 
   const home = renderHome();
   const productsPage = renderProducts();
-  const mastering = renderMasteringSuite();
   const mixRackPage = renderMixRack();
-  const pages = [home, productsPage, mastering, mixRackPage, renderNotFound()];
+  const contact = renderContact();
+  const pages = [home, productsPage, mixRackPage, contact, renderNotFound()];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -100,21 +100,14 @@ export function validateSource() {
     }
   }
 
-  const downloadMatches = mastering.split(expectedUrl).length - 1;
-  if (downloadMatches !== 1) throw new Error('Expected exactly one primary installer URL');
-  for (const required of [
-    'StudioZIO Mastering Suite',
-    'Version 2.0.0',
-    'macOS',
-    'Audio Unit (AU)',
-    'VST3',
-    'Standalone',
-    'Developer ID signed',
-    'Apple notarized',
-    'StudioZIO-Mastering-Suite-2.0.0.pkg',
-    expectedSha
-  ]) {
-    if (!mastering.includes(required)) throw new Error(`Required public fact missing: ${required}`);
+  // The hub used to render its own mastering-suite page whose canonical already
+  // pointed at the product site — two addresses for one product, and the hub
+  // conceding which one was real. The product site owns those release facts
+  // now; what has to hold here is that nothing links to the retired path.
+  for (const [index, page] of pages.entries()) {
+    if (page.includes('/products/mastering-suite')) {
+      throw new Error(`Page ${index} still links the retired local mastering-suite page`);
+    }
   }
 
   for (const catalogPage of [home, productsPage]) {
@@ -158,7 +151,7 @@ export function validateSource() {
     if (footerMarkup.split('class="logo"').length - 1 !== 1) {
       throw new Error('Expected exactly one logo lockup in the footer');
     }
-    for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<']) {
+    for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<', '>Contact<']) {
       if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
     }
   }
@@ -207,6 +200,56 @@ export function validateSource() {
     }
     if (/<style[\s>]/.test(page)) {
       throw new Error(`Inline <style> element on page ${index} is blocked by the CSP`);
+    }
+    // The same header has no 'unsafe-inline' for scripts either, so an inline
+    // <script> body would be dropped just as silently. Every script the site
+    // ships has to be a src= reference to a file the build actually emits.
+    const inlineScripts = page.match(/<script(?![^>]*\ssrc=)[^>]*>/g);
+    if (inlineScripts) {
+      throw new Error(
+        `Inline <script> on page ${index} is blocked by the site's own `
+        + `Content-Security-Policy; move it into a file under src/: ${inlineScripts[0]}`
+      );
+    }
+  }
+
+  // The Google tag has to be on every page, or the pages that lost it go
+  // uncounted while the reports still look healthy. Assert all three parts:
+  // the same-origin init, Google's loader with this property's measurement
+  // ID, and the consent banner that gates it in the opt-in regions.
+  for (const [index, page] of pages.entries()) {
+    for (const required of [
+      '<script src="/assets/gtag.js"></script>',
+      'https://www.googletagmanager.com/gtag/js?id=G-VL8Z542XMP',
+      '<script src="/assets/consent.js" defer></script>'
+    ]) {
+      if (!page.includes(required)) {
+        throw new Error(`Google tag missing on page ${index}: ${required}`);
+      }
+    }
+  }
+
+  // A support form that renders but cannot submit loses messages quietly, so
+  // the three parts that carry a submission are asserted, not assumed: the
+  // form itself, every required field, and the script that posts it.
+  for (const required of [
+    'class="panel-float support-form"',
+    '<script src="/assets/contact.js" defer></script>',
+    'name="name"',
+    'name="email"',
+    'name="message"',
+    'class="form-status"'
+  ]) {
+    if (!contact.includes(required)) {
+      throw new Error(`Contact page is missing a submission-critical part: ${required}`);
+    }
+  }
+
+  // Only the contact page carries the form script; loading it elsewhere would
+  // be dead weight, and its absence here is the failure that matters.
+  for (const [index, page] of pages.entries()) {
+    if (page !== contact && page.includes('/assets/contact.js')) {
+      throw new Error(`Page ${index} loads the contact script but has no form`);
     }
   }
 }
