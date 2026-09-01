@@ -239,6 +239,7 @@ function productCard(product) {
   const detailsLabel = product.externalDetails ? 'Open product site' : 'Open product page';
   const chips = [
     product.version ? chip(`v${product.version}`) : '',
+    product.price ? chip(product.price) : '',
     chip(product.compactFormats.replaceAll(' / ', ' · ')),
     isShipping ? chip(product.availability) : chip(product.availability, 'signal')
   ].join('');
