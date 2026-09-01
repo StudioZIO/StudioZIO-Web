@@ -193,8 +193,8 @@ function tempoDelayMock() {
         </div>
         <div class="lane">
           <span class="lane-head"><span>Signal routing</span><span>Ping-pong</span></span>
-          <span class="lane-row"><span class="ch">L</span><span class="lane-track"><span class="lane-tap lane-tap--p38"></span><span class="lane-tap lane-tap--p76"></span></span></span>
-          <span class="lane-row lane-row--r"><span class="ch">R</span><span class="lane-track"><span class="lane-tap lane-tap--p19"></span><span class="lane-tap lane-tap--p57"></span></span></span>
+          <span class="lane-row"><span class="ch">L</span><span class="lane-track"><span class="lane-runner"></span><span class="lane-tap lane-tap--p38"></span><span class="lane-tap lane-tap--p76"></span></span></span>
+          <span class="lane-row lane-row--r"><span class="ch">R</span><span class="lane-track"><span class="lane-runner"></span><span class="lane-tap lane-tap--p19"></span><span class="lane-tap lane-tap--p57"></span></span></span>
           <span class="lane-foot"><span>Independent left and right timing</span><span>tap 2</span></span>
         </div>
       </div>
