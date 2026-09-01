@@ -55,7 +55,7 @@ export function validateSource() {
   const tempoDelay = getProduct('tempo-delay');
   if (
     tempoDelay.name !== 'StudioZIO Tempo Delay' ||
-    tempoDelay.availability !== 'Available now' ||
+    tempoDelay.availability !== 'Release candidate' ||
     tempoDelay.platform !== 'macOS' ||
     tempoDelay.compactFormats !== 'AU / VST3 / Standalone' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||

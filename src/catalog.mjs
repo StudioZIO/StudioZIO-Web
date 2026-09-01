@@ -38,7 +38,10 @@ export const products = Object.freeze([
     platform: 'macOS',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
     compactFormats: 'AU / VST3 / Standalone',
-    availability: 'Available now',
+    /* The shipping build is tagged RC1 and its release notes call it a
+       testable beta, and the product site chips it the same way. "Available
+       now" here said something the download did not support. */
+    availability: 'Release candidate',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
     detailsUrl: TEMPO_DELAY_WEBSITE,

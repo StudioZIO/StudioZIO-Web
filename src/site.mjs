@@ -232,13 +232,15 @@ const MOCKS = {
 /* ---------- cards ------------------------------------------------------- */
 
 function productCard(product) {
-  const isUpcoming = product.availability === 'Coming soon';
+  /* Amber marks a release flag, which is any status that is not simply
+     shipping -- "Coming soon" and "Release candidate" alike. */
+  const isShipping = product.availability === 'Available now';
   const mock = MOCKS[product.slug];
   const detailsLabel = product.externalDetails ? 'Open product site' : 'Open product page';
   const chips = [
     product.version ? chip(`v${product.version}`) : '',
     chip(product.compactFormats.replaceAll(' / ', ' · ')),
-    isUpcoming ? chip(product.availability, 'signal') : chip(product.availability)
+    isShipping ? chip(product.availability) : chip(product.availability, 'signal')
   ].join('');
 
   return `<article class="panel product-card">
