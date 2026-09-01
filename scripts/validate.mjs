@@ -60,7 +60,7 @@ export function validateSource() {
     tempoDelay.platform !== 'macOS' ||
     tempoDelay.compactFormats !== 'AU / VST3 / Standalone' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
-    TEMPO_DELAY_WEBSITE !== 'https://tempo-delay-virid.vercel.app/'
+    TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/'
   ) {
     throw new Error('Tempo Delay public metadata drift');
   }
