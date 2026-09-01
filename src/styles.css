@@ -690,3 +690,53 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .lane-tap { opacity: 1 !important; transform: none !important; }
   .lane-runner { display: none; }
 }
+
+/* ---------- consent banner ----------------------------------------------
+   Drawn by consent.js only for visitors who have not chosen yet. It sits
+   above the page rather than pushing it, and uses the raised surface so it
+   reads as a control layer, not as content. The buttons reuse .btn and
+   .btn-primary unchanged: the design system sizes those for AA contrast at
+   the accent fill, and shrinking them here would quietly break it. */
+.consent-banner {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--surface-raised);
+  border-top: 1px solid var(--border);
+  box-shadow: var(--shadow-float);
+}
+.consent-inner {
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding: 1.25rem var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.consent-text {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+.consent-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.consent-btn { flex: 0 0 auto; }
+
+/* The withdraw control joins the footer navigation, so it inherits that
+   list's mono/uppercase treatment rather than looking like a stray button. */
+.consent-reopen {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding: 0.6rem 0;
+}
+.consent-reopen:hover, .consent-reopen:focus-visible { color: var(--foreground); }
