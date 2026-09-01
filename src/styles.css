@@ -543,6 +543,36 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .lane-row--r .lane-tap { background: var(--signal); }
 .lane-foot { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 0.5625rem; color: var(--muted-foreground); }
 
+/* The system promises that "taps travel the routing lane", so they do: a
+   signal head sweeps each row and every tap blooms as the head reaches it.
+   The two rows run half a cycle apart, which is what ping-pong means. The
+   taps keep their fixed positions because those are divisions, not motion —
+   only the arrival of signal moves. */
+.lane { --lane-cycle: 2.4s; }
+.lane-runner {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: lane-run var(--lane-cycle) linear infinite;
+}
+.lane-row--r .lane-runner {
+  background: var(--signal);
+  animation-delay: calc(var(--lane-cycle) / -2);
+}
+.lane-tap { animation: tap-fire var(--lane-cycle) ease-out infinite; }
+/* Each delay places the bloom at the moment its row's head passes that
+   position: L leads, R is half a cycle behind. */
+.lane-tap--p38 { animation-delay: -1.488s; }
+.lane-tap--p76 { animation-delay: -0.576s; }
+.lane-tap--p19 { animation-delay: -0.744s; }
+.lane-tap--p57 { animation-delay: -2.232s; }
+
 /* meters */
 .meter-stack { display: flex; align-items: flex-end; gap: 4px; height: 100%; min-height: 96px; padding: 0.6rem; border: 1px solid var(--hairline); border-radius: 8px; background: var(--surface-control); }
 .meter { flex: 1; border-radius: 2px; background: var(--meter-low); animation: meter-drift 3.2s ease-in-out infinite; }
@@ -631,6 +661,17 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   35%      { height: 82%; }
   70%      { height: 54%; }
 }
+@keyframes lane-run {
+  0%   { left: 0%;   opacity: 0; }
+  10%  { opacity: 0.9; }
+  90%  { opacity: 0.9; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes tap-fire {
+  0%, 100% { transform: scale(1);   opacity: 0.4; }
+  4%       { transform: scale(1.6); opacity: 1; }
+  32%      { transform: scale(1);   opacity: 0.85; }
+}
 .rise { animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .rise-1 { animation-delay: 60ms; }
 .rise-2 { animation-delay: 120ms; }
@@ -643,4 +684,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+  /* Collapsing tap-fire would leave the taps at their dimmest keyframe and
+     strand the signal head at the end of the lane. Show the lane at rest
+     instead: every tap fully drawn, no head. */
+  .lane-tap { opacity: 1 !important; transform: none !important; }
+  .lane-runner { display: none; }
 }
