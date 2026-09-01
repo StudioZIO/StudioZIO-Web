@@ -28,8 +28,8 @@ export const products = Object.freeze([
     availability: 'Available now',
     description:
       'A single macOS distribution for StudioZIO mastering software across standalone and plug-in formats.',
-    detailsUrl: '/products/mastering-suite/',
-    productWebsite: MASTERING_SUITE_WEBSITE
+    detailsUrl: MASTERING_SUITE_WEBSITE,
+    externalDetails: true
   }),
   Object.freeze({
     slug: 'tempo-delay',
