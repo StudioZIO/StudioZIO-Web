@@ -8,6 +8,23 @@ import {
 const stylesheet = '/assets/styles.css';
 const HUB_ORIGIN = 'https://studiozio.vercel.app';
 
+/* Google tag for the "Hub" data stream of the StudioZIO Analytics property.
+   Three files, in this order, because the site is served under
+   `default-src 'self'` with no 'unsafe-inline':
+     1. gtag.js - Google's inline half, moved to a same-origin file. It runs
+                  synchronously, so the Consent Mode defaults are established
+                  before the loader can send anything.
+     2. the googletagmanager loader - kept as the literal tag that Google's
+                  own installation check looks for.
+     3. consent.js - the banner, deferred so the footer it hangs the withdraw
+                  control on already exists.
+   scripts/validate.mjs asserts all three on every page, so a page that ever
+   stops carrying the tag fails the build instead of shipping untracked. */
+const MEASUREMENT_ID = 'G-VL8Z542XMP';
+const analytics = `<script src="/assets/gtag.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
+  <script src="/assets/consent.js" defer></script>`;
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -84,6 +101,7 @@ function shell({ title, description, canonical, current, content }) {
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${stylesheet}">
   <link rel="preload" href="/assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+  ${analytics}
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
