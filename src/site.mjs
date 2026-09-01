@@ -8,6 +8,23 @@ import {
 const stylesheet = '/assets/styles.css';
 const HUB_ORIGIN = 'https://studiozio.vercel.app';
 
+/* Google tag for the "Hub" data stream of the StudioZIO Analytics property.
+   Three files, in this order, because the site is served under
+   `default-src 'self'` with no 'unsafe-inline':
+     1. gtag.js - Google's inline half, moved to a same-origin file. It runs
+                  synchronously, so the Consent Mode defaults are established
+                  before the loader can send anything.
+     2. the googletagmanager loader - kept as the literal tag that Google's
+                  own installation check looks for.
+     3. consent.js - the banner, deferred so the footer it hangs the withdraw
+                  control on already exists.
+   scripts/validate.mjs asserts all three on every page, so a page that ever
+   stops carrying the tag fails the build instead of shipping untracked. */
+const MEASUREMENT_ID = 'G-VL8Z542XMP';
+const analytics = `<script src="/assets/gtag.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
+  <script src="/assets/consent.js" defer></script>`;
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -48,7 +65,8 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
 const NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
-  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo']
+  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
+  ['Contact', '/contact', 'contact']
 ];
 
 function navList(current) {
@@ -66,7 +84,7 @@ function chip(label, tone = '') {
   }${escapeHtml(label)}</span>`;
 }
 
-function shell({ title, description, canonical, current, content }) {
+function shell({ title, description, canonical, current, content, scripts = '' }) {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -87,6 +105,8 @@ function shell({ title, description, canonical, current, content }) {
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${stylesheet}">
   <link rel="preload" href="/assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+  ${analytics}
+  ${scripts}
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -324,90 +344,6 @@ export function renderProducts() {
   });
 }
 
-export function renderMasteringSuite() {
-  const product = getProduct('mastering-suite');
-  const modules = [
-    ['Tone EQ', 'Broad shaping bands with a curve that reads at a glance and never redraws behind the header.'],
-    ['Glue compression', 'Program-dependent release with a gain-reduction trace, so you can see how much the bus is moving.'],
-    ['Mid/side width', 'Stereo width with a correlation read-out that flags anything that will collapse in mono.'],
-    ['Saturation', 'Drive staged before the ceiling, applied where the level is still under your control.'],
-    ['True-peak limiter', 'Oversampled ceiling with inter-sample detection and a hold-and-release read-out.'],
-    ['Delivery metering', 'Loudness and true peak in one strip, so the master leaves at the level you intended.']
-  ];
-
-  return shell({
-    title: 'Mastering Suite — StudioZIO Mastering Chain for macOS',
-    description: `${product.name} ${product.version} for macOS in AU, VST3, and Standalone formats. Developer ID signed and Apple notarized.`,
-    canonical: MASTERING_SUITE_WEBSITE,
-    current: 'mastering',
-    content: `<section class="hero tech-grid">
-      <div class="shell">
-        <div class="hero-grid">
-          <div class="rise">
-            <p class="eyebrow">Master bus · Version ${escapeHtml(product.version)}</p>
-            <h1>The whole master,<span class="accent">one signal path.</span></h1>
-            <p class="lede">${escapeHtml(product.description)}</p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="#download-title">Download for macOS</a>
-              <a class="btn" href="#modules-title">See the modules</a>
-            </div>
-            <div class="chip-row mt-md">
-              ${chip(product.compactFormats.replaceAll(' / ', ' · '))}${chip(product.platform)}${chip(product.notarization, 'signal')}
-            </div>
-          </div>
-          <div class="panel rise rise-2">${masteringSuiteMock()}</div>
-        </div>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="modules-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Architecture</p>
-          <h2 id="modules-title">Six modules, one gain structure</h2>
-        </div>
-        <div class="card-grid card-grid--3">
-          ${modules
-            .map(
-              ([name, copy], index) => `<article class="panel module-card">
-            <span class="idx">${String(index + 1).padStart(2, '0')}</span>
-            <h3>${escapeHtml(name)}</h3>
-            <p>${escapeHtml(copy)}</p>
-          </article>`
-            )
-            .join('')}
-        </div>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="spec-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Specification</p>
-          <h2 id="spec-title">What ships</h2>
-        </div>
-        <dl class="spec-grid">
-          <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
-          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
-          <div><dt>Version</dt><dd>${escapeHtml(product.version)}</dd></div>
-          <div><dt>Signing</dt><dd>${escapeHtml(product.signing)}</dd></div>
-          <div><dt>Notarization</dt><dd>${escapeHtml(product.notarization)}</dd></div>
-          <div><dt>Availability</dt><dd>${escapeHtml(product.availability)}</dd></div>
-        </dl>
-      </div>
-    </section>
-    ${downloadComponent(product)}
-    <section class="section" aria-labelledby="distribution-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Distribution</p>
-          <h2 id="distribution-title">Public, versioned, verifiable</h2>
-        </div>
-        <p class="lede">The installer is distributed from the public StudioZIO binary-release registry, pinned to this exact release rather than a moving link.</p>
-        <p class="mt-md"><a class="btn" href="${escapeHtml(product.releaseUrl)}">View the release record</a></p>
-      </div>
-    </section>`
-  });
-}
-
 export function renderMixRack() {
   const product = getProduct('mixrack');
   return shell({
@@ -441,6 +377,87 @@ export function renderMixRack() {
           <div><dt>Status</dt><dd>Coming Soon</dd></div>
           <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
         </dl>
+      </div>
+    </section>`
+  });
+}
+
+/* The one page on the hub that takes input rather than giving it. The form
+   posts through src/contact.js; the CSP allows that single endpoint and
+   nothing else, and blocks a native POST entirely, so there is no quiet path
+   for a message to leave this page by. */
+export function renderContact() {
+  return shell({
+    title: 'Contact and support — StudioZIO',
+    description:
+      'Reach the people who build StudioZIO Mastering Suite and Tempo Delay: bug reports, host compatibility and setup questions.',
+    canonical: `${HUB_ORIGIN}/contact`,
+    current: 'contact',
+    scripts: '<script src="/assets/contact.js" defer></script>',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <p class="eyebrow">Support</p>
+        <h1>Talk to the people who build it</h1>
+        <p class="lede">Bug reports, host compatibility and setup questions all reach the same desk. Most answers go out within 24&ndash;48 business hours.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="shell">
+        <form class="panel-float support-form" novalidate="false">
+          <div class="form-hp" aria-hidden="true">
+            <label for="company">Company</label>
+            <input id="company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form-grid form-grid--2">
+            <div class="form-row">
+              <label class="form-label" for="name">Name <span class="req">required</span></label>
+              <input id="name" name="name" class="field" type="text" required autocomplete="name">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="email">Email <span class="req">required</span></label>
+              <input id="email" name="email" class="field" type="email" required autocomplete="email">
+              <p class="form-hint">The only address the reply can reach.</p>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--3">
+            <div class="form-row">
+              <label class="form-label" for="category">Category</label>
+              <select id="category" name="category" class="field">
+                <option value="Technical support">Technical support</option>
+                <option value="DAW compatibility">DAW compatibility</option>
+                <option value="Bug report">Bug report</option>
+                <option value="Feature inquiry">Feature inquiry</option>
+                <option value="Licence and download">Licence and download</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="os">Operating system</label>
+              <input id="os" name="os" class="field field-mono" type="text" placeholder="macOS 14">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="daw">Host DAW</label>
+              <input id="daw" name="daw" class="field field-mono" type="text" placeholder="Logic Pro">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="message">Message <span class="req">required</span></label>
+            <textarea id="message" name="message" class="field field-area" rows="7" required></textarea>
+            <p class="form-hint">For a bug, the host, its version and what you did before it happened get to an answer fastest.</p>
+          </div>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Send message</button>
+          </div>
+        </form>
+
+        <noscript>
+          <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming a message went through.</p>
+        </noscript>
       </div>
     </section>`
   });
