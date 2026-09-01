@@ -44,8 +44,7 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
 const NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
-  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
-  ['System', '/system/', 'system']
+  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo']
 ];
 
 function navList(current) {
@@ -291,20 +290,6 @@ export function renderHome() {
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
       </div>
-    </section>
-    <section class="section" aria-labelledby="approach-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Approach</p>
-          <h2 id="approach-title">Why they look the same</h2>
-        </div>
-        <div class="card-grid card-grid--3">
-          <article class="panel module-card"><span class="idx">01</span><h3>One lockup</h3><p>A single waveform mark and wordmark across every property. The product name is a mono label, never a second logo.</p></article>
-          <article class="panel module-card"><span class="idx">02</span><h3>A visible surface ramp</h3><p>Base, raised, overlay and control each step up in lightness and carry a hairline plus a real shadow, so panels read as objects.</p></article>
-          <article class="panel module-card"><span class="idx">03</span><h3>Motion that means something</h3><p>Meters move because there is signal, knobs rotate to their value, taps travel the routing lane. Nothing animates for decoration.</p></article>
-        </div>
-        <p class="mt-xl"><a class="btn" href="/system/">Read the design system</a></p>
-      </div>
     </section>`
   });
 }
@@ -451,87 +436,6 @@ export function renderMixRack() {
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
           <div><dt>Status</dt><dd>Coming Soon</dd></div>
           <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
-        </dl>
-      </div>
-    </section>`
-  });
-}
-
-export function renderSystem() {
-  const swatches = [
-    ['background', 'Page base'],
-    ['surface-raised', 'Cards and panels'],
-    ['surface-overlay', 'Headers and chips'],
-    ['surface-control', 'Knob tracks and wells'],
-    ['primary', 'Deep instrument cyan. Actions, curves, active state.'],
-    ['primary-deep', 'Pressed and inactive accent.'],
-    ['signal', 'Amber. Meters and release flags only — never an action.'],
-    ['destructive', 'Clip and error only.']
-  ];
-  return shell({
-    title: 'Design System — StudioZIO',
-    description:
-      'The shared StudioZIO design system: one token set, one logo lockup, and one motion language across the hub, Mastering Suite and Tempo Delay.',
-    canonical: `${HUB_ORIGIN}/system/`,
-    current: 'system',
-    content: `<section class="hero tech-grid">
-      <div class="shell">
-        <div class="rise">
-          <p class="eyebrow">Design system</p>
-          <h1>One system.<span class="accent">Three properties.</span></h1>
-          <p class="lede">A single token set, logo lockup and motion language for the StudioZIO hub, Mastering Suite and Tempo Delay.</p>
-        </div>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="identity-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Identity</p>
-          <h2 id="identity-title">A single lockup</h2>
-          <p class="lede">The mark is a waveform stroke in the accent on an overlay tile; the product name sits in mono beside the wordmark, never as a second logo.</p>
-        </div>
-        <div class="card-grid card-grid--3">
-          <div class="panel module-card"><span class="idx">Hub</span>${logo({ link: false })}</div>
-          <div class="panel module-card"><span class="idx">Product site</span>${logo({ suffix: 'Mastering Suite', link: false })}</div>
-          <div class="panel module-card"><span class="idx">Compact</span>${logo({ suffix: 'Tempo Delay', link: false })}</div>
-        </div>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="color-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Color</p>
-          <h2 id="color-title">A surface ramp you can see</h2>
-          <p class="lede">Each step lifts lightness by a fixed amount and pairs with a hairline border plus a real shadow, so panels read as objects rather than smudges.</p>
-        </div>
-        <ul class="card-grid card-grid--3">
-          ${swatches
-            .map(
-              ([token, note]) => `<li class="panel swatch">
-            <span class="swatch-sample swatch--${token}"></span>
-            <span class="module-card swatch-body">
-              <code class="idx">${escapeHtml(token)}</code>
-              <span class="swatch-note">${escapeHtml(note)}</span>
-            </span>
-          </li>`
-            )
-            .join('')}
-        </ul>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="type-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Type and motion</p>
-          <h2 id="type-title">Three families, one rhythm</h2>
-        </div>
-        <dl class="spec-grid">
-          <div><dt>Display</dt><dd>Space Grotesk 600/700 — headings, tight leading, balanced wrapping.</dd></div>
-          <div><dt>Body</dt><dd>Inter Tight 400/500 — paragraphs capped at a 62-character measure.</dd></div>
-          <div><dt>Technical</dt><dd>JetBrains Mono 400/500 — eyebrows, navigation, spec keys and parameter IDs.</dd></div>
-          <div><dt>Fast motion</dt><dd>140 ms — hover and colour changes.</dd></div>
-          <div><dt>Base motion</dt><dd>260 ms — surface and border transitions.</dd></div>
-          <div><dt>Reduced motion</dt><dd>Every animation collapses when the visitor asks for less.</dd></div>
         </dl>
       </div>
     </section>`

@@ -7,7 +7,6 @@ import {
   renderMixRack,
   renderNotFound,
   renderProducts,
-  renderSystem
 } from '../src/site.mjs';
 import { validateSource } from './validate.mjs';
 
@@ -22,7 +21,6 @@ const outputs = new Map([
   ['products/index.html', renderProducts()],
   ['products/mastering-suite/index.html', renderMasteringSuite()],
   ['products/mixrack/index.html', renderMixRack()],
-  ['system/index.html', renderSystem()],
   ['404.html', renderNotFound()]
 ]);
 
