@@ -192,6 +192,25 @@ export function validateSource() {
       throw new Error(`Unsupported public claim: ${forbiddenClaim}`);
     }
   }
+
+  // vercel.json serves the site under `style-src 'self'` with no
+  // 'unsafe-inline', so a browser drops every style="" attribute. That failure
+  // is silent — the page still renders, just with the layout the attribute was
+  // carrying, which is how the mastering-suite mock ended up collapsing on top
+  // of its own heading in production while every local check passed. Keep the
+  // header strict and keep the markup free of inline styles instead.
+  for (const [index, page] of pages.entries()) {
+    const inlineStyles = page.match(/<[^>]+\sstyle="[^"]*"/g);
+    if (inlineStyles) {
+      throw new Error(
+        `Inline style attribute on page ${index} is dropped by the site's own `
+        + `Content-Security-Policy; move it into styles.css: ${inlineStyles[0]}`
+      );
+    }
+    if (/<style[\s>]/.test(page)) {
+      throw new Error(`Inline <style> element on page ${index} is blocked by the CSP`);
+    }
+  }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
