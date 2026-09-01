@@ -26,8 +26,12 @@ function formatList(items) {
 // The single StudioZIO lockup: waveform mark on an overlay tile, "Studio" in
 // the foreground colour, "ZIO" in the accent, optional mono product suffix.
 function logo({ href = '/', suffix = '', link = true } = {}) {
+  // The accessible name has to contain the visible text. The wordmark and the
+  // suffix are separate elements, so the label is built from the same pieces
+  // and the markup carries a real space between them.
+  const label = `StudioZIO${suffix ? ` ${suffix}` : ''}`;
   const open = link
-    ? `<a class="logo" href="${escapeHtml(href)}" aria-label="StudioZIO home">`
+    ? `<a class="logo" href="${escapeHtml(href)}" aria-label="${escapeHtml(label)}">`
     : '<span class="logo">';
   const close = link ? '</a>' : '</span>';
   return `${open}
@@ -37,7 +41,7 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
         </svg>
       </span>
       <span class="logo-word">Studio<b>ZIO</b></span>
-      ${suffix ? `<span class="logo-suffix">${escapeHtml(suffix)}</span>` : ''}
+      ${suffix ? ` <span class="logo-suffix">${escapeHtml(suffix)}</span>` : ''}
     ${close}`;
 }
 
