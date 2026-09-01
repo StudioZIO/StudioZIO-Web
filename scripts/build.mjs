@@ -6,7 +6,8 @@ import {
   renderMasteringSuite,
   renderMixRack,
   renderNotFound,
-  renderProducts
+  renderProducts,
+  renderSystem
 } from '../src/site.mjs';
 import { validateSource } from './validate.mjs';
 
@@ -21,6 +22,7 @@ const outputs = new Map([
   ['products/index.html', renderProducts()],
   ['products/mastering-suite/index.html', renderMasteringSuite()],
   ['products/mixrack/index.html', renderMixRack()],
+  ['system/index.html', renderSystem()],
   ['404.html', renderNotFound()]
 ]);
 
@@ -32,6 +34,8 @@ for (const [relativePath, content] of outputs) {
 
 await mkdir(resolve(outputRoot, 'assets'), { recursive: true });
 await cp(resolve(projectRoot, 'src/styles.css'), resolve(outputRoot, 'assets/styles.css'));
+await cp(resolve(projectRoot, 'src/fonts'), resolve(outputRoot, 'assets/fonts'), { recursive: true });
+await cp(resolve(projectRoot, 'src/favicon.svg'), resolve(outputRoot, 'assets/favicon.svg'));
 await writeFile(
   resolve(outputRoot, 'robots.txt'),
   'User-agent: *\nAllow: /\n',
