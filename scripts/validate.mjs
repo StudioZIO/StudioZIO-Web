@@ -11,7 +11,6 @@ import {
   renderMixRack,
   renderNotFound,
   renderProducts,
-  renderSystem
 } from '../src/site.mjs';
 
 const expectedUrl =
@@ -90,8 +89,7 @@ export function validateSource() {
   const productsPage = renderProducts();
   const mastering = renderMasteringSuite();
   const mixRackPage = renderMixRack();
-  const systemPage = renderSystem();
-  const pages = [home, productsPage, mastering, mixRackPage, systemPage, renderNotFound()];
+  const pages = [home, productsPage, mastering, mixRackPage, renderNotFound()];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -160,7 +158,7 @@ export function validateSource() {
     if (footerMarkup.split('class="logo"').length - 1 !== 1) {
       throw new Error('Expected exactly one logo lockup in the footer');
     }
-    for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<', '>System<']) {
+    for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<']) {
       if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
     }
   }
