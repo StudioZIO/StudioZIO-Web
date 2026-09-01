@@ -254,6 +254,49 @@ function productCard(product) {
     </article>`;
 }
 
+/* The shared behaviour both plugins are built on. Each product site carries
+   its own four claims; these are the ones that are true of both, so the hub is
+   the only place they are stated. Every claim is paired with a value the
+   plugin reports, because a claim without its number is the thing these tools
+   exist not to do. */
+const claims = [
+  {
+    title: 'You never have to trust your ears alone',
+    body: 'Momentary, short-term and integrated loudness, loudness range, crest factor, sample peak, true peak and stereo correlation update while you work. No second plugin, no bouncing to check.',
+    key: 'Live readouts',
+    value: 'LUFS M · S · I · LRA · CREST · TP · CORR'
+  },
+  {
+    title: 'Louder is not allowed to win',
+    body: 'Gain match levels the bypassed and processed paths before you compare, and delta monitoring plays only what the chain added. Both exist because an unmatched A/B always flatters the louder side, whatever it actually did to the sound.',
+    key: 'Controls',
+    value: 'GAIN MATCH · DELTA · RESET LUFS'
+  },
+  {
+    title: 'Automation is a first-class surface',
+    body: 'Every control is a parameter with a stable identifier, so automation lanes, macro mappings and saved sessions survive updates instead of silently re-binding.',
+    key: 'Tempo Delay',
+    value: '32 automatable parameters'
+  },
+  {
+    title: 'Nothing allocates on the audio thread',
+    body: 'Bypass is crossfaded rather than switched, so engaging it produces no transient. Filter cutoffs cannot cross and destabilise the loop. These are the parts nobody demos and everybody notices.',
+    key: 'Engine',
+    value: 'REALTIME SAFE · CROSSFADED BYPASS'
+  }
+];
+
+function claim({ title, body, key, value }) {
+  return `<div class="claim">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(body)}</p>
+        <dl class="claim-readout">
+          <dt>${escapeHtml(key)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </dl>
+      </div>`;
+}
+
 function downloadComponent(product) {
   return `<section class="section" aria-labelledby="download-title">
       <div class="shell">
@@ -313,6 +356,16 @@ export function renderHome() {
           <p class="lede">Every product ships as a signed macOS installer with its formats and status stated up front.</p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="through-line-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">The through-line</p>
+          <h2 id="through-line-title">Measurement is not a separate product</h2>
+          <p class="lede">The industry sells you a processor, then sells you a meter to find out what the processor did. StudioZIO puts both on one surface, and makes the honest comparison the default one.</p>
+        </div>
+        <div class="claims">${claims.map(claim).join('')}</div>
       </div>
     </section>`
   });

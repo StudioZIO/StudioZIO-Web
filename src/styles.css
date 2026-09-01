@@ -440,6 +440,40 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .module-card p { color: var(--muted-foreground); font-size: 0.9375rem; margin: 0; }
 
+/* claim + readout: a plain-language claim with the value the plugin actually
+   reports directly beneath it. The products are measurement-first, so the
+   pages argue the way they do -- never a claim without its number. Named
+   .claim-readout because .readout is already taken by the plugin mocks. */
+.claims { display: grid; gap: 2.25rem; }
+@media (min-width: 820px) { .claims { grid-template-columns: 1fr 1fr; gap: 2.75rem 3.5rem; } }
+/* the claim is a column so the readout can sit at the bottom of it: that
+   lines the hairline rules up across a row instead of letting each one follow
+   the length of its own paragraph. The margin-bottom keeps the gap honest
+   when a claim is tall enough that there is no free space to push with. */
+.claim { display: flex; flex-direction: column; }
+.claim h3 { font-size: 1.1875rem; letter-spacing: -0.012em; }
+.claim p { margin: 0.7rem 0 1rem; color: var(--muted-foreground); font-size: 0.9375rem; }
+.claim-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.9rem;
+  margin: auto 0 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.claim-readout dt {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+/* amber is data: these values are measured, so they read as measurements */
+.claim-readout dd { margin: 0; color: var(--signal); }
+
 /* spec grid: 1px gaps over --border so dividers read as hairlines */
 .spec-grid {
   display: grid;
