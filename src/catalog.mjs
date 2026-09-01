@@ -5,7 +5,7 @@ export const MASTERING_SUITE_WEBSITE =
   'https://studioziomasteringsuite.vercel.app/';
 
 export const TEMPO_DELAY_WEBSITE =
-  'https://tempo-delay-virid.vercel.app/';
+  'https://www.tempodelay.tech/';
 
 export const products = Object.freeze([
   Object.freeze({
