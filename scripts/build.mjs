@@ -36,6 +36,10 @@ await mkdir(resolve(outputRoot, 'assets'), { recursive: true });
 await cp(resolve(projectRoot, 'src/styles.css'), resolve(outputRoot, 'assets/styles.css'));
 await cp(resolve(projectRoot, 'src/fonts'), resolve(outputRoot, 'assets/fonts'), { recursive: true });
 await cp(resolve(projectRoot, 'src/favicon.svg'), resolve(outputRoot, 'assets/favicon.svg'));
+// The Google tag's own two files. They ship from the site origin because the
+// site's CSP has no 'unsafe-inline'; see the comment in src/site.mjs.
+await cp(resolve(projectRoot, 'src/gtag.js'), resolve(outputRoot, 'assets/gtag.js'));
+await cp(resolve(projectRoot, 'src/consent.js'), resolve(outputRoot, 'assets/consent.js'));
 await writeFile(
   resolve(outputRoot, 'robots.txt'),
   'User-agent: *\nAllow: /\n',
