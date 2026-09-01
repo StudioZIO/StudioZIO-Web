@@ -1,3 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { dirname, extname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { mediaSeconds } from '../src/media.mjs';
 import {
   getProduct,
   products,
@@ -251,6 +255,87 @@ export function validateSource() {
     if (page !== contact && page.includes('/assets/contact.js')) {
       throw new Error(`Page ${index} loads the contact script but has no form`);
     }
+  }
+
+  // The A/B section is two cards, and a card that renders but cannot play is
+  // worse than no card: the page keeps claiming a comparison it will not make.
+  // Assert the parts that carry playback rather than assuming them.
+  const abCards = home.split('data-ab="card"').length - 1;
+  if (abCards !== 2) {
+    throw new Error(`Expected two A/B cards on the home page, found ${abCards}`);
+  }
+  for (const required of [
+    '<script src="/assets/ab.js" defer></script>',
+    'data-take="dry"',
+    'data-take="wet"',
+    'data-ab="play"',
+    'data-ab="take"',
+    'data-ab="meter-fill"',
+    'data-ab="progress-bar"',
+    'type="audio/ogg; codecs=opus"',
+    'type="audio/mp4; codecs=mp4a.40.2"'
+  ]) {
+    if (!home.includes(required)) {
+      throw new Error(`A/B section is missing a playback-critical part: ${required}`);
+    }
+  }
+
+  // Only the home page carries the listener.
+  for (const [index, page] of pages.entries()) {
+    if (page !== home && page.includes('/assets/ab.js')) {
+      throw new Error(`Page ${index} loads the A/B listener but has no cards`);
+    }
+  }
+
+  // Every render and capture the markup names has to exist, and be the format
+  // its extension claims. A missing or mistyped path is invisible until a
+  // visitor presses play and nothing happens, which is exactly the failure
+  // that should not reach production.
+  const mediaRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../src/media');
+  const signatures = {
+    '.opus': (buffer) => buffer.subarray(0, 4).toString('ascii') === 'OggS',
+    '.m4a': (buffer) => buffer.subarray(4, 8).toString('ascii') === 'ftyp',
+    '.webp': (buffer) =>
+      buffer.subarray(0, 4).toString('ascii') === 'RIFF'
+      && buffer.subarray(8, 12).toString('ascii') === 'WEBP'
+  };
+  const referenced = [...home.matchAll(/\/assets\/media\/([\w.-]+)/g)].map((match) => match[1]);
+  if (referenced.length === 0) throw new Error('A/B section references no media');
+  for (const name of new Set(referenced)) {
+    const file = resolve(mediaRoot, name);
+    let payload;
+    try {
+      payload = readFileSync(file);
+    } catch {
+      throw new Error(`A/B media referenced but not present in src/media: ${name}`);
+    }
+    const check = signatures[extname(name)];
+    if (!check) throw new Error(`Unexpected A/B media type: ${name}`);
+    if (!check(payload)) {
+      throw new Error(`A/B media is not the format its name claims: ${name}`);
+    }
+    if (payload.length < 1024) {
+      throw new Error(`A/B media is too small to be a real render: ${name}`);
+    }
+  }
+
+  // The two takes in a pair have to be the same passage at the same length.
+  // If one is a different render the switch stops being a comparison, and
+  // nothing about the page would look wrong while it happened.
+  for (const [dry, wet] of [['master-dry', 'master-wet'], ['delay-dry', 'delay-wet']]) {
+    const drift = Math.abs(mediaSeconds(dry) - mediaSeconds(wet));
+    if (drift > 0.05) {
+      throw new Error(
+        `A/B pair lengths disagree by ${drift.toFixed(3)}s: ${dry} vs ${wet}`
+      );
+    }
+  }
+
+  // The player divides by this, so a card that lost it would report a
+  // position of zero for the whole passage.
+  const declared = [...home.matchAll(/data-length="([\d.]+)"/g)].map((m) => Number(m[1]));
+  if (declared.length !== 2 || declared.some((value) => !(value > 1))) {
+    throw new Error(`Each A/B card must declare a real length; got ${declared.join(', ')}`);
   }
 }
 
