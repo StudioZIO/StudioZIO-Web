@@ -25,6 +25,7 @@ export const products = Object.freeze([
       'c84cce49e651451409550daaac97f358220bcf7398183369e03f55b25d51793d',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
+    price: 'Free',
     availability: 'Available now',
     description:
       'A single macOS distribution for StudioZIO mastering software across standalone and plug-in formats.',
@@ -38,7 +39,11 @@ export const products = Object.freeze([
     platform: 'macOS',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
     compactFormats: 'AU / VST3 / Standalone',
-    availability: 'Available now',
+    price: 'Free',
+    /* The shipping build is tagged RC1 and its release notes call it a
+       testable beta, and the product site chips it the same way. "Available
+       now" here said something the download did not support. */
+    availability: 'Release candidate',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
     detailsUrl: TEMPO_DELAY_WEBSITE,
