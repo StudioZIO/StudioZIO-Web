@@ -41,6 +41,10 @@ await cp(resolve(projectRoot, 'src/consent.js'), resolve(outputRoot, 'assets/con
 // The support form's own script. It is served from the site origin because
 // the CSP has no 'unsafe-inline'; see the comment in src/contact.js.
 await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/contact.js'));
+// The A/B listener and the renders it plays. Same-origin for the same reason,
+// and because `media-src` inherits the `default-src 'self'` in vercel.json.
+await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));
+await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 await writeFile(
   resolve(outputRoot, 'robots.txt'),
   'User-agent: *\nAllow: /\n',
