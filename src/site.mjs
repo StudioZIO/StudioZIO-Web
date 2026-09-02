@@ -131,6 +131,9 @@ function shell({ title, description, canonical, current, content, scripts = '', 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b1013">
+  <!-- Google Search Console ownership. Removing this un-verifies the
+       property and silently stops the indexing and canonical reports. -->
+  <meta name="google-site-verification" content="aXMQpgJhgbtlNAKPjP751z9uU3gJMCb8X_LJwqav5Oc">
   <meta name="description" content="${escapeHtml(description)}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="StudioZIO">
