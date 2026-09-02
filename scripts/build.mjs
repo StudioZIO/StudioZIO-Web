@@ -2,11 +2,11 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  HUB_ORIGIN,
   renderContact,
   renderHome,
   renderMixRack,
   renderNotFound,
-  renderProducts,
 } from '../src/site.mjs';
 import { validateSource } from './validate.mjs';
 
@@ -16,13 +16,20 @@ const outputRoot = resolve(projectRoot, 'dist');
 validateSource();
 await rm(outputRoot, { recursive: true, force: true });
 
-const outputs = new Map([
-  ['index.html', renderHome()],
-  ['products/index.html', renderProducts()],
-  ['products/mixrack/index.html', renderMixRack()],
-  ['contact/index.html', renderContact()],
-  ['404.html', renderNotFound()]
-]);
+/* One manifest, three consumers: the files written, the sitemap, and the
+   canonical each page declares. Deriving the sitemap from the same list the
+   build writes is what stops it drifting into advertising URLs that do not
+   exist -- which is exactly what the Tempo Delay sitemap had done.
+   404.html carries `indexable: false`: it is a real output but never a search
+   result, so it is written and never listed. */
+const routes = [
+  { file: 'index.html', url: '/', render: renderHome, indexable: true },
+  { file: 'products/mixrack/index.html', url: '/products/mixrack', render: renderMixRack, indexable: true },
+  { file: 'contact/index.html', url: '/contact', render: renderContact, indexable: true },
+  { file: '404.html', url: null, render: renderNotFound, indexable: false }
+];
+
+const outputs = new Map(routes.map((route) => [route.file, route.render()]));
 
 for (const [relativePath, content] of outputs) {
   const destination = resolve(outputRoot, relativePath);
@@ -34,6 +41,9 @@ await mkdir(resolve(outputRoot, 'assets'), { recursive: true });
 await cp(resolve(projectRoot, 'src/styles.css'), resolve(outputRoot, 'assets/styles.css'));
 await cp(resolve(projectRoot, 'src/fonts'), resolve(outputRoot, 'assets/fonts'), { recursive: true });
 await cp(resolve(projectRoot, 'src/favicon.svg'), resolve(outputRoot, 'assets/favicon.svg'));
+// 1200x630 share cards. Generated from the design system rather than drawn by
+// hand; see src/og/README.md for how to regenerate them.
+await cp(resolve(projectRoot, 'src/og'), resolve(outputRoot, 'assets/og'), { recursive: true });
 // The Google tag's own two files. They ship from the site origin because the
 // CSP has no 'unsafe-inline'; see the comment in src/gtag.js.
 await cp(resolve(projectRoot, 'src/gtag.js'), resolve(outputRoot, 'assets/gtag.js'));
@@ -45,10 +55,22 @@ await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/con
 // and because `media-src` inherits the `default-src 'self'` in vercel.json.
 await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
+const indexableUrls = routes.filter((route) => route.indexable).map((route) => `${HUB_ORIGIN}${route.url}`);
+
 await writeFile(
-  resolve(outputRoot, 'robots.txt'),
-  'User-agent: *\nAllow: /\n',
+  resolve(outputRoot, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n`
+    + `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
+    + indexableUrls.map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>\n`).join('')
+    + `</urlset>\n`,
   'utf8'
 );
 
-console.log(`Built ${outputs.size} HTML pages into dist/`);
+// robots.txt exists to point crawlers at the sitemap; it had never named one.
+await writeFile(
+  resolve(outputRoot, 'robots.txt'),
+  `User-agent: *\nAllow: /\n\nSitemap: ${HUB_ORIGIN}/sitemap.xml\n`,
+  'utf8'
+);
+
+console.log(`Built ${outputs.size} HTML pages and a ${indexableUrls.length}-URL sitemap into dist/`);

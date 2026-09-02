@@ -7,7 +7,7 @@ import {
 import { mediaSeconds } from './media.mjs';
 
 const stylesheet = '/assets/styles.css';
-const HUB_ORIGIN = 'https://studiozio.vercel.app';
+export const HUB_ORIGIN = 'https://studiozio.vercel.app';
 
 /* Google tag for the "Hub" data stream of the StudioZIO Analytics property.
    Three files, in this order, because the site is served under
@@ -85,7 +85,46 @@ function chip(label, tone = '') {
   }${escapeHtml(label)}</span>`;
 }
 
-function shell({ title, description, canonical, current, content, scripts = '' }) {
+const DEFAULT_SOCIAL_IMAGE = '/assets/og/og-studiozio.png';
+
+export const ORGANIZATION_ID = `${HUB_ORIGIN}/#organization`;
+
+/* Structured data ships as a data island, not executable code. The site's CSP
+   has no 'unsafe-inline' for scripts, which is why every other script here is
+   a separate file -- but script-src governs execution, and a ld+json block is
+   never executed. Verified against this site's own production CSP: the block
+   loads with zero violations and parses in the DOM. */
+function jsonLdBlock(graph) {
+  const serialised = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2);
+  if (serialised.includes('</')) throw new Error('JSON-LD payload would break out of its script element');
+  return `<script type="application/ld+json">\n${serialised}\n  </script>`;
+}
+
+const organizationNode = {
+  '@type': 'Organization',
+  '@id': `${HUB_ORIGIN}/#organization`,
+  name: 'StudioZIO',
+  url: `${HUB_ORIGIN}/`,
+  description:
+    'Independent audio software company building native Audio Unit, VST3 and Standalone plug-ins for macOS.',
+  logo: `${HUB_ORIGIN}/assets/og/og-studiozio.png`
+};
+
+const homeJsonLd = () =>
+  jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'WebSite',
+      '@id': `${HUB_ORIGIN}/#website`,
+      url: `${HUB_ORIGIN}/`,
+      name: 'StudioZIO',
+      inLanguage: 'en',
+      publisher: { '@id': `${HUB_ORIGIN}/#organization` }
+    }
+  ]);
+
+function shell({ title, description, canonical, current, content, scripts = '', socialImage = DEFAULT_SOCIAL_IMAGE, socialImageAlt = 'StudioZIO — audio plug-ins for macOS', jsonLd = '' }) {
+  const image = `${HUB_ORIGIN}${socialImage}`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -99,14 +138,21 @@ function shell({ title, description, canonical, current, content, scripts = '' }
   <meta property="og:description" content="${escapeHtml(description)}">
   ${canonical ? `<meta property="og:url" content="${escapeHtml(canonical)}">
   <link rel="canonical" href="${escapeHtml(canonical)}">` : ''}
+  <meta property="og:image" content="${escapeHtml(image)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${escapeHtml(socialImageAlt)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:image" content="${escapeHtml(image)}">
+  <meta name="twitter:image:alt" content="${escapeHtml(socialImageAlt)}">
   <title>${escapeHtml(title)}</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${stylesheet}">
   <link rel="preload" href="/assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
   ${analytics}
+  ${jsonLd}
   ${scripts}
 </head>
 <body>
@@ -442,13 +488,14 @@ export function renderHome() {
       'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU and VST3, plus the upcoming ZIO MixRack.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
+    jsonLd: homeJsonLd(),
     scripts: AB_SCRIPT,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="hero-grid hero--stacked">
           <div class="rise">
             <p class="eyebrow">Plug-ins for macOS</p>
-            <h1>Tools that behave like<span class="accent">hardware you trust.</span></h1>
+            <h1>Tools that behave like <span class="accent">hardware you trust.</span></h1>
             <p class="lede">Two focused instruments, one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
@@ -483,39 +530,13 @@ export function renderHome() {
   });
 }
 
-export function renderProducts() {
-  return shell({
-    title: 'Products — StudioZIO',
-    description:
-      'Browse StudioZIO Mastering Suite and Tempo Delay, available now, plus ZIO MixRack, coming soon.',
-    canonical: `${HUB_ORIGIN}/products/`,
-    current: 'hub',
-    content: `<section class="hero tech-grid">
-      <div class="shell">
-        <p class="eyebrow">StudioZIO catalog</p>
-        <h1>Products</h1>
-        <p class="lede">Available and upcoming StudioZIO software, with product status and verified public links.</p>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="catalog-list-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Catalog</p>
-          <h2 id="catalog-list-title">Every StudioZIO product</h2>
-        </div>
-        <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
-      </div>
-    </section>`
-  });
-}
-
 export function renderMixRack() {
   const product = getProduct('mixrack');
   return shell({
     title: 'ZIO MixRack — Coming Soon | StudioZIO',
     description:
       'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
-    canonical: `${HUB_ORIGIN}/products/mixrack/`,
+    canonical: `${HUB_ORIGIN}/products/mixrack`,
     current: 'hub',
     content: `<section class="hero tech-grid">
       <div class="shell">

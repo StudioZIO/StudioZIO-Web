@@ -9,6 +9,11 @@
       "source": "/products/mastering-suite",
       "destination": "https://studioziomasteringsuite.vercel.app/",
       "permanent": true
+    },
+    {
+      "source": "/products",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "headers": [
