@@ -14,7 +14,7 @@ import {
   renderHome,
   renderMixRack,
   renderNotFound,
-  renderProducts,
+  HUB_ORIGIN,
 } from '../src/site.mjs';
 
 const expectedUrl =
@@ -90,10 +90,11 @@ export function validateSource() {
   }
 
   const home = renderHome();
-  const productsPage = renderProducts();
   const mixRackPage = renderMixRack();
   const contact = renderContact();
-  const pages = [home, productsPage, mixRackPage, contact, renderNotFound()];
+  const notFound = renderNotFound();
+  const pages = [home, mixRackPage, contact, notFound];
+  const indexablePages = [home, mixRackPage, contact];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -114,7 +115,7 @@ export function validateSource() {
     }
   }
 
-  for (const catalogPage of [home, productsPage]) {
+  for (const catalogPage of [home]) {
     for (const required of [
       'StudioZIO Mastering Suite',
       'StudioZIO Tempo Delay',
@@ -136,7 +137,7 @@ export function validateSource() {
   if (!pages.every((page) => page.includes(TEMPO_DELAY_WEBSITE))) {
     throw new Error('Tempo Delay site must be linked from every page');
   }
-  for (const catalogPage of [home, productsPage]) {
+  for (const catalogPage of [home]) {
     const navAndFooterLinks = 2;
     if (catalogPage.split(TEMPO_DELAY_WEBSITE).length - 1 <= navAndFooterLinks) {
       throw new Error('Catalog surfaces must link Tempo Delay from its product card');
@@ -208,8 +209,9 @@ export function validateSource() {
     // The same header has no 'unsafe-inline' for scripts either, so an inline
     // <script> body would be dropped just as silently. Every script the site
     // ships has to be a src= reference to a file the build actually emits.
-    const inlineScripts = page.match(/<script(?![^>]*\ssrc=)[^>]*>/g);
-    if (inlineScripts) {
+    const inlineScripts = (page.match(/<script(?![^>]*\ssrc=)[^>]*>/g) ?? [])
+      .filter((tag) => !/\stype="application\/ld\+json"/.test(tag));
+    if (inlineScripts.length) {
       throw new Error(
         `Inline <script> on page ${index} is blocked by the site's own `
         + `Content-Security-Policy; move it into a file under src/: ${inlineScripts[0]}`
@@ -336,6 +338,93 @@ export function validateSource() {
   const declared = [...home.matchAll(/data-length="([\d.]+)"/g)].map((m) => Number(m[1]));
   if (declared.length !== 2 || declared.some((value) => !(value > 1))) {
     throw new Error(`Each A/B card must declare a real length; got ${declared.join(', ')}`);
+  }
+
+  /* ---- SEO route and metadata contract --------------------------------
+     Each assertion stands for a defect that was live: canonicals naming a
+     trailing-slash URL the host redirects away from, a summary_large_image
+     card with no image behind it, and a site declaring no organisation at
+     all. Invisible in a browser; only a crawler pays for them. */
+  const single = (page, pattern, label, index) => {
+    const found = [...page.matchAll(pattern)];
+    if (found.length !== 1) throw new Error(`Expected exactly one ${label} on page ${index}, found ${found.length}`);
+    return found[0][1];
+  };
+
+  for (const [index, page] of indexablePages.entries()) {
+    const title = single(page, /<title>([^<]*)<\/title>/g, '<title>', index).trim();
+    if (title.length < 20 || title.length > 65) {
+      throw new Error(`Page ${index} title should read as a full result line, 20-65 chars; got ${title.length}: ${title}`);
+    }
+    const description = single(page, /<meta name="description" content="([^"]*)">/g, 'meta description', index);
+    if (description.length < 70 || description.length > 165) {
+      throw new Error(`Page ${index} meta description should be 70-165 chars; got ${description.length}`);
+    }
+    const headingMarkup = single(page, /<h1[^>]*>([\s\S]*?)<\/h1>/g, '<h1>', index);
+    /* A heading split across an inline element loses the space between the two
+       halves unless the markup carries it: "like<span>hardware" renders as
+       "likehardware". Checking the markup boundary rather than the rendered
+       text is what keeps deliberate camel case like "MixRack" from tripping
+       this. Both product sites shipped this defect. */
+    if (/\S<(?:span|em|strong|b|i)\b/.test(headingMarkup)) {
+      throw new Error(
+        `Heading on page ${index} runs a word straight into an inline element, so the rendered text loses a space: ${headingMarkup.slice(0, 90)}`
+      );
+    }
+
+    const canonical = single(page, /<link rel="canonical" href="([^"]*)">/g, 'rel=canonical', index);
+    if (canonical !== `${HUB_ORIGIN}/` && canonical.endsWith('/')) {
+      throw new Error(`Canonical on page ${index} names a URL the host redirects away from: ${canonical}`);
+    }
+    if (!canonical.startsWith(`${HUB_ORIGIN}/`)) {
+      throw new Error(`Canonical on page ${index} is off-origin: ${canonical}`);
+    }
+    if (single(page, /<meta property="og:url" content="([^"]*)">/g, 'og:url', index) !== canonical) {
+      throw new Error(`og:url and canonical disagree on page ${index}`);
+    }
+    for (const [pattern, label] of [
+      [/<meta property="og:image" content="([^"]*)">/g, 'og:image'],
+      [/<meta property="og:image:alt" content="([^"]*)">/g, 'og:image:alt'],
+      [/<meta name="twitter:image" content="([^"]*)">/g, 'twitter:image'],
+      [/<meta name="twitter:image:alt" content="([^"]*)">/g, 'twitter:image:alt']
+    ]) {
+      if (!single(page, pattern, label, index).trim()) throw new Error(`Empty ${label} on page ${index}`);
+    }
+    const ogImage = single(page, /<meta property="og:image" content="([^"]*)">/g, 'og:image', index);
+    if (!ogImage.startsWith(`${HUB_ORIGIN}/assets/og/`)) {
+      throw new Error(`Social image must be self-hosted from /assets/og/: ${ogImage}`);
+    }
+    if (/<meta name="keywords"/.test(page)) throw new Error(`Page ${index} carries a meta keywords tag`);
+    if (/<meta name="robots"[^>]*noindex/.test(page)) throw new Error(`Page ${index} carries noindex`);
+  }
+
+  const ldBlocks = [...home.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  if (ldBlocks.length !== 1) {
+    throw new Error(`Expected exactly one JSON-LD block on the home page, found ${ldBlocks.length}`);
+  }
+  let graph;
+  try {
+    graph = JSON.parse(ldBlocks[0][1]);
+  } catch (error) {
+    throw new Error(`Home page JSON-LD does not parse: ${error.message}`);
+  }
+  const types = graph['@graph'].map((node) => node['@type']);
+  for (const required of ['Organization', 'WebSite']) {
+    if (!types.includes(required)) throw new Error(`Home page JSON-LD is missing a ${required} node`);
+  }
+  const organization = graph['@graph'].find((node) => node['@type'] === 'Organization');
+  // Tempo Delay's graph points at this exact @id. If they drift, the estate
+  // describes two organisations that happen to share a name.
+  if (organization['@id'] !== `${HUB_ORIGIN}/#organization`) {
+    throw new Error(`Organization @id must be the shared estate id; got ${organization['@id']}`);
+  }
+  if (JSON.stringify(graph).includes('aggregateRating')) {
+    throw new Error('JSON-LD must not publish a rating that does not exist');
+  }
+
+  // /products is permanently redirected to the root; nothing may link to it.
+  if (pages.some((page) => /href="\/products"/.test(page))) {
+    throw new Error('Nothing may link to the retired /products route');
   }
 }
 
