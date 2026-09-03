@@ -305,6 +305,7 @@ const AB_DEMOS = Object.freeze({
     shot: 'mastering-suite-ui',
     shotWidth: 1440,
     shotHeight: 720,
+    shotWidths: Object.freeze([640, 1024, 1440]),
     shotAlt:
       'The StudioZIO Mastering Suite window: output spectrum across the top, a loudness column reading -11.5 LUFS integrated with true-peak bars and a vectorscope, and the mid/side, saturation, pink match, glue compressor, tone EQ and limiter modules below.',
     note:
@@ -319,12 +320,33 @@ const AB_DEMOS = Object.freeze({
     shot: 'tempo-delay-ui',
     shotWidth: 1120,
     shotHeight: 720,
+    /* No 1440 entry: the master is 1120 wide and a 1440 candidate would be an
+       upscale, which costs bytes to deliver no detail. */
+    shotWidths: Object.freeze([640, 1024, 1120]),
     shotAlt:
       'The StudioZIO Tempo Delay window: tempo sync at 120 BPM with 1/8 dotted on the left and 1/8 on the right, 40 per cent feedback on both sides, 100 per cent width, 35 per cent mix, and the tone and filters tab open.',
     note:
       'Rendered through Tempo Delay 4.0.1 at 44.1 kHz. Judge placement, tail and stereo spread.'
   })
 });
+
+/* The capture is rendered about 545 CSS px wide inside a two-column grid, and
+   full width below the 900px breakpoint where that grid collapses. Serving the
+   1440px master to a 545px slot was most of a megapixel thrown away on every
+   visit; the browser now picks from the variants and takes the master only on a
+   wide, high-density screen.
+
+   The master keeps its plain filename so its <src> stays a working fallback for
+   anything that ignores srcset, and so the social-card and JSON-LD references
+   to it do not have to move. */
+function shotSrcset(demo) {
+  return demo.shotWidths
+    .map((width) => {
+      const file = width === demo.shotWidth ? demo.shot : `${demo.shot}-${width}`;
+      return `/assets/media/${file}.webp ${width}w`;
+    })
+    .join(', ');
+}
 
 function abCard(key) {
   const demo = AB_DEMOS[key];
@@ -347,7 +369,9 @@ function abCard(key) {
         <span class="ab-flag">Real render · matched −12 LUFS</span>
       </div>
       <img class="ab-shot" src="/assets/media/${demo.shot}.webp"
-        width="${demo.shotWidth}" height="${demo.shotHeight}" decoding="async"
+        srcset="${shotSrcset(demo)}"
+        sizes="(min-width: 900px) 545px, calc(100vw - 3rem)"
+        width="${demo.shotWidth}" height="${demo.shotHeight}" decoding="async" loading="lazy"
         alt="${escapeHtml(demo.shotAlt)}">
       <div class="ab-transport">
         <button type="button" class="btn btn-primary ab-play" data-ab="play" aria-pressed="false"><span data-ab="play-label">Hear it</span></button>
