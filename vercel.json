@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false,
+  "trailingSlash": true,
   "redirects": [
     {
       "source": "/products/mastering-suite",
@@ -11,7 +11,17 @@
       "permanent": true
     },
     {
+      "source": "/products/mastering-suite/",
+      "destination": "https://studioziomasteringsuite.vercel.app/",
+      "permanent": true
+    },
+    {
       "source": "/products",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/products/",
       "destination": "/",
       "permanent": true
     }

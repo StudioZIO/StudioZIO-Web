@@ -68,7 +68,7 @@ const NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
   ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
-  ['Contact', '/contact', 'contact']
+  ['Contact', '/contact/', 'contact']
 ];
 
 function navList(current) {
@@ -566,7 +566,7 @@ export function renderMixRack() {
     title: 'ZIO MixRack — Coming Soon | StudioZIO',
     description:
       'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
-    canonical: `${HUB_ORIGIN}/products/mixrack`,
+    canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: 'hub',
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -607,7 +607,7 @@ export function renderContact() {
     title: 'Contact and support — StudioZIO',
     description:
       'Reach the people who build StudioZIO Mastering Suite and Tempo Delay: bug reports, host compatibility and setup questions.',
-    canonical: `${HUB_ORIGIN}/contact`,
+    canonical: `${HUB_ORIGIN}/contact/`,
     current: 'contact',
     scripts: '<script src="/assets/contact.js" defer></script>',
     content: `<section class="hero tech-grid">

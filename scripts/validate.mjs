@@ -390,10 +390,19 @@ export function validateSource() {
   }
 
   /* ---- SEO route and metadata contract --------------------------------
-     Each assertion stands for a defect that was live: canonicals naming a
-     trailing-slash URL the host redirects away from, a summary_large_image
-     card with no image behind it, and a site declaring no organisation at
-     all. Invisible in a browser; only a crawler pays for them. */
+     Each assertion stands for a defect that was live: canonicals disagreeing
+     with the form the host serves, a summary_large_image card with no image
+     behind it, and a site declaring no organisation at all. Invisible in a
+     browser; only a crawler pays for them.
+     The trailing-slash rule reads the other way round from how it first
+     shipped. The original defect was a canonical naming /contact/ while
+     vercel.json said trailingSlash: false, so the canonical pointed at a
+     redirect; that was fixed by dropping the slash from the canonical. The
+     estate has since settled on slash-always -- the artist site and the
+     Mastering Suite site are directory-served and cannot do anything else --
+     so the host was moved instead of the canonicals, and every hub URL now
+     ends in a slash. Either resolution fixes the original defect; only one of
+     them makes the four properties agree. */
   const single = (page, pattern, label, index) => {
     const found = [...page.matchAll(pattern)];
     if (found.length !== 1) throw new Error(`Expected exactly one ${label} on page ${index}, found ${found.length}`);
@@ -422,7 +431,7 @@ export function validateSource() {
     }
 
     const canonical = single(page, /<link rel="canonical" href="([^"]*)">/g, 'rel=canonical', index);
-    if (canonical !== `${HUB_ORIGIN}/` && canonical.endsWith('/')) {
+    if (!canonical.endsWith('/')) {
       throw new Error(`Canonical on page ${index} names a URL the host redirects away from: ${canonical}`);
     }
     if (!canonical.startsWith(`${HUB_ORIGIN}/`)) {
@@ -445,6 +454,36 @@ export function validateSource() {
     }
     if (/<meta name="keywords"/.test(page)) throw new Error(`Page ${index} carries a meta keywords tag`);
     if (/<meta name="robots"[^>]*noindex/.test(page)) throw new Error(`Page ${index} carries noindex`);
+  }
+
+  /* ---- one URL form per page ------------------------------------------
+     vercel.json declares trailingSlash: true, so the host 308s /contact to
+     /contact/. Any internal link written without the slash therefore costs a
+     redirect on the way to a page this site owns. That had already happened
+     in the other direction: catalog.mjs wrote detailsUrl: '/products/mixrack/'
+     while the route table and the canonical both said '/products/mixrack',
+     so the home page's only product link redirected. Rather than pin a second
+     copy of the route table here, the set of pages this site owns is read off
+     the canonicals the pages themselves declare -- so a link and a canonical
+     cannot disagree without one of them failing this. */
+  const ownPages = new Set(
+    indexablePages.map((page) => {
+      const declared = single(page, /<link rel="canonical" href="([^"]*)">/g, 'rel=canonical', -1);
+      return declared.slice(HUB_ORIGIN.length);
+    })
+  );
+  const fileRoutes = new Set(['/sitemap.xml', '/robots.txt']);
+  for (const [index, page] of [home, mixRackPage, contact, notFound].entries()) {
+    for (const [, href] of page.matchAll(/href="([^"]*)"/g)) {
+      if (!href.startsWith('/') || href.startsWith('/assets/')) continue;
+      if (fileRoutes.has(href)) continue;
+      if (!ownPages.has(href)) {
+        throw new Error(
+          `Page ${index} links to ${href}, which is not a URL this site serves. `
+            + `Own pages: ${[...ownPages].join(', ')}`
+        );
+      }
+    }
   }
 
   const ldBlocks = [...home.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
