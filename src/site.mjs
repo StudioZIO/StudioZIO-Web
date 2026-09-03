@@ -145,6 +145,32 @@ const homeJsonLd = () =>
       name: 'StudioZIO',
       inLanguage: 'en',
       publisher: { '@id': `${HUB_ORIGIN}/#organization` }
+    },
+    /* The hub's job is to send people to the products, and until now the only
+       machine-readable trace of that was three inline links. The audit's
+       suggested fix -- put the product URLs in the hub's sitemap -- is not
+       available: a sitemap may only list URLs on its own host, and two of the
+       three products live on other origins.
+
+       An ItemList says the same thing correctly. Each entry points at the
+       product's canonical page and, where that page defines an entity, cites
+       its @id rather than restating it -- the reference pattern the founder
+       link already uses. Nothing here duplicates a product page, so the hub
+       still has no thin copy competing with the real one. */
+    {
+      '@type': 'ItemList',
+      '@id': `${HUB_ORIGIN}/#catalog`,
+      name: 'StudioZIO plug-ins',
+      itemListOrder: 'https://schema.org/ItemListUnordered',
+      numberOfItems: products.length,
+      itemListElement: products.map((product, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: product.name,
+        url: product.detailsUrl.startsWith('/')
+          ? `${HUB_ORIGIN}${product.detailsUrl}`
+          : product.detailsUrl
+      }))
     }
   ]);
 
@@ -592,6 +618,24 @@ export function renderMixRack() {
       'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
     canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: 'hub',
+    /* The one product page the hub owns outright, and the only page on the
+       estate that carried no structured data at all. It names the product
+       without offering it: no downloadUrl and no offers, because there is
+       nothing to download yet and a machine-readable claim otherwise would be
+       a claim the page itself does not make. */
+    jsonLd: jsonLdBlock([
+      organizationNode,
+      {
+        '@type': 'SoftwareApplication',
+        '@id': `${HUB_ORIGIN}/products/mixrack/#software`,
+        name: product.name,
+        description: product.description,
+        applicationCategory: 'MultimediaApplication',
+        operatingSystem: product.platform,
+        url: `${HUB_ORIGIN}/products/mixrack/`,
+        publisher: { '@id': `${HUB_ORIGIN}/#organization` }
+      }
+    ]),
     scripts: '<script src="/assets/notify.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">

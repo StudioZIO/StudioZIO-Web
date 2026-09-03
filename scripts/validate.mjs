@@ -248,6 +248,23 @@ export function validateSource() {
      reported as debug traffic, which GA4 treats differently, and the loss is
      silent. Assert the wiring exists AND that it is still conditional. */
   const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../src');
+  /* The catalog ItemList is the hub's only machine-readable statement that it
+     funnels to the products. A product silently missing from it is invisible
+     on the page, so it is counted rather than trusted. */
+  {
+    const graph = JSON.parse(home.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    const list = graph['@graph'].find((node) => node['@type'] === 'ItemList');
+    if (!list) throw new Error('the home page no longer publishes the product ItemList');
+    const listed = list.itemListElement.map((item) => item.url);
+    if (listed.length !== products.length) {
+      throw new Error(`the ItemList names ${listed.length} products; the catalog has ${products.length}`);
+    }
+    for (const product of products) {
+      const expected = product.detailsUrl.startsWith('/') ? `${HUB_ORIGIN}${product.detailsUrl}` : product.detailsUrl;
+      if (!listed.includes(expected)) throw new Error(`the ItemList omits ${product.name} (${expected})`);
+    }
+  }
+
   const gtagSource = readFileSync(resolve(sourceRoot, 'gtag.js'), 'utf8');
   for (const required of ['_dbg', 'debug_mode']) {
     if (!gtagSource.includes(required)) {
