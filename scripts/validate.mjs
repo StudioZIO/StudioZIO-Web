@@ -514,6 +514,98 @@ export function validateSource() {
   if (pages.some((page) => /href="\/products"/.test(page))) {
     throw new Error('Nothing may link to the retired /products route');
   }
+
+  verifyMeasurementPolicy();
+}
+
+/* ---- the CSP has to let the tag finish measuring -------------------------
+   GA reported this property's tag as partially blocked, and it was. The
+   policy allowed gtag.js and the primary /g/collect beacon -- so page views
+   and events did arrive, which is why nothing looked wrong -- but refused
+   Google Analytics' identity layer. Measured rather than guessed: a probe
+   served each StudioZIO policy as a real response header and listened for
+   securitypolicyviolation while requesting every endpoint gtag.js uses.
+   Since CSP is evaluated before the network fetch, a violation event means
+   the policy refused it, and no event means the policy allowed it -- which
+   separates policy refusals from this container's blocked egress. Five
+   endpoints were refused, identically on all four properties:
+
+     img-src      stats.g.doubleclick.net    Google Signals hit
+     img-src      www.google.com             audience ping
+     connect-src  stats.g.doubleclick.net    Signals beacon
+     frame-src    td.doubleclick.net         Signals cookie-sync frame
+     frame-src    www.googletagmanager.com   tag frame
+
+   The two frame refusals came from having no frame-src at all, so
+   `default-src 'self'` governed frames. All four properties now share one
+   measurement ID with cross-domain linking, and that identity layer is what
+   stitches a visit across them -- blocked, the four domains read as four
+   unrelated sessions.
+
+   Hosts are named, not wildcarded past what is needed: *.doubleclick.net
+   would admit the ad-serving hosts and nothing here wants them. Nothing else
+   in the policy moved -- no 'unsafe-inline', no wider script-src -- and the
+   probe re-run confirmed three controls (an off-origin fetch, a CDN script,
+   an off-origin pixel) are still refused. */
+const REQUIRED_MEASUREMENT_HOSTS = {
+  'script-src': ['https://www.googletagmanager.com'],
+  'img-src': [
+    'https://*.google-analytics.com',
+    'https://*.g.doubleclick.net',
+    'https://www.google.com'
+  ],
+  'connect-src': [
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://*.g.doubleclick.net',
+    'https://www.google.com'
+  ],
+  'frame-src': ['https://td.doubleclick.net', 'https://www.googletagmanager.com']
+};
+
+function verifyMeasurementPolicy() {
+  const config = JSON.parse(
+    readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'vercel.json'), 'utf8')
+  );
+  const header = config.headers
+    .flatMap((entry) => entry.headers)
+    .find((entry) => entry.key.toLowerCase() === 'content-security-policy');
+  if (!header) throw new Error('vercel.json serves no Content-Security-Policy');
+
+  const directives = new Map(
+    header.value
+      .split(';')
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .map((part) => [part.split(/\s+/)[0], part.split(/\s+/).slice(1)])
+  );
+  for (const [directive, hosts] of Object.entries(REQUIRED_MEASUREMENT_HOSTS)) {
+    const allowed = directives.get(directive);
+    if (!allowed) {
+      throw new Error(
+        `CSP has no ${directive}, so default-src governs it and GA4 loses `
+          + `${hosts.join(' and ')}`
+      );
+    }
+    for (const host of hosts) {
+      if (!allowed.includes(host)) {
+        throw new Error(`CSP ${directive} must allow ${host} or GA4 measurement is blocked there`);
+      }
+    }
+  }
+  // The additions above are measurement, not a general opening. Anything that
+  // would let arbitrary third-party code run is still refused.
+  for (const directive of ['script-src', 'style-src']) {
+    if ((directives.get(directive) ?? []).includes("'unsafe-eval'")) {
+      throw new Error(`CSP ${directive} must not allow 'unsafe-eval'`);
+    }
+  }
+  if ((directives.get('script-src') ?? []).includes("'unsafe-inline'")) {
+    throw new Error("CSP script-src must not allow 'unsafe-inline'");
+  }
+  if ((directives.get('object-src') ?? []).join(' ') !== "'none'") {
+    throw new Error("CSP object-src must stay 'none'");
+  }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
