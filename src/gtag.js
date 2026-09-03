@@ -81,6 +81,42 @@ var STUDIOZIO_NETWORK_DOMAINS = [
   'zio-audio.vercel.app'
 ];
 
-gtag('config', 'G-VL8Z542XMP', {
+/* ---- DebugView opt-in ----------------------------------------------------
+
+   GA4's DebugView shows only traffic that flags itself as a debug session, so
+   without this it stays empty however many events arrive. That is exactly what
+   happened the first time it was opened: the runbook said to append `?_dbg=1`,
+   nothing appeared, and the obvious conclusion — that measurement was broken —
+   was wrong. The events were reaching Realtime the whole time; only the debug
+   screen was blind, because nothing here ever turned the flag on.
+
+   Off by default, and never inferred from the hostname or a preview URL. GA4
+   treats debug traffic differently in reporting, so switching it on for real
+   visitors would quietly cost data. `?_dbg=1` turns it on for the rest of the
+   browser session; `?_dbg=0` turns it off again.
+
+   Stored rather than read from the query string alone, so it survives
+   navigation inside one site. It deliberately does not cross to another
+   property — sessionStorage is per-origin — so a tester following a
+   cross-domain link appends `?_dbg=1` again on arrival. */
+var STUDIOZIO_DEBUG_KEY = 'studiozio-debug';
+var studioZioDebug = false;
+try {
+  var debugFlag = new URLSearchParams(window.location.search).get('_dbg');
+  if (debugFlag === '1') window.sessionStorage.setItem(STUDIOZIO_DEBUG_KEY, '1');
+  else if (debugFlag === '0') window.sessionStorage.removeItem(STUDIOZIO_DEBUG_KEY);
+  studioZioDebug = window.sessionStorage.getItem(STUDIOZIO_DEBUG_KEY) === '1';
+} catch (e) {
+  /* Private modes can throw on storage. The query string alone still works; it
+     just will not survive the next navigation. */
+  studioZioDebug = window.location.search.indexOf('_dbg=1') !== -1;
+}
+
+var STUDIOZIO_MEASUREMENT_CONFIG = {
   linker: { domains: STUDIOZIO_NETWORK_DOMAINS, accept_incoming: true }
-});
+};
+/* Added only when on. `debug_mode: false` behaves the same today, but a key
+   that is simply absent cannot be misread by a future gtag build. */
+if (studioZioDebug) STUDIOZIO_MEASUREMENT_CONFIG.debug_mode = true;
+
+gtag('config', 'G-VL8Z542XMP', STUDIOZIO_MEASUREMENT_CONFIG);
