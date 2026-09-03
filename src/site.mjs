@@ -24,7 +24,8 @@ export const HUB_ORIGIN = 'https://studiozio.vercel.app';
 const MEASUREMENT_ID = 'G-VL8Z542XMP';
 const analytics = `<script src="/assets/gtag.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
-  <script src="/assets/consent.js" defer></script>`;
+  <script src="/assets/consent.js" defer></script>
+  <script src="/assets/events.js" defer></script>`;
 
 function escapeHtml(value) {
   return String(value)
@@ -351,8 +352,10 @@ function abCard(key) {
       <div class="ab-transport">
         <button type="button" class="btn btn-primary ab-play" data-ab="play" aria-pressed="false"><span data-ab="play-label">Hear it</span></button>
         <div class="ab-takes" role="group" aria-label="${escapeHtml(demo.group)}">
-          <button type="button" data-ab="take" aria-pressed="false">Dry</button>
-          <button type="button" data-ab="take" aria-pressed="true">${escapeHtml(
+          <button type="button" data-ab="take" aria-pressed="false"
+            data-event="ab_toggle" data-ev-take="dry" data-ev-product="${key}">Dry</button>
+          <button type="button" data-ab="take" aria-pressed="true"
+            data-event="ab_toggle" data-ev-take="processed" data-ev-product="${key}">${escapeHtml(
             demo.processedLabel
           )}</button>
         </div>

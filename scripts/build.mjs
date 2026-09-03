@@ -54,6 +54,9 @@ await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/con
 // The A/B listener and the renders it plays. Same-origin for the same reason,
 // and because `media-src` inherits the `default-src 'self'` in vercel.json.
 await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));
+// Conversion measurement. One delegated listener, same file on all four
+// StudioZIO properties, same-origin for the same CSP reason as the rest.
+await cp(resolve(projectRoot, 'src/events.js'), resolve(outputRoot, 'assets/events.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 const indexableUrls = routes.filter((route) => route.indexable).map((route) => `${HUB_ORIGIN}${route.url}`);
 

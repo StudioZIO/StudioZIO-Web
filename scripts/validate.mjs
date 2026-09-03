@@ -295,6 +295,28 @@ export function validateSource() {
     }
   }
 
+  // Conversion measurement rides on every page, unlike the listener: a
+  // data-event attribute added to any page must report without someone
+  // remembering to load the file that reports it.
+  for (const [index, page] of pages.entries()) {
+    if (!page.includes('/assets/events.js')) {
+      throw new Error(`Page ${index} carries no conversion measurement`);
+    }
+  }
+
+  // The A/B toggle is the hub's one conversion. Both takes on both cards must
+  // declare it, or the report fills in for one product and silently not the
+  // other.
+  const declaredToggles = (home.match(/data-event="ab_toggle"/g) || []).length;
+  if (declaredToggles !== 4) {
+    throw new Error(`Expected 4 declared A/B toggles (two takes on two cards); found ${declaredToggles}`);
+  }
+  for (const product of ['mastering-suite', 'tempo-delay']) {
+    if (!home.includes(`data-ev-product="${product}"`)) {
+      throw new Error(`The ${product} A/B card reports no product parameter`);
+    }
+  }
+
   // Every render and capture the markup names has to exist, and be the format
   // its extension claims. A missing or mistyped path is invisible until a
   // visitor presses play and nothing happens, which is exactly the failure
