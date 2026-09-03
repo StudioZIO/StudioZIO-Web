@@ -59,7 +59,8 @@ export function validateSource() {
   const tempoDelay = getProduct('tempo-delay');
   if (
     tempoDelay.name !== 'StudioZIO Tempo Delay' ||
-    tempoDelay.availability !== 'Release candidate' ||
+    tempoDelay.availability !== 'Available now' ||
+    tempoDelay.version !== '4.0.1' ||
     tempoDelay.platform !== 'macOS' ||
     tempoDelay.compactFormats !== 'AU / VST3 / Standalone' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
@@ -67,7 +68,12 @@ export function validateSource() {
   ) {
     throw new Error('Tempo Delay public metadata drift');
   }
-  for (const unsupportedField of ['version', 'downloadUrl', 'releaseUrl', 'releaseDate']) {
+  /* The hub states versions and availability; it does not host downloads. A
+     download URL, release URL or release date here would be a second copy of
+     something the product site owns, free to drift and with no gate to catch
+     it. The version is the one figure both properties must agree on, so it is
+     asserted above rather than banned. */
+  for (const unsupportedField of ['downloadUrl', 'releaseUrl', 'releaseDate']) {
     if (tempoDelay[unsupportedField] !== undefined) {
       throw new Error(`Unsupported Tempo Delay field: ${unsupportedField}`);
     }
