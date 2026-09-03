@@ -592,6 +592,7 @@ export function renderMixRack() {
       'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
     canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: 'hub',
+    scripts: '<script src="/assets/notify.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -617,6 +618,37 @@ export function renderMixRack() {
           <div><dt>Status</dt><dd>Coming Soon</dd></div>
           <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
         </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="mixrack-notify-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Release notice</p>
+          <h2 id="mixrack-notify-title">Hear about it once</h2>
+          <p class="lede">ZIO MixRack has no release date yet. Leave an address and it gets used exactly once — on the day it ships.</p>
+        </div>
+        <form class="panel-float notify-form" novalidate="false">
+          <div class="form-hp" aria-hidden="true">
+            <label for="notify-company">Company</label>
+            <input id="notify-company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="notify-email">Email <span class="req">required</span></label>
+            <input id="notify-email" name="email" class="field" type="email" required autocomplete="email">
+            <p class="form-hint">One message, when ZIO MixRack is released. Nothing else is sent to it, and it is not used for anything else.</p>
+          </div>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Notify me at release</button>
+          </div>
+        </form>
+
+        <noscript>
+          <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming an address was recorded.</p>
+        </noscript>
       </div>
     </section>`
   });

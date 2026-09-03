@@ -265,6 +265,68 @@ export function validateSource() {
     }
   }
 
+  // Same three parts for the MixRack release-notice form, same reason.
+  for (const required of [
+    'class="panel-float notify-form"',
+    '<script src="/assets/notify.js" defer></script>',
+    'name="email"',
+    'class="form-status"'
+  ]) {
+    if (!mixRackPage.includes(required)) {
+      throw new Error(`MixRack page is missing a submission-critical part: ${required}`);
+    }
+  }
+  for (const [index, page] of pages.entries()) {
+    if (page !== mixRackPage && page.includes('/assets/notify.js')) {
+      throw new Error(`Page ${index} loads the notify script but has no form`);
+    }
+  }
+
+  /* The trap this site is built to fall into: `form-action 'none'` in
+     vercel.json means a native form submission is refused by the browser, and
+     refused silently -- the form renders, validates, submits, and the message
+     goes nowhere. Both forms therefore post by fetch and neither may carry an
+     action attribute, because an action attribute is the thing that makes a
+     form look submittable when it is not. Asserted rather than trusted: this
+     is invisible in a browser until someone reports a message that never
+     arrived. */
+  for (const [index, page] of pages.entries()) {
+    for (const [, attrs] of page.matchAll(/<form([^>]*)>/g)) {
+      if (/\baction=/.test(attrs)) {
+        throw new Error(
+          `Page ${index} has a <form action=...>, which form-action 'none' refuses `
+            + `silently; post it by fetch instead: <form${attrs}>`
+        );
+      }
+    }
+    // A form with no status element cannot tell the visitor either outcome.
+    const formCount = (page.match(/<form\b/g) || []).length;
+    const statusCount = (page.match(/class="form-status"/g) || []).length;
+    if (formCount !== statusCount) {
+      throw new Error(`Page ${index} has ${formCount} form(s) but ${statusCount} status element(s)`);
+    }
+  }
+
+  /* Both form scripts post to Formspree, and connect-src is the only reason
+     that is allowed to leave the page. If the endpoint host ever changes
+     without the policy changing with it, the form breaks in production and
+     nowhere else. */
+  const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../src');
+  const endpoints = new Set(
+    [readFileSync(resolve(sourceRoot, 'contact.js'), 'utf8'), readFileSync(resolve(sourceRoot, 'notify.js'), 'utf8')]
+      .flatMap((code) => [...code.matchAll(/ENDPOINT = '([^']+)'/g)].map((m) => m[1]))
+  );
+  if (endpoints.size !== 1) {
+    throw new Error(`Expected both forms to post to one endpoint; found ${[...endpoints].join(', ')}`);
+  }
+  const policy = readFileSync(resolve(sourceRoot, '..', 'vercel.json'), 'utf8');
+  for (const endpoint of endpoints) {
+    const origin = new URL(endpoint).origin;
+    if (!policy.includes(origin)) {
+      throw new Error(`CSP connect-src must allow ${origin} or both forms fail in production`);
+    }
+  }
+
   // The A/B section is two cards, and a card that renders but cannot play is
   // worse than no card: the page keeps claiming a comparison it will not make.
   // Assert the parts that carry playback rather than assuming them.
