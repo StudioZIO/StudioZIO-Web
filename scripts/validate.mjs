@@ -241,6 +241,30 @@ export function validateSource() {
     }
   }
 
+  /* DebugView is opt-in, and both halves of that matter. Without the opt-in
+     the screen stays empty however many events arrive, which reads as broken
+     measurement and is not — that is exactly how this was found. With the flag
+     left on unconditionally the opposite happens: every real visitor is
+     reported as debug traffic, which GA4 treats differently, and the loss is
+     silent. Assert the wiring exists AND that it is still conditional. */
+  const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../src');
+  const gtagSource = readFileSync(resolve(sourceRoot, 'gtag.js'), 'utf8');
+  for (const required of ['_dbg', 'debug_mode']) {
+    if (!gtagSource.includes(required)) {
+      throw new Error(`gtag.js no longer wires up DebugView: ${required} is missing`);
+    }
+  }
+  /* Every line that switches debug_mode on must be the guarded one. Matching
+     the value instead of the shape was not enough: `debug_mode: true` inside
+     the config literal and `CONFIG.debug_mode = true` after it are both ways
+     to leave it on, and a check written for the first form let the second
+     through when it was tried. */
+  for (const line of gtagSource.split('\n')) {
+    if (!/debug_mode/.test(line) || !/\btrue\b/.test(line)) continue;
+    if (line.includes('if (studioZioDebug)')) continue;
+    throw new Error(`debug_mode is switched on outside the opt-in guard, so every real visitor would be reported as debug traffic: ${line.trim()}`);
+  }
+
   // A support form that renders but cannot submit loses messages quietly, so
   // the three parts that carry a submission are asserted, not assumed: the
   // form itself, every required field, and the script that posts it.
@@ -311,7 +335,6 @@ export function validateSource() {
      that is allowed to leave the page. If the endpoint host ever changes
      without the policy changing with it, the form breaks in production and
      nowhere else. */
-  const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../src');
   const endpoints = new Set(
     [readFileSync(resolve(sourceRoot, 'contact.js'), 'utf8'), readFileSync(resolve(sourceRoot, 'notify.js'), 'utf8')]
       .flatMap((code) => [...code.matchAll(/ENDPOINT = '([^']+)'/g)].map((m) => m[1]))
