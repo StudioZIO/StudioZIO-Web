@@ -40,10 +40,17 @@ export const products = Object.freeze([
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
     compactFormats: 'AU / VST3 / Standalone',
     price: 'Free',
-    /* The shipping build is tagged RC1 and its release notes call it a
-       testable beta, and the product site chips it the same way. "Available
-       now" here said something the download did not support. */
-    availability: 'Release candidate',
+    version: '4.0.1',
+    /* 4.0.1 is final. This entry used to withhold the version and chip the
+       product as a release candidate, because the product site chipped it that
+       way too and "Available now" would have said something the download did
+       not support. The owner has since declared 4.0.1 shipping and the product
+       site now says so on every surface, so the two agree again — this time on
+       the shipping story rather than the RC one. The published artifact is
+       still named for the candidate it was cut as; that is a packaging label,
+       not a different binary, and it is tracked on the product site where the
+       download URL lives. */
+    availability: 'Available now',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
     detailsUrl: TEMPO_DELAY_WEBSITE,

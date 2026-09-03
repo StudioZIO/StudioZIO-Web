@@ -24,7 +24,8 @@ export const HUB_ORIGIN = 'https://studiozio.vercel.app';
 const MEASUREMENT_ID = 'G-VL8Z542XMP';
 const analytics = `<script src="/assets/gtag.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
-  <script src="/assets/consent.js" defer></script>`;
+  <script src="/assets/consent.js" defer></script>
+  <script src="/assets/events.js" defer></script>`;
 
 function escapeHtml(value) {
   return String(value)
@@ -63,11 +64,28 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
     ${close}`;
 }
 
+/* The artist site and this one are two entities: ZIO is a Person, StudioZIO
+   an Organization, and the graphs on both properties model them that way,
+   linked only by founder. Until now that relationship existed solely in
+   structured data with no crawlable link either way, and the two copies of
+   the shared Organization @id did not even agree — the artist site's copy
+   named a founder, this one's did not. A claim asserted in JSON-LD and
+   corroborated by nothing is the weakest form of it.
+   The link is appended to the footer list rather than added to NAVIGATION,
+   because NAVIGATION renders the header too and ZIO is not a StudioZIO
+   product. Inside the existing <ul> it inherits the footer nav's styling and
+   adds no new flex child to .inner, so nothing about the layout moves. */
+const ZIO_ARTIST_WEBSITE = 'https://zio-audio.vercel.app/';
+
+function zioFooterLink() {
+  return `<li><a href="${ZIO_ARTIST_WEBSITE}">ZIO — music</a></li>`;
+}
+
 const NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
   ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
-  ['Contact', '/contact', 'contact']
+  ['Contact', '/contact/', 'contact']
 ];
 
 function navList(current) {
@@ -107,7 +125,14 @@ const organizationNode = {
   url: `${HUB_ORIGIN}/`,
   description:
     'Independent audio software company building native Audio Unit, VST3 and Standalone plug-ins for macOS.',
-  logo: `${HUB_ORIGIN}/assets/og/og-studiozio.png`
+  logo: `${HUB_ORIGIN}/assets/og/og-studiozio.png`,
+  /* The artist site's copy of this same @id already named this founder. Both
+     copies now say it, so the two properties describe one Organization
+     consistently instead of one of them making a claim the other omits. The
+     @id is a reference, not a definition: ZIO the Person is defined on the
+     artist site, and the footer link above is what makes the reference
+     crawlable. */
+  founder: { '@id': 'https://zio-audio.vercel.app/#person' }
 };
 
 const homeJsonLd = () =>
@@ -179,7 +204,7 @@ function shell({ title, description, canonical, current, content, scripts = '', 
     <div class="shell inner">
       ${logo()}
       <nav aria-label="Footer">
-        <ul>${navList('')}</ul>
+        <ul>${navList('')}${zioFooterLink()}</ul>
       </nav>
       <p class="copy">© 2026 StudioZIO</p>
     </div>
@@ -304,6 +329,7 @@ const AB_DEMOS = Object.freeze({
     shot: 'mastering-suite-ui',
     shotWidth: 1440,
     shotHeight: 720,
+    shotWidths: Object.freeze([640, 1024, 1440]),
     shotAlt:
       'The StudioZIO Mastering Suite window: output spectrum across the top, a loudness column reading -11.5 LUFS integrated with true-peak bars and a vectorscope, and the mid/side, saturation, pink match, glue compressor, tone EQ and limiter modules below.',
     note:
@@ -318,12 +344,33 @@ const AB_DEMOS = Object.freeze({
     shot: 'tempo-delay-ui',
     shotWidth: 1120,
     shotHeight: 720,
+    /* No 1440 entry: the master is 1120 wide and a 1440 candidate would be an
+       upscale, which costs bytes to deliver no detail. */
+    shotWidths: Object.freeze([640, 1024, 1120]),
     shotAlt:
       'The StudioZIO Tempo Delay window: tempo sync at 120 BPM with 1/8 dotted on the left and 1/8 on the right, 40 per cent feedback on both sides, 100 per cent width, 35 per cent mix, and the tone and filters tab open.',
     note:
       'Rendered through Tempo Delay 4.0.1 at 44.1 kHz. Judge placement, tail and stereo spread.'
   })
 });
+
+/* The capture is rendered about 545 CSS px wide inside a two-column grid, and
+   full width below the 900px breakpoint where that grid collapses. Serving the
+   1440px master to a 545px slot was most of a megapixel thrown away on every
+   visit; the browser now picks from the variants and takes the master only on a
+   wide, high-density screen.
+
+   The master keeps its plain filename so its <src> stays a working fallback for
+   anything that ignores srcset, and so the social-card and JSON-LD references
+   to it do not have to move. */
+function shotSrcset(demo) {
+  return demo.shotWidths
+    .map((width) => {
+      const file = width === demo.shotWidth ? demo.shot : `${demo.shot}-${width}`;
+      return `/assets/media/${file}.webp ${width}w`;
+    })
+    .join(', ');
+}
 
 function abCard(key) {
   const demo = AB_DEMOS[key];
@@ -346,13 +393,17 @@ function abCard(key) {
         <span class="ab-flag">Real render · matched −12 LUFS</span>
       </div>
       <img class="ab-shot" src="/assets/media/${demo.shot}.webp"
-        width="${demo.shotWidth}" height="${demo.shotHeight}" decoding="async"
+        srcset="${shotSrcset(demo)}"
+        sizes="(min-width: 900px) 545px, calc(100vw - 3rem)"
+        width="${demo.shotWidth}" height="${demo.shotHeight}" decoding="async" loading="lazy"
         alt="${escapeHtml(demo.shotAlt)}">
       <div class="ab-transport">
         <button type="button" class="btn btn-primary ab-play" data-ab="play" aria-pressed="false"><span data-ab="play-label">Hear it</span></button>
         <div class="ab-takes" role="group" aria-label="${escapeHtml(demo.group)}">
-          <button type="button" data-ab="take" aria-pressed="false">Dry</button>
-          <button type="button" data-ab="take" aria-pressed="true">${escapeHtml(
+          <button type="button" data-ab="take" aria-pressed="false"
+            data-event="ab_toggle" data-ev-take="dry" data-ev-product="${key}">Dry</button>
+          <button type="button" data-ab="take" aria-pressed="true"
+            data-event="ab_toggle" data-ev-take="processed" data-ev-product="${key}">${escapeHtml(
             demo.processedLabel
           )}</button>
         </div>
@@ -539,8 +590,9 @@ export function renderMixRack() {
     title: 'ZIO MixRack — Coming Soon | StudioZIO',
     description:
       'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
-    canonical: `${HUB_ORIGIN}/products/mixrack`,
+    canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: 'hub',
+    scripts: '<script src="/assets/notify.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -567,6 +619,37 @@ export function renderMixRack() {
           <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
         </dl>
       </div>
+    </section>
+    <section class="section" aria-labelledby="mixrack-notify-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Release notice</p>
+          <h2 id="mixrack-notify-title">Hear about it once</h2>
+          <p class="lede">ZIO MixRack has no release date yet. Leave an address and it gets used exactly once — on the day it ships.</p>
+        </div>
+        <form class="panel-float notify-form" novalidate="false">
+          <div class="form-hp" aria-hidden="true">
+            <label for="notify-company">Company</label>
+            <input id="notify-company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="notify-email">Email <span class="req">required</span></label>
+            <input id="notify-email" name="email" class="field" type="email" required autocomplete="email">
+            <p class="form-hint">One message, when ZIO MixRack is released. Nothing else is sent to it, and it is not used for anything else.</p>
+          </div>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Notify me at release</button>
+          </div>
+        </form>
+
+        <noscript>
+          <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming an address was recorded.</p>
+        </noscript>
+      </div>
     </section>`
   });
 }
@@ -580,7 +663,7 @@ export function renderContact() {
     title: 'Contact and support — StudioZIO',
     description:
       'Reach the people who build StudioZIO Mastering Suite and Tempo Delay: bug reports, host compatibility and setup questions.',
-    canonical: `${HUB_ORIGIN}/contact`,
+    canonical: `${HUB_ORIGIN}/contact/`,
     current: 'contact',
     scripts: '<script src="/assets/contact.js" defer></script>',
     content: `<section class="hero tech-grid">

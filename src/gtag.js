@@ -64,4 +64,23 @@ try {
   /* Storage can throw outright in private modes; treat it as "no choice". */
 }
 
-gtag('config', 'G-VL8Z542XMP');
+/* Cross-domain measurement. The four StudioZIO properties are one journey —
+   read about a plug-in here, open its product site, download it — and without a
+   linker each hop starts a new session with the previous host as its referrer,
+   so the conversion is credited to nobody. gtag decorates outbound links to
+   these domains with the client id so the session survives the hop, and accepts
+   an incoming one on arrival.
+
+   This list must also be entered in the GA4 console, under the data stream's
+   configured domains: the console list is what drives referral exclusion, and
+   a domain missing there still shows up as self-referral traffic. */
+var STUDIOZIO_NETWORK_DOMAINS = [
+  'studiozio.vercel.app',
+  'studioziomasteringsuite.vercel.app',
+  'www.tempodelay.tech',
+  'zio-audio.vercel.app'
+];
+
+gtag('config', 'G-VL8Z542XMP', {
+  linker: { domains: STUDIOZIO_NETWORK_DOMAINS, accept_incoming: true }
+});

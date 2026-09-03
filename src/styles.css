@@ -725,11 +725,17 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .lane-runner { display: none; }
 }
 
-/* ---------- support form ------------------------------------------------
-   The only input surface on the site. Controls inherit the panel/token set
-   rather than introducing a second visual language: same radius, same
-   hairline, same focus ring as the buttons beside them. */
-.support-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
+/* ---------- forms -------------------------------------------------------
+   The site's input surfaces: the support form and the MixRack release
+   notice. Controls inherit the panel/token set rather than introducing a
+   second visual language: same radius, same hairline, same focus ring as
+   the buttons beside them. Both forms share the shell so the second one
+   cannot drift into a look of its own. */
+.support-form,
+.notify-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
+/* One short field does not want the full 1100px shell; the support form has
+   a grid of them and does. */
+.notify-form { max-width: 34rem; }
 .form-grid { display: grid; gap: 1.25rem; }
 @media (min-width: 700px) {
   .form-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }

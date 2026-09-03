@@ -24,8 +24,8 @@ await rm(outputRoot, { recursive: true, force: true });
    result, so it is written and never listed. */
 const routes = [
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
-  { file: 'products/mixrack/index.html', url: '/products/mixrack', render: renderMixRack, indexable: true },
-  { file: 'contact/index.html', url: '/contact', render: renderContact, indexable: true },
+  { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRack, indexable: true },
+  { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
 ];
 
@@ -51,9 +51,15 @@ await cp(resolve(projectRoot, 'src/consent.js'), resolve(outputRoot, 'assets/con
 // The support form's own script. It is served from the site origin because
 // the CSP has no 'unsafe-inline'; see the comment in src/contact.js.
 await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/contact.js'));
+// The MixRack release-notice form. Same origin, same reason, and the same
+// fetch-not-POST shape that `form-action 'none'` forces.
+await cp(resolve(projectRoot, 'src/notify.js'), resolve(outputRoot, 'assets/notify.js'));
 // The A/B listener and the renders it plays. Same-origin for the same reason,
 // and because `media-src` inherits the `default-src 'self'` in vercel.json.
 await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));
+// Conversion measurement. One delegated listener, same file on all four
+// StudioZIO properties, same-origin for the same CSP reason as the rest.
+await cp(resolve(projectRoot, 'src/events.js'), resolve(outputRoot, 'assets/events.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 const indexableUrls = routes.filter((route) => route.indexable).map((route) => `${HUB_ORIGIN}${route.url}`);
 
