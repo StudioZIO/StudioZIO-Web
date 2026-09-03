@@ -64,6 +64,23 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
     ${close}`;
 }
 
+/* The artist site and this one are two entities: ZIO is a Person, StudioZIO
+   an Organization, and the graphs on both properties model them that way,
+   linked only by founder. Until now that relationship existed solely in
+   structured data with no crawlable link either way, and the two copies of
+   the shared Organization @id did not even agree — the artist site's copy
+   named a founder, this one's did not. A claim asserted in JSON-LD and
+   corroborated by nothing is the weakest form of it.
+   The link is appended to the footer list rather than added to NAVIGATION,
+   because NAVIGATION renders the header too and ZIO is not a StudioZIO
+   product. Inside the existing <ul> it inherits the footer nav's styling and
+   adds no new flex child to .inner, so nothing about the layout moves. */
+const ZIO_ARTIST_WEBSITE = 'https://zio-audio.vercel.app/';
+
+function zioFooterLink() {
+  return `<li><a href="${ZIO_ARTIST_WEBSITE}">ZIO — music</a></li>`;
+}
+
 const NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
@@ -108,7 +125,14 @@ const organizationNode = {
   url: `${HUB_ORIGIN}/`,
   description:
     'Independent audio software company building native Audio Unit, VST3 and Standalone plug-ins for macOS.',
-  logo: `${HUB_ORIGIN}/assets/og/og-studiozio.png`
+  logo: `${HUB_ORIGIN}/assets/og/og-studiozio.png`,
+  /* The artist site's copy of this same @id already named this founder. Both
+     copies now say it, so the two properties describe one Organization
+     consistently instead of one of them making a claim the other omits. The
+     @id is a reference, not a definition: ZIO the Person is defined on the
+     artist site, and the footer link above is what makes the reference
+     crawlable. */
+  founder: { '@id': 'https://zio-audio.vercel.app/#person' }
 };
 
 const homeJsonLd = () =>
@@ -180,7 +204,7 @@ function shell({ title, description, canonical, current, content, scripts = '', 
     <div class="shell inner">
       ${logo()}
       <nav aria-label="Footer">
-        <ul>${navList('')}</ul>
+        <ul>${navList('')}${zioFooterLink()}</ul>
       </nav>
       <p class="copy">© 2026 StudioZIO</p>
     </div>
