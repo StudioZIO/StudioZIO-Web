@@ -328,10 +328,10 @@ const AB_DEMOS = Object.freeze({
     wet: '/assets/media/master-wet',
     shot: 'mastering-suite-ui',
     shotWidth: 1440,
-    shotHeight: 720,
+    shotHeight: 760,
     shotWidths: Object.freeze([640, 1024, 1440]),
     shotAlt:
-      'The StudioZIO Mastering Suite window: output spectrum across the top, a loudness column reading -11.5 LUFS integrated with true-peak bars and a vectorscope, and the mid/side, saturation, pink match, glue compressor, tone EQ and limiter modules below.',
+      'The StudioZIO Mastering Suite window: a signal-path rail across the top running M/S engine, saturation, pink match, glue, maximizer, tone EQ, clipper and limiter, with the Pink Match stage open at 60 per cent against a Hip-Hop target, and a meter column on the right reading -14.3 LUFS integrated against a -14 target, with true-peak bars and stereo correlation.',
     note:
       '“Güvercinler”, a StudioZIO production, rendered through Mastering Suite 2.0.0. Judge tone, depth and stability.'
   }),
@@ -342,13 +342,11 @@ const AB_DEMOS = Object.freeze({
     dry: '/assets/media/delay-dry',
     wet: '/assets/media/delay-wet',
     shot: 'tempo-delay-ui',
-    shotWidth: 1120,
-    shotHeight: 720,
-    /* No 1440 entry: the master is 1120 wide and a 1440 candidate would be an
-       upscale, which costs bytes to deliver no detail. */
-    shotWidths: Object.freeze([640, 1024, 1120]),
+    shotWidth: 1440,
+    shotHeight: 760,
+    shotWidths: Object.freeze([640, 1024, 1440]),
     shotAlt:
-      'The StudioZIO Tempo Delay window: tempo sync at 120 BPM with 1/8 dotted on the left and 1/8 on the right, 40 per cent feedback on both sides, 100 per cent width, 35 per cent mix, and the tone and filters tab open.',
+      'The StudioZIO Tempo Delay window: a signal-path rail across the top running tempo, left, right, tone, feedback, character, width and mix, with the primary delay engine open at 100 ms on each side, 45 per cent feedback, 100 per cent width and 50 per cent mix, a stereo echo field on the right, and the tone and filters tab showing an 80 Hz high-pass and an 8 kHz low-pass.',
     note:
       'Rendered through Tempo Delay 4.0.1 at 44.1 kHz. Judge placement, tail and stereo spread.'
   })
@@ -448,6 +446,7 @@ function productCard(product) {
     product.version ? chip(`v${product.version}`) : '',
     product.price ? chip(product.price) : '',
     chip(product.compactFormats.replaceAll(' / ', ' · ')),
+    product.architecture ? chip(product.architecture.split(' —')[0]) : '',
     isShipping ? chip(product.availability) : chip(product.availability, 'signal')
   ].join('');
 
