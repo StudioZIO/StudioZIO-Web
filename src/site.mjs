@@ -5,8 +5,25 @@ import {
   TEMPO_DELAY_WEBSITE
 } from './catalog.mjs';
 import { mediaSeconds } from './media.mjs';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const stylesheet = '/assets/styles.css';
+/* The stylesheet ships under a content-addressed name.
+
+   It used to be a fixed /assets/styles.css with a day-long max-age, which
+   meant a deploy could hand a returning visitor the new markup and the old
+   stylesheet at the same time -- and it did: the signal-path rail arrived as
+   unstyled text and retired colours kept rendering, because the browser was
+   still holding yesterday's CSS. A name that changes with the bytes cannot
+   be stale, so the pair can never disagree again and the file can be cached
+   for a year instead of a day. */
+export const STYLESHEET_FILE = `styles-${createHash('sha256')
+  .update(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'styles.css')))
+  .digest('hex')
+  .slice(0, 10)}.css`;
+const stylesheet = `/assets/${STYLESHEET_FILE}`;
 export const HUB_ORIGIN = 'https://studiozio.vercel.app';
 
 /* Google tag for the "Hub" data stream of the StudioZIO Analytics property.
