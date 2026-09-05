@@ -7,6 +7,7 @@ import {
   renderHome,
   renderMixRack,
   renderNotFound,
+  STYLESHEET_FILE,
 } from '../src/site.mjs';
 import { validateSource } from './validate.mjs';
 
@@ -38,7 +39,9 @@ for (const [relativePath, content] of outputs) {
 }
 
 await mkdir(resolve(outputRoot, 'assets'), { recursive: true });
-await cp(resolve(projectRoot, 'src/styles.css'), resolve(outputRoot, 'assets/styles.css'));
+// Written under the fingerprinted name the pages ask for, so the markup and
+// the stylesheet it depends on are deployed as one unit.
+await cp(resolve(projectRoot, 'src/styles.css'), resolve(outputRoot, 'assets', STYLESHEET_FILE));
 await cp(resolve(projectRoot, 'src/fonts'), resolve(outputRoot, 'assets/fonts'), { recursive: true });
 await cp(resolve(projectRoot, 'src/favicon.svg'), resolve(outputRoot, 'assets/favicon.svg'));
 // 1200x630 share cards. Generated from the design system rather than drawn by

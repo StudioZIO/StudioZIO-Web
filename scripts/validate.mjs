@@ -105,7 +105,9 @@ export function validateSource() {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
     if (!page.includes('<main id="main-content">')) throw new Error('Main landmark missing');
-    if (!page.includes('/assets/styles.css')) throw new Error('Stylesheet missing');
+    if (!/\/assets\/styles-[0-9a-f]{10}\.css/.test(page)) {
+      throw new Error('Stylesheet missing, or not the fingerprinted name the build writes');
+    }
     for (const pattern of forbidden) {
       if (pattern.test(page)) throw new Error(`Forbidden public content: ${pattern}`);
     }
