@@ -99,7 +99,7 @@ function navList(current) {
 
 function chip(label, tone = '') {
   return `<span class="chip${tone ? ` chip--${tone}` : ''}">${
-    tone === 'signal' ? '<span class="dot" aria-hidden="true"></span>' : ''
+    tone === 'flag' ? '<span class="dot" aria-hidden="true"></span>' : ''
   }${escapeHtml(label)}</span>`;
 }
 
@@ -214,86 +214,85 @@ function shell({ title, description, canonical, current, content, scripts = '', 
 }
 
 /* ---------- live plugin mocks ------------------------------------------
-   Flat and alive: breathing curve, drifting meters, knobs whose indicator
-   rotates on hover. Stroke weights carry the boldness — no blur, no glow.
-   Marked decorative: every load-bearing fact is stated in the card body. */
+   Each mock is the plug-in's own organising idea, not a drawing of knobs the
+   product does not have: a signal-path rail whose stages light in the order
+   the audio takes them, exactly as the real window presents itself. Values
+   are the shipped defaults, so the rail and the screenshot further down the
+   page agree. Marked decorative: every load-bearing fact is in the card body. */
+
+/** One rail. `stages` is [label, value] in signal order; the arming sweep is
+    driven by nth-child delays in the stylesheet, keyed off the stage count. */
+function signalRail(stages) {
+  const cells = stages
+    .map(
+      ([label, value]) => `<span class="st">
+          <span class="k">${escapeHtml(label)}</span>
+          <span class="v">${escapeHtml(value)}</span>
+        </span>`
+    )
+    .join('');
+  return `<div class="rail-head"><span>Signal path</span><span>in the order the audio takes</span></div>
+      <div class="rail rail--${stages.length}">${cells}</div>`;
+}
 
 function masteringSuiteMock() {
-  const knobs = [
-    ['Low cut', '24 Hz', 'primary'],
-    ['Glue', '-16.0 dB', 'signal'],
-    ['M/S width', '124 %', 'primary'],
-    ['Match', '75 %', 'primary'],
-    ['Ceiling', '-0.2 dB', 'signal']
+  /* The nine APVTS stages, in the plug-in's own order. */
+  const stages = [
+    ['M/S', '0 %'],
+    ['Sat', 'Off'],
+    ['Pink', '60 %'],
+    ['Glue', '-0.4'],
+    ['Max', '0 %'],
+    ['EQ', '0.0'],
+    ['Clip', '-3.0'],
+    ['Limit', '-0.30'],
+    ['Out', '-14.3']
   ];
-  const knobSvg = (tone) => `<svg viewBox="0 0 46 46" fill="none" aria-hidden="true">
-          <circle cx="23" cy="23" r="17" stroke="var(--surface-control)" stroke-width="4"/>
-          <path d="M11.4 34.6A17 17 0 0 1 23 6" stroke="var(--${tone})" stroke-width="3" stroke-linecap="round"/>
-          <line class="ind" x1="23" y1="23" x2="23" y2="9" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-        </svg>`;
-
+  /* Ten bars, one per band the learned correction reports. */
+  const bands = ['31', '63', '125', '250', '500', '1k', '2k', '4k', '8k', '16k'];
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Mastering Suite</span>
-        <span class="chip-row">${chip('AU · VST3')}${chip('Notarized', 'signal')}</span>
+        <span class="chip-row">${chip('AU · VST3')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
-        <div class="mock-eq">
-          <svg viewBox="0 0 420 150" role="presentation" class="mock-eq-curve">
-            <path d="M0 100h420M0 60h420" stroke="var(--hairline)" stroke-width="1"/>
-            <path d="M8 108C70 108 96 62 150 62s70 34 128 20 106-52 134-52" stroke="var(--primary)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M8 62C120 74 250 96 412 112" stroke="var(--signal)" stroke-width="1.5" stroke-dasharray="5 6" fill="none" opacity="0.75"/>
-            <circle cx="150" cy="62" r="4.5" fill="var(--background)" stroke="var(--primary)" stroke-width="2.5"/>
-            <circle cx="278" cy="82" r="4.5" fill="var(--background)" stroke="var(--signal)" stroke-width="2.5"/>
-            <text x="12" y="140" fill="var(--muted-foreground)" font-family="var(--font-mono)" font-size="10" letter-spacing="1.6">LOW</text>
-            <text x="176" y="140" fill="var(--muted-foreground)" font-family="var(--font-mono)" font-size="10" letter-spacing="1.6">MID GLUE</text>
-            <text x="344" y="140" fill="var(--muted-foreground)" font-family="var(--font-mono)" font-size="10" letter-spacing="1.6">AIR</text>
-          </svg>
-          <div class="meter-stack"><span class="meter"></span><span class="meter"></span><span class="meter"></span><span class="meter"></span></div>
-        </div>
-        <div class="mock-knobs">
-          ${knobs
-            .map(
-              ([label, value, tone]) => `<span class="knob">
-            ${knobSvg(tone)}
-            <span class="k">${escapeHtml(label)}</span>
-            <span class="v">${escapeHtml(value)}</span>
-          </span>`
-            )
-            .join('')}
+        ${signalRail(stages)}
+        <div class="bands">
+          <span class="bands-head"><span>Learned correction · per band</span><span>target -14 LUFS</span></span>
+          <span class="bands-row">${bands.map(() => '<i></i>').join('')}</span>
+          <span class="bands-scale">${bands
+            .map((b) => `<span>${b}</span>`)
+            .join('')}</span>
         </div>
       </div>
     </div>`;
 }
 
 function tempoDelayMock() {
-  const readouts = [
-    ['L div', '1/4', ''],
-    ['R div', '1/8D', 'signal'],
-    ['Feedback', '38 %', ''],
-    ['Ping-pong', 'On', 'plain']
+  /* The eight stages the window puts across the top, left to right. */
+  const stages = [
+    ['Tempo', '120.0'],
+    ['Left', '1/8D'],
+    ['Right', '1/8'],
+    ['Tone', '80-8k'],
+    ['Fdbk', '45 %'],
+    ['Char', 'Digital'],
+    ['Width', '100 %'],
+    ['Mix', '50 %']
   ];
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Tempo Delay</span>
-        <span class="chip-row">${chip('AU · VST3')}${chip('Host sync', 'signal')}</span>
+        <span class="chip-row">${chip('AU · VST3')}${chip('Host sync', 'flag')}</span>
       </div>
       <div class="mock-body">
-        <div class="mock-readouts">
-          ${readouts
-            .map(
-              ([k, v, tone]) => `<span class="readout">
-            <span class="k">${escapeHtml(k)}</span>
-            <span class="v${tone ? ` v--${tone}` : ''}">${escapeHtml(v)}</span>
-          </span>`
-            )
-            .join('')}
-        </div>
-        <div class="lane">
-          <span class="lane-head"><span>Signal routing</span><span>Ping-pong</span></span>
-          <span class="lane-row"><span class="ch">L</span><span class="lane-track"><span class="lane-runner"></span><span class="lane-tap lane-tap--p38"></span><span class="lane-tap lane-tap--p76"></span></span></span>
-          <span class="lane-row lane-row--r"><span class="ch">R</span><span class="lane-track"><span class="lane-runner"></span><span class="lane-tap lane-tap--p19"></span><span class="lane-tap lane-tap--p57"></span></span></span>
-          <span class="lane-foot"><span>Independent left and right timing</span><span>tap 2</span></span>
+        ${signalRail(stages)}
+        <div class="echo">
+          <span class="echo-corr">
+            <span class="echo-label"><span>Stereo echo field</span><span>correlation +1.00</span></span>
+            <span class="echo-bar"><i></i></span>
+          </span>
+          <span class="echo-big">100<small>ms L / R</small></span>
         </div>
       </div>
     </div>`;
@@ -437,8 +436,10 @@ const AB_SCRIPT = '<script src="/assets/ab.js" defer></script>';
 /* ---------- cards ------------------------------------------------------- */
 
 function productCard(product) {
-  /* Amber marks a release flag, which is any status that is not simply
-     shipping -- "Coming soon" and "Release candidate" alike. */
+  /* A release flag is any status that is not simply shipping -- "Coming
+     soon" and "Release candidate" alike. It is marked by the chip's dot, not
+     by a second accent hue: the plug-in windows themselves are single-accent,
+     so the sites are too. */
   const isShipping = product.availability === 'Available now';
   const mock = MOCKS[product.slug];
   const detailsLabel = product.externalDetails ? 'Open product site' : 'Open product page';
@@ -447,7 +448,7 @@ function productCard(product) {
     product.price ? chip(product.price) : '',
     chip(product.compactFormats.replaceAll(' / ', ' · ')),
     product.architecture ? chip(product.architecture.split(' —')[0]) : '',
-    isShipping ? chip(product.availability) : chip(product.availability, 'signal')
+    isShipping ? chip(product.availability) : chip(product.availability, 'flag')
   ].join('');
 
   return `<article class="panel product-card">
@@ -515,7 +516,7 @@ function downloadComponent(product) {
             <h2 id="download-title">${escapeHtml(product.shortName)} ${escapeHtml(product.version)}</h2>
             <p class="lede">Version ${escapeHtml(product.version)} · ${formatList(product.formats)}</p>
             <div class="chip-row mt-sm">
-              ${chip(product.signing)}${chip(product.notarization, 'signal')}
+              ${chip(product.signing)}${chip(product.notarization, 'flag')}
             </div>
           </div>
           <div class="actions">
@@ -553,7 +554,7 @@ export function renderHome() {
             <div class="hero-actions">
               <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
               <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Tempo Delay</a>
-              <span class="chip chip--bare chip--signal"><span class="dot" aria-hidden="true"></span>Notarized builds</span>
+              <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized builds</span>
             </div>
           </div>
         </div>
@@ -599,7 +600,7 @@ export function renderMixRack() {
           <h1>ZIO MixRack</h1>
           <p class="lede">${escapeHtml(product.description)} Build a signal chain from StudioZIO processing modules and shape a mix from one unified interface.</p>
           <div class="chip-row mt-lg">
-            ${chip(product.manufacturer)}${chip(product.platform)}${chip('Coming Soon', 'signal')}
+            ${chip(product.manufacturer)}${chip(product.platform)}${chip('Coming Soon', 'flag')}
           </div>
         </div>
       </div>
