@@ -8,6 +8,7 @@
     "build": "node scripts/build.mjs",
     "typecheck": "node --check src/catalog.mjs && node --check src/site.mjs && node --check scripts/build.mjs && node --check scripts/dev.mjs && node --check scripts/validate.mjs",
     "lint": "node scripts/validate.mjs",
-    "check": "npm run typecheck && npm run lint && npm run build"
+    "test:products": "node scripts/test_products.mjs",
+    "check": "npm run typecheck && npm run lint && npm run build && npm run test:products"
   }
 }

@@ -22,11 +22,11 @@ export const products = Object.freeze([
     compactFormats: 'AU / VST3 / Standalone',
     filename: 'StudioZIO-Mastering-Suite-2.0.0.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/v2.0.0/StudioZIO-Mastering-Suite-2.0.0.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-ui-2026.09.04/StudioZIO-Mastering-Suite-2.0.0.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/v2.0.0',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.0.0-ui-2026.09.04',
     sha256:
-      'c84cce49e651451409550daaac97f358220bcf7398183369e03f55b25d51793d',
+      '35aa38c1f49bdefcce4792eb0616719bce4f8f4bd49760da31738d244cda3d67',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
@@ -46,15 +46,7 @@ export const products = Object.freeze([
     compactFormats: 'AU / VST3 / Standalone',
     price: 'Free',
     version: '4.0.1',
-    /* 4.0.1 is final. This entry used to withhold the version and chip the
-       product as a release candidate, because the product site chipped it that
-       way too and "Available now" would have said something the download did
-       not support. The owner has since declared 4.0.1 shipping and the product
-       site now says so on every surface, so the two agree again — this time on
-       the shipping story rather than the RC one. The published artifact is
-       still named for the candidate it was cut as; that is a packaging label,
-       not a different binary, and it is tracked on the product site where the
-       download URL lives. */
+    // Installer provenance is maintained on the authoritative product site.
     availability: 'Available now',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',

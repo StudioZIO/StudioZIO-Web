@@ -100,6 +100,7 @@ function zioFooterLink() {
 
 const NAVIGATION = [
   ['Hub', '/', 'hub'],
+  ['Products', '/products/', 'products'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
   ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
   ['Contact', '/contact/', 'contact']
@@ -164,6 +165,35 @@ const homeJsonLd = () =>
       publisher: { '@id': `${HUB_ORIGIN}/#organization` }
     }
   ]);
+
+const productsJsonLd = () => jsonLdBlock([
+  organizationNode,
+  {
+    '@type': 'CollectionPage',
+    '@id': `${HUB_ORIGIN}/products/#page`,
+    url: `${HUB_ORIGIN}/products/`,
+    name: 'StudioZIO products',
+    publisher: { '@id': ORGANIZATION_ID },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: products.length,
+      itemListElement: products.map((product, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'SoftwareApplication',
+          name: product.name,
+          url: new URL(product.detailsUrl, HUB_ORIGIN).href,
+          description: `${product.description} ${product.availability}.`,
+          operatingSystem: product.platform,
+          applicationCategory: 'MultimediaApplication',
+          ...(product.version ? { softwareVersion: product.version } : {}),
+          publisher: { '@id': ORGANIZATION_ID }
+        }
+      }))
+    }
+  }
+]);
 
 function shell({ title, description, canonical, current, content, scripts = '', socialImage = DEFAULT_SOCIAL_IMAGE, socialImageAlt = 'StudioZIO — audio plug-ins for macOS', jsonLd = '' }) {
   const image = `${HUB_ORIGIN}${socialImage}`;
@@ -586,7 +616,8 @@ export function renderHome() {
         <div class="section-head">
           <p class="eyebrow">Catalog</p>
           <h2 id="catalog-title">The instruments</h2>
-          <p class="lede">Every product ships as a signed macOS installer with its formats and status stated up front.</p>
+          <p class="lede">Mastering Suite and Tempo Delay are available now as signed macOS installers. ZIO MixRack is coming soon.</p>
+          <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
       </div>
@@ -604,6 +635,34 @@ export function renderHome() {
   });
 }
 
+export function renderProducts() {
+  return shell({
+    title: 'Audio plugins for macOS — StudioZIO Products',
+    description: 'Explore StudioZIO Mastering Suite and Tempo Delay for macOS, compare formats and availability, and learn about the upcoming ZIO MixRack.',
+    canonical: `${HUB_ORIGIN}/products/`,
+    current: 'products',
+    jsonLd: productsJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <p class="eyebrow">StudioZIO software</p>
+        <h1>Audio plugins for macOS</h1>
+        <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming ZIO MixRack.</p>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="catalog-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Products</p>
+          <h2 id="catalog-title">Choose your instrument</h2>
+          <p class="lede">Open a product site for its installer, documentation and release details. MixRack is in development and has no release date yet.</p>
+        </div>
+        <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
+        <p class="mt-lg">Hear Mastering Suite and Tempo Delay on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
+      </div>
+    </section>`
+  });
+}
+
 export function renderMixRack() {
   const product = getProduct('mixrack');
   return shell({
@@ -611,13 +670,14 @@ export function renderMixRack() {
     description:
       'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
     canonical: `${HUB_ORIGIN}/products/mixrack/`,
-    current: 'hub',
+    current: '',
     scripts: '<script src="/assets/notify.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
           <p class="eyebrow">StudioZIO software · Coming Soon</p>
           <h1>ZIO MixRack</h1>
+          <p><a href="/products/">All StudioZIO products</a></p>
           <p class="lede">${escapeHtml(product.description)} Build a signal chain from StudioZIO processing modules and shape a mix from one unified interface.</p>
           <div class="chip-row mt-lg">
             ${chip(product.manufacturer)}${chip(product.platform)}${chip('Coming Soon', 'flag')}
@@ -691,6 +751,7 @@ export function renderContact() {
         <p class="eyebrow">Support</p>
         <h1>Talk to the people who build it</h1>
         <p class="lede">Bug reports, host compatibility and setup questions all reach the same desk. Most answers go out within 24&ndash;48 business hours.</p>
+        <p>For installers and product documentation, start with the <a href="/products/">product catalogue</a>.</p>
       </div>
     </section>
     <section class="section">
