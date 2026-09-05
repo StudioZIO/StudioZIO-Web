@@ -14,13 +14,14 @@ import {
   renderHome,
   renderMixRack,
   renderNotFound,
+  renderProducts,
   HUB_ORIGIN,
 } from '../src/site.mjs';
 
 const expectedUrl =
-  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/v2.0.0/StudioZIO-Mastering-Suite-2.0.0.pkg';
+  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-ui-2026.09.04/StudioZIO-Mastering-Suite-2.0.0.pkg';
 const expectedSha =
-  'c84cce49e651451409550daaac97f358220bcf7398183369e03f55b25d51793d';
+  '35aa38c1f49bdefcce4792eb0616719bce4f8f4bd49760da31738d244cda3d67';
 const forbidden = [
   /github\.com\/StudioZIO\/(?!StudioZIO-Releases)/i,
   /\/Users\/mert\//i,
@@ -96,11 +97,12 @@ export function validateSource() {
   }
 
   const home = renderHome();
+  const catalog = renderProducts();
   const mixRackPage = renderMixRack();
   const contact = renderContact();
   const notFound = renderNotFound();
-  const pages = [home, mixRackPage, contact, notFound];
-  const indexablePages = [home, mixRackPage, contact];
+  const pages = [home, catalog, mixRackPage, contact, notFound];
+  const indexablePages = [home, catalog, mixRackPage, contact];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -123,7 +125,7 @@ export function validateSource() {
     }
   }
 
-  for (const catalogPage of [home]) {
+  for (const catalogPage of [home, catalog]) {
     for (const required of [
       'StudioZIO Mastering Suite',
       'StudioZIO Tempo Delay',
@@ -138,14 +140,14 @@ export function validateSource() {
     }
   }
 
-  // The shared four-link navigation puts the Tempo Delay site in the header
+  // The shared navigation puts the Tempo Delay site in the header
   // and footer of every page, so the old exact-count rule no longer applies.
   // What must hold: it is reachable everywhere, and both catalog surfaces
   // still carry it on the product card itself.
   if (!pages.every((page) => page.includes(TEMPO_DELAY_WEBSITE))) {
     throw new Error('Tempo Delay site must be linked from every page');
   }
-  for (const catalogPage of [home]) {
+  for (const catalogPage of [home, catalog]) {
     const navAndFooterLinks = 2;
     if (catalogPage.split(TEMPO_DELAY_WEBSITE).length - 1 <= navAndFooterLinks) {
       throw new Error('Catalog surfaces must link Tempo Delay from its product card');
@@ -164,7 +166,7 @@ export function validateSource() {
     if (footerMarkup.split('class="logo"').length - 1 !== 1) {
       throw new Error('Expected exactly one logo lockup in the footer');
     }
-    for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<', '>Contact<']) {
+    for (const label of ['>Hub<', '>Products<', '>Mastering Suite<', '>Tempo Delay<', '>Contact<']) {
       if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
     }
   }
@@ -560,7 +562,7 @@ export function validateSource() {
     })
   );
   const fileRoutes = new Set(['/sitemap.xml', '/robots.txt']);
-  for (const [index, page] of [home, mixRackPage, contact, notFound].entries()) {
+  for (const [index, page] of pages.entries()) {
     for (const [, href] of page.matchAll(/href="([^"]*)"/g)) {
       if (!href.startsWith('/') || href.startsWith('/assets/')) continue;
       if (fileRoutes.has(href)) continue;
@@ -597,9 +599,17 @@ export function validateSource() {
     throw new Error('JSON-LD must not publish a rating that does not exist');
   }
 
-  // /products is permanently redirected to the root; nothing may link to it.
-  if (pages.some((page) => /href="\/products"/.test(page))) {
-    throw new Error('Nothing may link to the retired /products route');
+  const hosting = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'));
+  if (hosting.redirects.some(({ source }) => source === '/products' || source === '/products/')) {
+    throw new Error('The product catalogue must be served, not redirected');
+  }
+  if (!catalog.includes(`<link rel="canonical" href="${HUB_ORIGIN}/products/">`)) {
+    throw new Error('Product catalogue must declare its own canonical');
+  }
+  for (const page of [home, mixRackPage, contact]) {
+    if (!mainContent(page).includes('href="/products/"')) {
+      throw new Error('Product catalogue contextual link missing');
+    }
   }
 
   verifyMeasurementPolicy();
