@@ -269,16 +269,19 @@ function masteringSuiteMock() {
 }
 
 function tempoDelayMock() {
-  /* The eight stages the window puts across the top, left to right. */
+  /* The eight stages the window puts across the top, left to right. Values
+     are the plug-in's APVTS defaults, which is what its own parameter guide
+     publishes; the shipped screenshot is captured on the "Default Stereo
+     Delay" preset and differs on feedback, mix and delay times. */
   const stages = [
     ['Tempo', '120.0'],
     ['Left', '1/8D'],
     ['Right', '1/8'],
     ['Tone', '80-8k'],
-    ['Fdbk', '45 %'],
+    ['Fdbk', '40 %'],
     ['Char', 'Digital'],
     ['Width', '100 %'],
-    ['Mix', '50 %']
+    ['Mix', '35 %']
   ];
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
