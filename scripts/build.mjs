@@ -7,6 +7,7 @@ import {
   renderHome,
   renderMixRack,
   renderNotFound,
+  renderProducts,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
 import { validateSource } from './validate.mjs';
@@ -25,6 +26,7 @@ await rm(outputRoot, { recursive: true, force: true });
    result, so it is written and never listed. */
 const routes = [
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
+  { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
   { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRack, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
