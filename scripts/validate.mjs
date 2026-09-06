@@ -19,7 +19,7 @@ import {
 } from '../src/site.mjs';
 
 const expectedUrl =
-  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-ui-2026.09.04/StudioZIO-Mastering-Suite-2.0.0.pkg';
+  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-signed-2026.09.06/StudioZIO-Mastering-Suite-2.0.0.pkg';
 const expectedSha =
   '35aa38c1f49bdefcce4792eb0616719bce4f8f4bd49760da31738d244cda3d67';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
