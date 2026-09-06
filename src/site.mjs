@@ -25,6 +25,11 @@ export const STYLESHEET_FILE = `styles-${createHash('sha256')
   .slice(0, 10)}.css`;
 const stylesheet = `/assets/${STYLESHEET_FILE}`;
 export const HUB_ORIGIN = 'https://studiozio.vercel.app';
+const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
+const KVR_MASTERING_URL =
+  'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio';
+const KVR_TEMPO_URL =
+  'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio';
 
 /* Google tag for the "Hub" data stream of the StudioZIO Analytics property.
    Three files, in this order, because the site is served under
@@ -92,10 +97,22 @@ function logo({ href = '/', suffix = '', link = true } = {}) {
    because NAVIGATION renders the header too and ZIO is not a StudioZIO
    product. Inside the existing <ul> it inherits the footer nav's styling and
    adds no new flex child to .inner, so nothing about the layout moves. */
-const ZIO_ARTIST_WEBSITE = 'https://zio-audio.vercel.app/';
+function instagramLink() {
+  return `<a class="social-link" href="${INSTAGRAM_URL}" target="_blank" rel="noopener noreferrer" aria-label="Instagram — studio_zio_plugin">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/>
+          <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/>
+          <circle cx="17.4" cy="6.7" r="1.1" fill="currentColor"/>
+        </svg>
+      </a>`;
+}
 
-function zioFooterLink() {
-  return `<li><a href="${ZIO_ARTIST_WEBSITE}">ZIO — music</a></li>`;
+function kvrLink(url, label) {
+  return `<a class="kvr-link" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${label} — KVR Audio" title="${label} — KVR Audio">
+        <svg viewBox="0 0 42 22" aria-hidden="true">
+          <text x="1" y="16" fill="currentColor" font-family="monospace" font-size="13" font-weight="700" letter-spacing="1">KVR</text>
+        </svg>
+      </a>`;
 }
 
 const NAVIGATION = [
@@ -249,9 +266,16 @@ function shell({ title, description, canonical, current, content, scripts = '', 
   <main id="main-content">${content}</main>
   <footer class="site-footer">
     <div class="shell inner">
-      ${logo()}
+      <div class="footer-brand">
+        ${logo()}
+        <div class="footer-tools">
+          ${instagramLink()}
+          ${kvrLink(KVR_MASTERING_URL, 'Mastering Suite')}
+          ${kvrLink(KVR_TEMPO_URL, 'Tempo Delay')}
+        </div>
+      </div>
       <nav aria-label="Footer">
-        <ul>${navList('')}${zioFooterLink()}</ul>
+        <ul>${navList('')}</ul>
       </nav>
       <p class="copy">© 2026 StudioZIO</p>
     </div>

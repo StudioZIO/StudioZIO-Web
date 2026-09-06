@@ -22,6 +22,11 @@ const expectedUrl =
   'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-ui-2026.09.04/StudioZIO-Mastering-Suite-2.0.0.pkg';
 const expectedSha =
   '35aa38c1f49bdefcce4792eb0616719bce4f8f4bd49760da31738d244cda3d67';
+const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
+const KVR_URLS = [
+  'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio',
+  'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio'
+];
 const forbidden = [
   /github\.com\/StudioZIO\/(?!StudioZIO-Releases)/i,
   /\/Users\/mert\//i,
@@ -168,6 +173,10 @@ export function validateSource() {
     }
     for (const label of ['>Hub<', '>Products<', '>Mastering Suite<', '>Tempo Delay<', '>Contact<']) {
       if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
+    }
+    if (!page.includes(`href="${INSTAGRAM_URL}"`)) throw new Error('Instagram footer link missing');
+    for (const url of KVR_URLS) {
+      if (!page.includes(`href="${url}"`)) throw new Error(`KVR link missing: ${url}`);
     }
   }
 
