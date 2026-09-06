@@ -761,16 +761,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   45%      { right: 2%; }
   70%      { right: 11%; }
 }
-  35%      { height: 82%; }
-  70%      { height: 54%; }
-}
-  10%  { opacity: 0.9; }
-  90%  { opacity: 0.9; }
-  100% { left: 100%; opacity: 0; }
-}
-  4%       { transform: scale(1.6); opacity: 1; }
-  32%      { transform: scale(1);   opacity: 0.85; }
-}
 .rise { animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .rise-1 { animation-delay: 60ms; }
 .rise-2 { animation-delay: 120ms; }
