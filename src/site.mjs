@@ -668,9 +668,11 @@ export function renderProducts() {
     jsonLd: productsJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
-        <p class="eyebrow">StudioZIO software</p>
-        <h1>Audio plugins for macOS</h1>
-        <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming ZIO MixRack.</p>
+        <div class="rise">
+          <p class="eyebrow">StudioZIO software</p>
+          <h1>Audio plugins for macOS</h1>
+          <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming ZIO MixRack.</p>
+        </div>
       </div>
     </section>
     <section class="section" aria-labelledby="catalog-title">
