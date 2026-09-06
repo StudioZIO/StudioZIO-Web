@@ -23,3 +23,27 @@ its permanent redirect to the Mastering Suite site.
 missing pages, redirects, canonical/sitemap drift, hidden cards and inconsistent
 structured data. Product versions and availability come from `src/catalog.mjs`;
 MixRack has no asserted release date or download.
+
+## Deploying
+
+This repository is the canonical source for `https://studiozio.vercel.app/`.
+The Vercel project `studiozio` builds it with `npm run build` and serves
+`dist/`, as declared in `vercel.json`.
+
+**Production is deployed by the Vercel Git integration, from `main`, and by
+nothing else.** Every production deployment must name the commit it was built
+from. Do not run `vercel deploy` — or any other manual publish — from a
+workstation: it creates a production deployment with no branch and no commit,
+which silently replaces a reviewed one and leaves no way to tell what is live.
+
+So the deployment path is: branch → pull request → `npm run check` → merge into
+`main` → Vercel builds and promotes automatically. To re-deploy without a
+content change, use Redeploy on the latest `main` deployment in the Vercel
+dashboard, which keeps the commit attached. If production ever shows a
+deployment whose source is `vercel deploy` instead of a branch and commit, that
+is the defect: promote a `main` deployment again so the live site is traceable.
+
+The hub is one of three surfaces. The rule and the repository-to-project
+mapping for all of them are recorded in `docs/CANONICAL-ARCHITECTURE.md` in the
+[TempoDelay](https://github.com/StudioZIO/TempoDelay) repository. A change here
+does not authorize rebuilding or repointing another surface.
