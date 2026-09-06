@@ -774,10 +774,12 @@ export function renderContact() {
     scripts: '<script src="/assets/contact.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">
-        <p class="eyebrow">Support</p>
-        <h1>Talk to the people who build it</h1>
-        <p class="lede">Bug reports, host compatibility and setup questions all reach the same desk. Most answers go out within 24&ndash;48 business hours.</p>
-        <p>For installers and product documentation, start with the <a href="/products/">product catalogue</a>.</p>
+        <div class="rise">
+          <p class="eyebrow">Support</p>
+          <h1>Talk to the people who build it</h1>
+          <p class="lede">Bug reports, host compatibility and setup questions all reach the same desk. Most answers go out within 24&ndash;48 business hours.</p>
+          <p>For installers and product documentation, start with the <a href="/products/">product catalogue</a>.</p>
+        </div>
       </div>
     </section>
     <section class="section">
