@@ -18,9 +18,14 @@ import {
 } from '../src/site.mjs';
 
 const expectedUrl =
-  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/v2.0.0/StudioZIO-Mastering-Suite-2.0.0.pkg';
+  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-signed-2026.09.06/StudioZIO-Mastering-Suite-2.0.0.pkg';
 const expectedSha =
-  'c84cce49e651451409550daaac97f358220bcf7398183369e03f55b25d51793d';
+  '41b186b6aef41b78e821f2f62fbc7d7631a25126f85a0689b39edb0f6acd5218';
+const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
+const KVR_URLS = [
+  'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio',
+  'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio'
+];
 const forbidden = [
   /github\.com\/StudioZIO\/(?!StudioZIO-Releases)/i,
   /\/Users\/mert\//i,
@@ -136,7 +141,7 @@ export function validateSource() {
     }
   }
 
-  // The shared four-link navigation puts the Tempo Delay site in the header
+  // The shared five-link navigation puts the Tempo Delay site in the header
   // and footer of every page, so the old exact-count rule no longer applies.
   // What must hold: it is reachable everywhere, and both catalog surfaces
   // still carry it on the product card itself.
@@ -164,6 +169,11 @@ export function validateSource() {
     }
     for (const label of ['>Hub<', '>Mastering Suite<', '>Tempo Delay<', '>Contact<']) {
       if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
+    }
+    if (!page.includes('>Products<')) throw new Error('Products navigation label missing');
+    if (!page.includes(`href="${INSTAGRAM_URL}"`)) throw new Error('Instagram footer link missing');
+    for (const url of KVR_URLS) {
+      if (!page.includes(`href="${url}"`)) throw new Error(`KVR link missing: ${url}`);
     }
   }
 

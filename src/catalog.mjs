@@ -22,11 +22,11 @@ export const products = Object.freeze([
     compactFormats: 'AU / VST3 / Standalone',
     filename: 'StudioZIO-Mastering-Suite-2.0.0.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/v2.0.0/StudioZIO-Mastering-Suite-2.0.0.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-signed-2026.09.06/StudioZIO-Mastering-Suite-2.0.0.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/v2.0.0',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.0.0-signed-2026.09.06',
     sha256:
-      'c84cce49e651451409550daaac97f358220bcf7398183369e03f55b25d51793d',
+      '41b186b6aef41b78e821f2f62fbc7d7631a25126f85a0689b39edb0f6acd5218',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
