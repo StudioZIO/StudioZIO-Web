@@ -19,9 +19,9 @@ import {
 } from '../src/site.mjs';
 
 const expectedUrl =
-  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-signed-2026.09.06/StudioZIO-Mastering-Suite-2.0.0.pkg';
+  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-signed-2026.09.07/StudioZIO-Mastering-Suite-2.1.1.pkg';
 const expectedSha =
-  '41b186b6aef41b78e821f2f62fbc7d7631a25126f85a0689b39edb0f6acd5218';
+  '68e7abb87458bcf8e331f435c7bec7792d33e67fe5c9a5e834195676c11bad7b';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
 const KVR_URLS = [
   'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio',
@@ -52,7 +52,7 @@ export function validateSource() {
   const product = getProduct('mastering-suite');
   if (product.downloadUrl !== expectedUrl) throw new Error('Download URL drift');
   if (product.sha256 !== expectedSha) throw new Error('Checksum drift');
-  if (product.version !== '2.0.0' || product.platform !== 'macOS') {
+  if (product.version !== '2.1.1' || product.platform !== 'macOS') {
     throw new Error('Public release metadata drift');
   }
   if (RELEASE_REPOSITORY_URL !== 'https://github.com/StudioZIO/StudioZIO-Releases') {
@@ -87,7 +87,7 @@ export function validateSource() {
 
   const mixRack = getProduct('mixrack');
   if (
-    mixRack.name !== 'ZIO MixRack' ||
+    mixRack.name !== 'StudioZIO MixRack' ||
     mixRack.manufacturer !== 'StudioZIO' ||
     mixRack.availability !== 'Coming soon' ||
     mixRack.platform !== 'macOS' ||
@@ -134,7 +134,7 @@ export function validateSource() {
     for (const required of [
       'StudioZIO Mastering Suite',
       'StudioZIO Tempo Delay',
-      'ZIO MixRack',
+      'StudioZIO MixRack',
       'Available now',
       'Coming soon',
       TEMPO_DELAY_WEBSITE
@@ -182,7 +182,7 @@ export function validateSource() {
 
   const mixRackMain = mainContent(mixRackPage);
   for (const required of [
-    'ZIO MixRack',
+    'StudioZIO MixRack',
     'Coming Soon',
     'macOS',
     'Audio Unit (AU)',

@@ -1,4 +1,4 @@
-/* ZIO MixRack "notify me" submission.
+/* StudioZIO MixRack "notify me" submission.
 
    Same two constraints as src/contact.js, for the same reasons: the site is
    served under `form-action 'none'`, so a native POST is refused — a plain
@@ -52,7 +52,7 @@
        otherwise count crawlers as interested buyers. */
     if (honeypot && honeypot.value.trim().length > 0) {
       form.hidden = true;
-      say('sent', 'Thanks — we will let you know when ZIO MixRack is out.');
+      say('sent', 'Thanks — we will let you know when StudioZIO MixRack is out.');
       return;
     }
 
@@ -68,7 +68,7 @@
         email: email,
         intent: 'mixrack-notify',
         site: 'StudioZIO Hub',
-        _subject: 'ZIO MixRack notify: ' + email
+        _subject: 'StudioZIO MixRack notify: ' + email
       })
     })
       .then(function (response) {
@@ -81,7 +81,7 @@
         }
         form.reset();
         submit.disabled = false;
-        say('sent', 'Thanks — we will email you once, when ZIO MixRack is released.');
+        say('sent', 'Thanks — we will email you once, when StudioZIO MixRack is released.');
         report();
       })
       .catch(function () {

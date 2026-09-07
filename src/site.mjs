@@ -26,6 +26,7 @@ export const STYLESHEET_FILE = `styles-${createHash('sha256')
 const stylesheet = `/assets/${STYLESHEET_FILE}`;
 export const HUB_ORIGIN = 'https://studiozio.vercel.app';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
+const YOUTUBE_URL = 'https://www.youtube.com/@StudioZIO-plugins';
 const KVR_MASTERING_URL =
   'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio';
 const KVR_TEMPO_URL =
@@ -107,6 +108,15 @@ function instagramLink() {
       </a>`;
 }
 
+function youtubeLink() {
+  return `<a class="social-link" href="${YOUTUBE_URL}" target="_blank" rel="noopener noreferrer" aria-label="YouTube — @StudioZIO-plugins">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2.5" y="5.5" width="19" height="13" rx="3.5" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M10.5 9.3v5.4l4.7-2.7-4.7-2.7z" fill="currentColor"/>
+        </svg>
+      </a>`;
+}
+
 function kvrLink(url, label) {
   return `<a class="kvr-link" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${label} — KVR Audio" title="${label} — KVR Audio">
         <svg viewBox="0 0 42 22" aria-hidden="true">
@@ -139,6 +149,8 @@ function chip(label, tone = '') {
 }
 
 const DEFAULT_SOCIAL_IMAGE = '/assets/og/og-studiozio.png';
+
+const FREE_PROMISE = 'No account, no iLok, no email registration. Signed and notarised.';
 
 export const ORGANIZATION_ID = `${HUB_ORIGIN}/#organization`;
 
@@ -269,6 +281,7 @@ function shell({ title, description, canonical, current, content, scripts = '', 
       <div class="footer-brand">
         ${logo()}
         <div class="footer-tools">
+          ${youtubeLink()}
           ${instagramLink()}
           ${kvrLink(KVR_MASTERING_URL, 'Mastering Suite')}
           ${kvrLink(KVR_TEMPO_URL, 'Tempo Delay')}
@@ -534,6 +547,7 @@ function productCard(product) {
         <p>${escapeHtml(product.description)}</p>
         <div class="chip-row">${chips}</div>
         <a class="btn" href="${escapeHtml(product.detailsUrl)}">${detailsLabel}</a>
+        ${product.price === 'Free' ? `<p class="form-hint">${escapeHtml(FREE_PROMISE)}</p>` : ''}
       </div>
     </article>`;
 }
@@ -613,7 +627,7 @@ export function renderHome() {
   return shell({
     title: 'StudioZIO — Audio Plugins Built on Visible Signal Flow',
     description:
-      'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU and VST3, plus the upcoming ZIO MixRack.',
+      'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU and VST3, plus the upcoming StudioZIO MixRack.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
@@ -624,7 +638,7 @@ export function renderHome() {
           <div class="rise">
             <p class="eyebrow">Plug-ins for macOS</p>
             <h1>Tools that behave like <span class="accent">hardware you trust.</span></h1>
-            <p class="lede">Two focused instruments, one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
+            <p class="lede">Three focused instruments, one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
               <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Tempo Delay</a>
@@ -640,7 +654,7 @@ export function renderHome() {
         <div class="section-head">
           <p class="eyebrow">Catalog</p>
           <h2 id="catalog-title">The instruments</h2>
-          <p class="lede">Mastering Suite and Tempo Delay are available now as signed macOS installers. ZIO MixRack is coming soon.</p>
+          <p class="lede">Mastering Suite and Tempo Delay are available now as signed macOS installers. StudioZIO MixRack is coming soon.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
@@ -662,7 +676,7 @@ export function renderHome() {
 export function renderProducts() {
   return shell({
     title: 'Audio plugins for macOS — StudioZIO Products',
-    description: 'Explore StudioZIO Mastering Suite and Tempo Delay for macOS, compare formats and availability, and learn about the upcoming ZIO MixRack.',
+    description: 'Explore StudioZIO Mastering Suite and Tempo Delay for macOS, compare formats and availability, and learn about the upcoming StudioZIO MixRack.',
     canonical: `${HUB_ORIGIN}/products/`,
     current: 'products',
     jsonLd: productsJsonLd(),
@@ -671,7 +685,7 @@ export function renderProducts() {
         <div class="rise">
           <p class="eyebrow">StudioZIO software</p>
           <h1>Audio plugins for macOS</h1>
-          <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming ZIO MixRack.</p>
+          <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming StudioZIO MixRack.</p>
         </div>
       </div>
     </section>
@@ -692,9 +706,9 @@ export function renderProducts() {
 export function renderMixRack() {
   const product = getProduct('mixrack');
   return shell({
-    title: 'ZIO MixRack — Coming Soon | StudioZIO',
+    title: 'StudioZIO MixRack — Coming Soon | StudioZIO',
     description:
-      'ZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
+      'StudioZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
     canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: '',
     scripts: '<script src="/assets/notify.js" defer></script>',
@@ -702,7 +716,7 @@ export function renderMixRack() {
       <div class="shell">
         <div class="rise">
           <p class="eyebrow">StudioZIO software · Coming Soon</p>
-          <h1>ZIO MixRack</h1>
+          <h1>StudioZIO MixRack</h1>
           <p><a href="/products/">All StudioZIO products</a></p>
           <p class="lede">${escapeHtml(product.description)} Build a signal chain from StudioZIO processing modules and shape a mix from one unified interface.</p>
           <div class="chip-row mt-lg">
@@ -716,7 +730,7 @@ export function renderMixRack() {
         <div class="section-head">
           <p class="eyebrow">Planned formats</p>
           <h2 id="mixrack-spec-title">Coming Soon</h2>
-          <p class="lede">ZIO MixRack is in development. Release details will be published when they are available.</p>
+          <p class="lede">StudioZIO MixRack is in development. Release details will be published when they are available.</p>
         </div>
         <dl class="spec-grid">
           <div><dt>Manufacturer</dt><dd>${escapeHtml(product.manufacturer)}</dd></div>
@@ -731,7 +745,7 @@ export function renderMixRack() {
         <div class="section-head">
           <p class="eyebrow">Release notice</p>
           <h2 id="mixrack-notify-title">Hear about it once</h2>
-          <p class="lede">ZIO MixRack has no release date yet. Leave an address and it gets used exactly once — on the day it ships.</p>
+          <p class="lede">StudioZIO MixRack has no release date yet. Leave an address and it gets used exactly once — on the day it ships.</p>
         </div>
         <form class="panel-float notify-form" novalidate="false">
           <div class="form-hp" aria-hidden="true">
@@ -742,7 +756,7 @@ export function renderMixRack() {
           <div class="form-row">
             <label class="form-label" for="notify-email">Email <span class="req">required</span></label>
             <input id="notify-email" name="email" class="field" type="email" required autocomplete="email">
-            <p class="form-hint">One message, when ZIO MixRack is released. Nothing else is sent to it, and it is not used for anything else.</p>
+            <p class="form-hint">One message, when StudioZIO MixRack is released. Nothing else is sent to it, and it is not used for anything else.</p>
           </div>
 
           <p class="form-status" role="status" aria-live="polite"></p>
