@@ -12,7 +12,7 @@ export const products = Object.freeze([
     slug: 'mastering-suite',
     name: 'StudioZIO Mastering Suite',
     shortName: 'Mastering Suite',
-    version: '2.0.0',
+    version: '2.1.1',
     platform: 'macOS',
     /* Stated per product, not assumed. Mastering Suite ships a universal
        binary; Tempo Delay is arm64 only, and a hub that says only "macOS"
@@ -20,19 +20,19 @@ export const products = Object.freeze([
     architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
     compactFormats: 'AU / VST3 / Standalone',
-    filename: 'StudioZIO-Mastering-Suite-2.0.0.pkg',
+    filename: 'StudioZIO-Mastering-Suite-2.1.1.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.0.0-signed-2026.09.06/StudioZIO-Mastering-Suite-2.0.0.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-signed-2026.09.07/StudioZIO-Mastering-Suite-2.1.1.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.0.0-signed-2026.09.06',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.1.1-signed-2026.09.07',
     sha256:
-      '41b186b6aef41b78e821f2f62fbc7d7631a25126f85a0689b39edb0f6acd5218',
+      '68e7abb87458bcf8e331f435c7bec7792d33e67fe5c9a5e834195676c11bad7b',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
     availability: 'Available now',
     description:
-      'A single macOS distribution for StudioZIO mastering software across standalone and plug-in formats.',
+      'Nine mastering stages on one surface, in the order the audio takes, sharing one gain structure and one metering reference.',
     detailsUrl: MASTERING_SUITE_WEBSITE,
     externalDetails: true
   }),
@@ -55,8 +55,8 @@ export const products = Object.freeze([
   }),
   Object.freeze({
     slug: 'mixrack',
-    name: 'ZIO MixRack',
-    shortName: 'ZIO MixRack',
+    name: 'StudioZIO MixRack',
+    shortName: 'StudioZIO MixRack',
     manufacturer: 'StudioZIO',
     platform: 'macOS',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),

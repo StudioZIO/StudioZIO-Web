@@ -60,7 +60,7 @@ const mutations = [
   ['root canonical', data => data.files['products/index.html'] = data.files['products/index.html'].replace(`rel="canonical" href="${origin}/products/"`, `rel="canonical" href="${origin}/"`)],
   ['retired redirect', data => data.hosting.redirects.push({ source: '/products/', destination: '/', permanent: true })],
   ['hidden card', data => data.files['products/index.html'] = data.files['products/index.html'].replace(/<article class="panel product-card">[\s\S]*?<\/article>/, '')],
-  ['structured name drift', data => data.files['products/index.html'] = data.files['products/index.html'].replace('"name": "ZIO MixRack"', '"name": "Unknown"')],
+  ['structured name drift', data => data.files['products/index.html'] = data.files['products/index.html'].replace('"name": "StudioZIO MixRack"', '"name": "Unknown"')],
   ['missing contextual link', data => data.files['contact/index.html'] = data.files['contact/index.html'].replace('href="/products/">product catalogue', 'href="/">product catalogue')]
 ];
 for (const [label, mutate] of mutations) {
