@@ -660,7 +660,7 @@ export function renderHome() {
           <div class="rise">
             <p class="eyebrow">Plug-ins for macOS</p>
             <h1>Tools that behave like <span class="accent">hardware you trust.</span></h1>
-            <p class="lede">Three focused instruments, one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
+            <p class="lede">Two available instruments and one in development, in one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
               <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Tempo Delay</a>
@@ -898,8 +898,8 @@ export function renderNotFound() {
 
 
 /* ---------- technical notes ---------------------------------------------
-   Things the plug-ins assert on their own surface -- that the delivered true
-   peak is not quite the ceiling, that oversampling is set per stage, that
+   Things the plug-ins assert on their own surface -- that EXPECTED TP is a
+   ceiling-derived reference, that oversampling is set per stage, that
    AAX is built but unsigned -- explained somewhere that is not a product
    page. The list lives in notes.mjs and the routes, the sitemap and the
    validator are all derived from it, so they cannot disagree about which
@@ -1105,7 +1105,7 @@ export function renderPress() {
             mastering.releaseUrl
           )}">Tag and checksum</a></dd></div>
         </dl>
-        <p class="mt-sm">Worth mentioning: oversampling is fixed per stage rather than exposed as one global control, and the limiter reports the true peak the render will actually deliver rather than the ceiling that was asked for. Both are explained in the <a href="/notes/">technical notes</a>.</p>
+        <p class="mt-sm">Worth mentioning: oversampling is fixed per stage rather than exposed as one global control, and EXPECTED TP is a ceiling-derived reference rather than a measurement of rendered output. Both are explained in the <a href="/notes/">technical notes</a>.</p>
 
         <h3 class="mt-lg">${escapeHtml(tempo.name)} ${escapeHtml(tempo.version)}</h3>
         <p class="lede">A tempo-synced stereo delay with independent left and right timing. ${escapeHtml(
