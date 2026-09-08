@@ -1136,7 +1136,7 @@ export function renderPress() {
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
           <div><dt>Intel support</dt><dd>Mastering Suite has an Intel build. Tempo Delay does not.</dd></div>
-          <div><dt>Pro Tools</dt><dd>AAX is not signed yet, so neither plug-in loads in a standard Pro Tools installation.</dd></div>
+          <div><dt>Pro Tools</dt><dd>Neither plug-in loads in a standard Pro Tools installation. Tempo Delay has an unsigned AAX build; Mastering Suite has no AAX build.</dd></div>
         </dl>
         <p class="mt-md">The Pro Tools line is the one most often reported wrong, and the reasons are written out in <a href="/notes/where-aax-support-stands/">a note on where that stands</a>.</p>
       </div>

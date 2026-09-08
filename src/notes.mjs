@@ -102,41 +102,48 @@ export const notes = Object.freeze([
     heading: 'Where AAX support stands',
     title: 'Where AAX support stands',
     description:
-      'The Pro Tools build compiles, passes Avid\'s validator and loads in the developer build. What is missing is a signature, and that is paperwork, not engineering.',
+      'Tempo Delay has an AAX build that runs. It is unsigned, so Pro Tools will not load it, and one validator test still fails. Here is exactly where it stands.',
     standfirst:
-      'The engineering is finished. What is left is three agreements and a wait, none of which are code.',
+      'One plug-in has an AAX build, one does not, and the remaining distance is a signing chain plus one thing that is still code.',
     body: Object.freeze([
       Object.freeze({
-        h: 'What works',
+        h: 'What exists',
         p: Object.freeze([
-          'The most common question about Mastering Suite is whether it runs in Pro Tools. The honest answer has two halves, and the interesting half is not the one people expect.',
-          'There is an arm64 AAX build. It compiles against AAX SDK 2.9.0 with JUCE, it exposes 33 parameters across 6 effect variants, and it passes Avid\'s AAX Validator 2024.6.0.',
-          'It also loads and runs. Pro Tools has a developer build — a separate application, marked for development only with saving disabled — which will host unsigned plug-ins for exactly this purpose. In it, Mastering Suite works. So the plug-in is not theoretical, and the remaining work is not DSP.'
+          'The most common question here is whether these plug-ins run in Pro Tools. The answer is different for each of them, and stating it precisely matters more than stating it briefly.',
+          'Tempo Delay has an arm64 AAX build. It compiles against AAX SDK 2.9.0 with JUCE, and Avid\'s AAX Plug-In Validator 2024.6.0 instantiated six effect variants from it — three realtime, three AudioSuite — enumerating all 33 parameters, and ran three hundred seconds of continuous parameter traversal without a crash.',
+          'Mastering Suite does not have an AAX build. Not an unsigned one, not a failing one: the AAX work so far is Tempo Delay only. Anything you read that says otherwise, including an earlier version of this page, was wrong.'
         ])
       }),
       Object.freeze({
-        h: 'What is missing',
+        h: 'What the validator actually said',
         p: Object.freeze([
-          'A signature. Every AAX plug-in that loads in a normal Pro Tools installation carries a cryptographic signature from PACE, the company that provides Avid\'s plug-in security. Without it Pro Tools refuses to load the binary, and there is no user-side setting that changes this. It is not a warning that can be clicked through.',
-          'Getting to a signature means three things, and none of them are code. Commercial AAX developer status with Avid, which is distinct from the developer programme that grants SDK access and test licences: it is the agreement that makes you a party allowed to ship.',
-          'A PACE signing licence, held on a physical iLok. The signing tool authenticates against an iLok 3 USB key and cloud licences do not cover it. The key has been ordered.',
-          'And a per-product identifier: every shipping AAX product carries a unique code issued for it, so that hosts and the security layer can tell products apart across versions and vendors.',
-          'Each is a form, an agreement and a wait. Together they are the entire remaining distance between a build that works and a build you can install.'
+          '"Passes the validator" would be an overstatement, so here is the real result. Every functional test passed on all six variants. One test did not: test.page_table.load failed on three of six, with the three AudioSuite variants correctly skipping as offline-only.',
+          'That is a real gap rather than a tooling artefact. An AAX page table maps parameters onto Avid control surfaces, and this build ships none — which is why the S6 feature score reads zero per cent for page tables. It does not stop the plug-in loading or running. It means no control-surface mapping on an S6 or similar, and closing it is code, not paperwork.',
+          'One more thing worth being exact about: the bundle the validator ran against is unwrapped and unsigned. That run says the plug-in is structurally sound as AAX. It says nothing about whether Pro Tools would load it.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The signing chain',
+        p: Object.freeze([
+          'Every AAX plug-in that loads in a normal Pro Tools installation is wrapped by PACE, the company that provides Avid\'s plug-in security. Without that wrap Pro Tools refuses the binary, and there is no user-side setting that changes it. It is not a warning that can be clicked through.',
+          'Three things stand between a build and that wrap, and none of them are code. Commercial AAX developer status with Avid, which is a different thing from the developer programme that grants SDK access and test licences: it is the agreement that makes you a party allowed to ship.',
+          'A PACE signing licence on an iLok account, with PACE\'s wraptool — which is separate tooling, not part of the AAX Developer Tools download, and only becomes available after Avid approves you.',
+          'And a per-product wrapping identifier, issued by Avid and PACE for that one product, so hosts and the security layer can tell products apart across versions and vendors.'
         ])
       }),
       Object.freeze({
         h: 'Why there is no date',
         p: Object.freeze([
-          'Because the timeline is not mine. Each step depends on a response from a party who owes me nothing and has their own queue. Naming a month would mean inventing a commitment on someone else\'s behalf, and a missed date announced in advance does more damage than no date at all.',
-          'What can be said: the engineering is done, the developer licences are in place and installed, the iLok is ordered, and the applications are in. When it is signed, it ships, and it will be free like everything else.'
+          'Because the timeline is not mine. Each step waits on a response from a party who owes me nothing and has their own queue. Naming a month would mean inventing a commitment on someone else\'s behalf, and a date announced and missed does more damage than no date at all.',
+          'What can be said is what is true today: one plug-in has a build that runs and is not wrapped, one plug-in has no AAX build at all, the page table is outstanding, and the agreements are the long pole. When it ships it will be free, like everything else here.'
         ])
       }),
       Object.freeze({
         h: 'What to do until then',
         p: Object.freeze([
           'If you are on Pro Tools, nothing here helps you yet, and I would rather say so than let you download an installer and find out afterwards.',
-          'If you are on Logic, Live, Reaper, Studio One, Bitwig, Cubase or anything else that hosts AU or VST3 on macOS, the plug-in is finished and free today. The AAX work adds a host; it does not change the product.',
-          'And if you are a developer reading this because you are about to walk the same path: the engineering was never the hard part. Budget your time for the paperwork.'
+          'If you are on Logic, Live, Reaper, Studio One, Bitwig, Cubase or anything else that hosts AU or VST3 on macOS, both plug-ins are finished and free today. The AAX work adds a host; it does not change the product.',
+          'And if you are a developer about to walk the same path: budget for the paperwork, and do not assume a clean validator run means you are nearly done. Read the failures.'
         ])
       })
     ])
@@ -171,7 +178,7 @@ export const notes = Object.freeze([
         p: Object.freeze([
           'macOS only. There is no build for any other platform and no timeline for one. If that is a problem, it is better to find out here than after a download.',
           'Tempo Delay is Apple Silicon only. Mastering Suite is a universal binary and runs on Intel Macs; Tempo Delay does not.',
-          'AAX is not signed yet. The build compiles, passes Avid\'s validator and loads in the Pro Tools developer build, but it will not load in a normal Pro Tools installation, because that requires a signing chain that is a separate commercial process. It is in progress and there is no date.',
+          'No Pro Tools support yet, and it is further off than one sentence can carry. Tempo Delay has an unsigned AAX build that runs and passes every functional test in Avid\'s validator except its control-surface page table; Mastering Suite has no AAX build at all. Neither will load in a normal Pro Tools installation, because that needs a PACE signing chain that is a separate commercial process. There is no date, and the reasons are in a note of their own.',
           'Stating these plainly costs some downloads. It costs fewer than a bad first five minutes does, and a free plug-in has nothing to sell except whether you trust what it tells you.'
         ])
       }),
