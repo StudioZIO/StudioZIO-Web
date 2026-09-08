@@ -8,12 +8,12 @@
 export const notes = Object.freeze([
   Object.freeze({
     slug: 'expected-true-peak',
-    heading: 'Why the ceiling you set is not quite the peak you get',
-    title: 'Why your ceiling is not quite your peak',
+    heading: 'What EXPECTED TP tells you',
+    title: 'EXPECTED TP is not an output measurement',
     description:
-      'Set a limiter to -1.00 dBTP and the render measures -1.01. That gap is not a fault, and the reason for it is the whole job of a true-peak limiter.',
+      'EXPECTED TP is a value derived from the ceiling setting, not a measurement of the rendered audio. Verify delivery with an output meter.',
     standfirst:
-      'A hundredth of a decibel nobody can hear, and the reason it is there is the same reason a master survives a codec.',
+      'A useful ceiling-derived reference, provided it is not confused with a true-peak measurement of your audio.',
     body: Object.freeze([
       Object.freeze({
         h: 'Sample peak is not the peak',
@@ -30,25 +30,24 @@ export const notes = Object.freeze([
         ])
       }),
       Object.freeze({
-        h: 'Where the hundredth of a decibel comes from',
+        h: 'A reference, not a reading',
         p: Object.freeze([
-          'The limiter has to guarantee the reconstructed waveform never exceeds the ceiling you set, which means predicting where the reconstructed peaks will land and reducing gain before they arrive. That is what the lookahead is for.',
-          'Prediction is not exact. The limiter works on a finite-length reconstruction with a finite-length filter, and the residual is systematic rather than random: the delivered peak lands a hair away from the target, by an amount the algorithm can compute in advance.',
-          'So there are two honest options. Pretend the ceiling is exact and let you find the discrepancy in an analyser. Or say what will actually come out.'
+          'EXPECTED TP is calculated from the ceiling setting with a fixed 0.01 dB allowance. It helps make that configured relationship visible in the interface.',
+          'It does not inspect the music passing through the plug-in. It cannot replace a meter on the actual output, and it does not predict or guarantee the measured true peak of a rendered, encoded, or exported file.'
         ])
       }),
       Object.freeze({
         h: 'The readout',
         p: Object.freeze([
-          'Mastering Suite shows an EXPECTED TP figure beside the ceiling. Set -1.00 dBTP and it reads approximately -1.01 dBTP, which is what the render will measure.',
-          'It is a readout, not a parameter: there is nothing to turn, and switching the display off would produce a byte-identical file. It is a prediction, not a correction: the plug-in is not nudging the ceiling to make a round number come out. And it exists because the alternative is worse. A plug-in that displays -1.00 and delivers -1.01 has not done anything wrong to the audio. It has declined to tell you something it knew.'
+          'Mastering Suite shows an EXPECTED TP figure beside the ceiling. It is derived from the ceiling setting with a fixed 0.01 dB allowance; it is not a measurement of the audio output and it does not guarantee the true peak of a rendered, encoded, or exported file.',
+          'It is a readout, not a parameter: there is nothing to turn, and switching the display off produces a byte-identical file. It is not a correction or an output meter. Use a true-peak meter on the rendered file when a delivery specification requires a measured limit.'
         ])
       }),
       Object.freeze({
         h: 'What to do with it',
         p: Object.freeze([
-          'For streaming delivery the practical advice has not changed: leave real headroom. Platforms transcode to lossy formats, and lossy encoding moves peaks in a direction nobody can predict from the source file. A ceiling of -1.0 dBTP is a common floor for a reason, and going further costs nothing that matters.',
-          'What the readout gives you is not a new setting to chase. It is the ability to stop wondering. When a delivery spec says the file must not exceed -1.0 dBTP and your analyser says -1.01, you know that is the limiter doing what it said it would, and not a sign that something in the chain is lying to you.'
+          'For streaming delivery the practical advice has not changed: leave real headroom. Platforms transcode to lossy formats, and lossy encoding can move peaks in ways that cannot be inferred from the source file. A ceiling of -1.0 dBTP is a common starting point.',
+          'EXPECTED TP is not a new target to chase. Treat it as a clear indication of the configured ceiling relationship, then use a true-peak meter on the actual output and exported file when compliance matters.'
         ])
       })
     ])
