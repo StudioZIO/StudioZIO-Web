@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { products } from '../src/catalog.mjs';
+import { notes } from '../src/notes.mjs';
 
 const origin = 'https://studiozio.vercel.app';
-const paths = ['index.html', 'products/index.html', 'products/mixrack/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', '404.html', 'sitemap.xml'];
+const paths = ['index.html', 'products/index.html', 'products/mixrack/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml'];
 const baseline = {
   files: Object.fromEntries(paths.map(path => [path, readFileSync(new URL(`../dist/${path}`, import.meta.url), 'utf8')])),
   hosting: JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
@@ -16,7 +17,12 @@ function verify({ files, hosting }) {
   assert.equal(hosting.trailingSlash, true);
   assert.ok(!hosting.redirects.some(({ source }) => ['/products', '/products/'].includes(source)), 'Catalogue redirected');
   const urls = [...files['sitemap.xml'].matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-  assert.deepEqual(urls, ['/', '/products/', '/products/mixrack/', '/contact/', '/notes/', '/notes/expected-true-peak/', '/notes/oversampling-is-not-one-switch/'].map(path => origin + path));
+  /* Built from the same note list the routes are, so adding a note does not
+     need this line edited -- but the surrounding order is still asserted
+     literally, because a note silently dropping out of the sitemap is exactly
+     the regression this file exists to catch. */
+  const expectedUrls = ['/', '/products/', '/products/mixrack/', '/contact/', '/notes/', ...notes.map(note => `/notes/${note.slug}/`), '/press/'];
+  assert.deepEqual(urls, expectedUrls.map(path => origin + path));
   const blocks = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   assert.equal(blocks.length, 1);
   const collection = JSON.parse(blocks[0][1])['@graph'].find(node => node['@type'] === 'CollectionPage');

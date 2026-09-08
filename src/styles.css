@@ -135,6 +135,29 @@ p { margin: 0 0 1rem; max-width: var(--measure); }
 p:last-child { margin-bottom: 0; }
 
 a { color: inherit; text-decoration: none; }
+/* ...except in body copy. `color: inherit` with no underline is right for the
+   navigation, the cards and the buttons, which all carry their own
+   affordance; inside a sentence it left links completely indistinguishable
+   from the text around them -- same colour, same weight, no underline -- so
+   the contact page's link to the catalogue, and every cross-link between the
+   notes, were invisible to a reader and only worked for a crawler. Scoped to
+   paragraphs, list items and definition values so nothing that already looks
+   like a control is touched. */
+main p a:not(.btn),
+main li a:not(.btn),
+main dd a:not(.btn) {
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in oklch, var(--primary-text) 45%, transparent);
+  transition: text-decoration-color var(--dur-base) var(--ease-out);
+}
+main p a:not(.btn):hover,
+main li a:not(.btn):hover,
+main dd a:not(.btn):hover {
+  text-decoration-color: currentColor;
+}
 img, svg { display: block; max-width: 100%; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 

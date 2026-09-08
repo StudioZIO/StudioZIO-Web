@@ -2,6 +2,7 @@ import {
   getProduct,
   products,
   MASTERING_SUITE_WEBSITE,
+  RELEASE_REPOSITORY_URL,
   TEMPO_DELAY_WEBSITE
 } from './catalog.mjs';
 import { mediaSeconds } from './media.mjs';
@@ -135,8 +136,16 @@ const NAVIGATION = [
   ['Contact', '/contact/', 'contact']
 ];
 
-function navList(current) {
-  return NAVIGATION.map(
+/* The press kit sits in the footer rather than the header. Journalists go
+   looking for it and customers never do, and the header already carries two
+   off-site product links. A footer entry still puts a link to the page on
+   every page of the site, which is the part the crawler needs -- the three
+   Mastering Suite pages that Search Console reports as "discovered, not
+   indexed" are all pages nothing linked to. */
+const FOOTER_LINKS = [...NAVIGATION, ['Press kit', '/press/', 'press']];
+
+function navList(current, entries = NAVIGATION) {
+  return entries.map(
     ([label, href, id]) =>
       `<li><a href="${escapeHtml(href)}"${
         current === id ? ' aria-current="page"' : ''
@@ -290,7 +299,7 @@ function shell({ title, description, canonical, current, content, scripts = '', 
         </div>
       </div>
       <nav aria-label="Footer">
-        <ul>${navList('')}</ul>
+        <ul>${navList(current, FOOTER_LINKS)}</ul>
       </nav>
       <p class="copy">© 2026 StudioZIO</p>
     </div>
@@ -878,14 +887,15 @@ export function renderNotFound() {
 
 
 /* ---------- technical notes ---------------------------------------------
-   Two things a plug-in asserts on its own surface -- that the delivered true
-   peak is not quite the ceiling, and that oversampling is set per stage --
-   explained somewhere that is not a product page. The list lives in
-   notes.mjs so the routes, the sitemap and the validator cannot disagree
-   about which notes exist. */
+   Things the plug-ins assert on their own surface -- that the delivered true
+   peak is not quite the ceiling, that oversampling is set per stage, that
+   AAX is built but unsigned -- explained somewhere that is not a product
+   page. The list lives in notes.mjs and the routes, the sitemap and the
+   validator are all derived from it, so they cannot disagree about which
+   notes exist. */
 
 function noteCard(note) {
-  return `<article class="card">
+  return `<article class="panel module-card">
           <h3><a href="/notes/${escapeHtml(note.slug)}/">${escapeHtml(note.heading)}</a></h3>
           <p>${escapeHtml(note.standfirst)}</p>
         </article>`;
@@ -895,7 +905,7 @@ export function renderNotes() {
   return shell({
     title: 'Technical notes — StudioZIO',
     description:
-      'Short technical notes from StudioZIO on true-peak limiting and per-stage oversampling, explaining what the plug-ins report and why.',
+      'Technical notes from StudioZIO on true-peak limiting, per-stage oversampling and AAX signing, explaining what the plug-ins report and why.',
     canonical: `${HUB_ORIGIN}/notes/`,
     current: 'notes',
     content: `<section class="hero tech-grid">
@@ -951,5 +961,200 @@ export function renderNote(slug) {
       </div>
     </section>
     ${sections}`
+  });
+}
+
+/* ---------- press kit ---------------------------------------------------
+   Writers who decide to cover a free plug-in need four things in one place:
+   a description they can quote without rewriting, the facts that are easy to
+   get wrong, images they are allowed to use, and a name to contact. Sending
+   them to a product page instead means the piece gets written from whatever
+   the product page happens to say, including the parts that are marketing.
+   Every figure here is read from the catalogue, so a version bump cannot
+   leave a stale number on the one page the press reads. */
+
+const pressJsonLd = () =>
+  jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'AboutPage',
+      '@id': `${HUB_ORIGIN}/press/#page`,
+      url: `${HUB_ORIGIN}/press/`,
+      name: 'StudioZIO press kit',
+      inLanguage: 'en',
+      publisher: { '@id': ORGANIZATION_ID },
+      about: { '@id': ORGANIZATION_ID }
+    }
+  ]);
+
+const PRESS_ASSETS = Object.freeze([
+  Object.freeze({
+    href: '/assets/favicon.svg',
+    label: 'StudioZIO mark',
+    detail: 'SVG, scalable, cyan on near-black'
+  }),
+  Object.freeze({
+    href: '/assets/media/mastering-suite-ui.webp',
+    label: 'Mastering Suite interface',
+    detail: 'WebP, shipping build at default settings'
+  }),
+  Object.freeze({
+    href: '/assets/media/tempo-delay-ui.webp',
+    label: 'Tempo Delay interface',
+    detail: 'WebP, shipping build at default settings'
+  }),
+  Object.freeze({
+    href: '/assets/og/og-studiozio.png',
+    label: 'StudioZIO share card',
+    detail: 'PNG, 1200 x 630'
+  }),
+  Object.freeze({
+    href: '/assets/og/og-mixrack.png',
+    label: 'MixRack share card',
+    detail: 'PNG, 1200 x 630'
+  })
+]);
+
+function pressAsset({ href, label, detail }) {
+  return `<div><dt>${escapeHtml(label)}</dt><dd><a href="${escapeHtml(href)}">${escapeHtml(
+    detail
+  )}</a></dd></div>`;
+}
+
+export function renderPress() {
+  const mastering = getProduct('mastering-suite');
+  const tempo = getProduct('tempo-delay');
+  const mixRack = getProduct('mixrack');
+
+  return shell({
+    title: 'Press kit and brand assets — StudioZIO',
+    description:
+      'Quotable descriptions, product facts, logo and interface images for StudioZIO Mastering Suite and Tempo Delay. Free to use in reviews and articles.',
+    canonical: `${HUB_ORIGIN}/press/`,
+    current: 'press',
+    jsonLd: pressJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Press</p>
+          <h1>Press kit</h1>
+          <p class="lede">Everything needed to write about, review or feature StudioZIO plug-ins. The assets on this page may be used in reviews, roundups, videos and articles without asking first.</p>
+          <p>Press enquiries: <a href="mailto:studiozioplugins@gmail.com">studiozioplugins@gmail.com</a>. For a bug or a support question, use the <a href="/contact/">contact form</a> instead.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="press-copy">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Descriptions</p>
+          <h2 id="press-copy">Written to be quoted directly</h2>
+        </div>
+        <div class="panel module-card">
+          <p class="eyebrow eyebrow--muted">One line</p>
+          <p class="lede">StudioZIO makes free macOS audio plug-ins laid out in the order the audio takes, with the measurement always visible and no account or registration required.</p>
+        </div>
+        <div class="panel module-card mt-md">
+          <p class="eyebrow eyebrow--muted">Fifty words</p>
+          <p class="lede">StudioZIO is an independent one-person developer making free audio plug-ins for macOS. Mastering Suite puts nine mastering stages on a single surface in signal order, with the meter column always visible. Tempo Delay gives the left and right delay lines fully independent timing. Both are signed, notarised, and need no registration.</p>
+        </div>
+        <div class="panel module-card mt-md">
+          <p class="eyebrow eyebrow--muted">One hundred words</p>
+          <p class="lede">StudioZIO is an independent one-person developer making free audio plug-ins for macOS, built around the idea that measurement is not a separate product. StudioZIO Mastering Suite ${escapeHtml(
+            mastering.version
+          )} places nine mastering stages on one surface in the order the audio takes &mdash; mid/side, saturation, Pink Match, glue compression, maximizer, tone EQ, clipper, true-peak limiter and output &mdash; with loudness, true peak, crest factor and correlation visible throughout. StudioZIO Tempo Delay ${escapeHtml(
+            tempo.version
+          )} is a tempo-synced stereo delay whose two sides run fully independent buffers and note divisions. Both install from a signed, notarised package with no account, no iLok and no email registration.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="press-products">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Products</p>
+          <h2 id="press-products">The catalogue, with the numbers</h2>
+        </div>
+
+        <h3>${escapeHtml(mastering.name)} ${escapeHtml(mastering.version)}</h3>
+        <p class="lede">A nine-stage mastering console on a single surface. ${escapeHtml(
+          mastering.architecture
+        )}, macOS 11 or newer. ${escapeHtml(mastering.price)}.</p>
+        <dl class="spec-grid mt-sm">
+          <div><dt>Formats</dt><dd>${escapeHtml(formatList(mastering.formats))}</dd></div>
+          <div><dt>Installer</dt><dd><code>${escapeHtml(mastering.filename)}</code></dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(mastering.sha256)}</dd></div>
+          <div><dt>Product site</dt><dd><a href="${escapeHtml(
+            MASTERING_SUITE_WEBSITE
+          )}">studioziomasteringsuite.vercel.app</a></dd></div>
+          <div><dt>KVR listing</dt><dd><a href="${escapeHtml(
+            KVR_MASTERING_URL
+          )}">kvraudio.com</a></dd></div>
+          <div><dt>Release</dt><dd><a href="${escapeHtml(
+            mastering.releaseUrl
+          )}">Tag and checksum</a></dd></div>
+        </dl>
+        <p class="mt-sm">Worth mentioning: oversampling is fixed per stage rather than exposed as one global control, and the limiter reports the true peak the render will actually deliver rather than the ceiling that was asked for. Both are explained in the <a href="/notes/">technical notes</a>.</p>
+
+        <h3 class="mt-lg">${escapeHtml(tempo.name)} ${escapeHtml(tempo.version)}</h3>
+        <p class="lede">A tempo-synced stereo delay with independent left and right timing. ${escapeHtml(
+          tempo.architecture
+        )}, macOS 12 or newer. ${escapeHtml(tempo.price)}.</p>
+        <dl class="spec-grid mt-sm">
+          <div><dt>Formats</dt><dd>${escapeHtml(formatList(tempo.formats))}</dd></div>
+          <div><dt>Parameters</dt><dd>32 automatable, stable identifiers</dd></div>
+          <div><dt>Reported latency</dt><dd>0 samples</dd></div>
+          <div><dt>Product site</dt><dd><a href="${escapeHtml(
+            TEMPO_DELAY_WEBSITE
+          )}">tempodelay.tech</a></dd></div>
+          <div><dt>KVR listing</dt><dd><a href="${escapeHtml(
+            KVR_TEMPO_URL
+          )}">kvraudio.com</a></dd></div>
+          <div><dt>Installers</dt><dd><a href="${escapeHtml(
+            RELEASE_REPOSITORY_URL
+          )}">Releases and checksums</a></dd></div>
+        </dl>
+        <p class="mt-sm">Worth mentioning: each side has its own buffer and its own note division, so the two channels can sit on different rhythmic values against one tempo.</p>
+
+        <h3 class="mt-lg">${escapeHtml(mixRack.name)}</h3>
+        <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
+          mixRack.availability
+        )} &mdash; no date and nothing to download. Listed for completeness rather than as an announcement; there is a <a href="/products/mixrack/">holding page</a> and nothing more.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="press-facts">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Accuracy</p>
+          <h2 id="press-facts">Facts worth getting right</h2>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Developer</dt><dd>One person, not a company. Credit: Mert Erkan.</dd></div>
+          <div><dt>Price</dt><dd>Free permanently. Not a trial, not time-limited, not feature-locked, not a reduced version of a paid tier.</dd></div>
+          <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
+          <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
+          <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
+          <div><dt>Intel support</dt><dd>Mastering Suite has an Intel build. Tempo Delay does not.</dd></div>
+          <div><dt>Pro Tools</dt><dd>Neither plug-in loads in a standard Pro Tools installation. Tempo Delay has an unsigned AAX build; Mastering Suite has no AAX build.</dd></div>
+        </dl>
+        <p class="mt-md">The Pro Tools line is the one most often reported wrong, and the reasons are written out in <a href="/notes/where-aax-support-stands/">a note on where that stands</a>.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="press-assets">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Assets</p>
+          <h2 id="press-assets">Images</h2>
+        </div>
+        <p class="lede">Screenshots are of the shipping product at default settings, unretouched.</p>
+        <dl class="spec-grid mt-sm">${PRESS_ASSETS.map(pressAsset).join('')}</dl>
+        <p class="mt-md">Video: the <a href="https://youtu.be/K-OypjVpx-E">Mastering Suite overview</a> runs 1:05 and may be embedded. More on the <a href="https://www.youtube.com/@StudioZIO-plugins">StudioZIO channel</a>.</p>
+        <p>Elsewhere: the <a href="https://www.kvraudio.com/developer/studiozio">KVR developer page</a> carries release notes and development posts, and <a href="${escapeHtml(
+          INSTAGRAM_URL
+        )}">Instagram</a> carries the shorter material.</p>
+      </div>
+    </section>`
   });
 }

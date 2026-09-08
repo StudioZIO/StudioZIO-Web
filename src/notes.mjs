@@ -96,6 +96,109 @@ export const notes = Object.freeze([
         ])
       })
     ])
+  }),
+  Object.freeze({
+    slug: 'where-aax-support-stands',
+    heading: 'Where AAX support stands',
+    title: 'Where AAX support stands',
+    description:
+      'Tempo Delay has an AAX build that runs. It is unsigned, so Pro Tools will not load it, and one validator test still fails. Here is exactly where it stands.',
+    standfirst:
+      'One plug-in has an AAX build, one does not, and the remaining distance is a signing chain plus one thing that is still code.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What exists',
+        p: Object.freeze([
+          'The most common question here is whether these plug-ins run in Pro Tools. The answer is different for each of them, and stating it precisely matters more than stating it briefly.',
+          'Tempo Delay has an arm64 AAX build. It compiles against AAX SDK 2.9.0 with JUCE, and Avid\'s AAX Plug-In Validator 2024.6.0 instantiated six effect variants from it — three realtime, three AudioSuite — enumerating all 33 parameters, and ran three hundred seconds of continuous parameter traversal without a crash.',
+          'Mastering Suite does not have an AAX build. Not an unsigned one, not a failing one: the AAX work so far is Tempo Delay only. Anything you read that says otherwise, including an earlier version of this page, was wrong.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What the validator actually said',
+        p: Object.freeze([
+          '"Passes the validator" would be an overstatement, so here is the real result. Every functional test passed on all six variants. One test did not: test.page_table.load failed on three of six, with the three AudioSuite variants correctly skipping as offline-only.',
+          'That is a real gap rather than a tooling artefact. An AAX page table maps parameters onto Avid control surfaces, and this build ships none — which is why the S6 feature score reads zero per cent for page tables. It does not stop the plug-in loading or running. It means no control-surface mapping on an S6 or similar, and closing it is code, not paperwork.',
+          'One more thing worth being exact about: the bundle the validator ran against is unwrapped and unsigned. That run says the plug-in is structurally sound as AAX. It says nothing about whether Pro Tools would load it.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The signing chain',
+        p: Object.freeze([
+          'Every AAX plug-in that loads in a normal Pro Tools installation is wrapped by PACE, the company that provides Avid\'s plug-in security. Without that wrap Pro Tools refuses the binary, and there is no user-side setting that changes it. It is not a warning that can be clicked through.',
+          'Three things stand between a build and that wrap, and none of them are code. Commercial AAX developer status with Avid, which is a different thing from the developer programme that grants SDK access and test licences: it is the agreement that makes you a party allowed to ship.',
+          'A PACE signing licence on an iLok account, with PACE\'s wraptool — which is separate tooling, not part of the AAX Developer Tools download, and only becomes available after Avid approves you.',
+          'And a per-product wrapping identifier, issued by Avid and PACE for that one product, so hosts and the security layer can tell products apart across versions and vendors.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Why there is no date',
+        p: Object.freeze([
+          'Because the timeline is not mine. Each step waits on a response from a party who owes me nothing and has their own queue. Naming a month would mean inventing a commitment on someone else\'s behalf, and a date announced and missed does more damage than no date at all.',
+          'What can be said is what is true today: one plug-in has a build that runs and is not wrapped, one plug-in has no AAX build at all, the page table is outstanding, and the agreements are the long pole. When it ships it will be free, like everything else here.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What to do until then',
+        p: Object.freeze([
+          'If you are on Pro Tools, nothing here helps you yet, and I would rather say so than let you download an installer and find out afterwards.',
+          'If you are on Logic, Live, Reaper, Studio One, Bitwig, Cubase or anything else that hosts AU or VST3 on macOS, both plug-ins are finished and free today. The AAX work adds a host; it does not change the product.',
+          'And if you are a developer about to walk the same path: budget for the paperwork, and do not assume a clean validator run means you are nearly done. Read the failures.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'what-studiozio-is-building',
+    heading: 'What StudioZIO is building',
+    title: 'What these plug-ins are and are not',
+    description:
+      'Three focused macOS plug-ins, free, with no account and no registration, and the reasoning behind the way each one is laid out and what it refuses to hide.',
+    standfirst:
+      'One person, two finished plug-ins and a third in development, with the limits stated before the download rather than after it.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'The shared idea',
+        p: Object.freeze([
+          'Every StudioZIO plug-in is laid out in the order the audio takes. That sounds like an interface preference. It is closer to an argument.',
+          'Most processing chains are presented as a set of features — a panel of modules, a rack of slots, tabs across the top — and the order they run in is either hidden, or configurable, or simply not the point. The result is that you can operate the thing for months without being able to say what happens first.',
+          'Mastering Suite puts the nine stages on a rail in signal order: mid/side engine, saturation, Pink Match, VCA glue compressor, maximizer, three-band tone EQ, clipper, lookahead true-peak limiter, output. One stage is open at a time. The rail does not reorder, because the order is the design. When something sounds wrong, knowing where you are in the chain is most of the diagnosis.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Measurement is not a separate product',
+        p: Object.freeze([
+          'The meter column stays visible no matter which stage you have open: integrated and short-term loudness, loudness range, crest factor, true peak per channel, stereo correlation.',
+          'This is not a feature-list item, it is a position about how these tools should work. The industry norm is that you process in one plug-in and measure in another, which means the moment you make a change and the moment you find out what it did are separated by a window switch. Putting the measurement next to the control is not generosity; it is the only arrangement in which you can learn what the control does.',
+          'The same principle produces the smaller decisions. The expected true-peak figure beside the limiter ceiling, which reports the peak the render will really deliver rather than the one you asked for. The status bar reporting the oversampling ratio that is running rather than the one that was selected. In both cases the plug-in knows something, and the choice is whether to say it.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Naming the limits',
+        p: Object.freeze([
+          'macOS only. There is no build for any other platform and no timeline for one. If that is a problem, it is better to find out here than after a download.',
+          'Tempo Delay is Apple Silicon only. Mastering Suite is a universal binary and runs on Intel Macs; Tempo Delay does not.',
+          'No Pro Tools support yet, and it is further off than one sentence can carry. Tempo Delay has an unsigned AAX build that runs and passes every functional test in Avid\'s validator except its control-surface page table; Mastering Suite has no AAX build at all. Neither will load in a normal Pro Tools installation, because that needs a PACE signing chain that is a separate commercial process. There is no date, and the reasons are in a note of their own.',
+          'Stating these plainly costs some downloads. It costs fewer than a bad first five minutes does, and a free plug-in has nothing to sell except whether you trust what it tells you.'
+        ])
+      }),
+      Object.freeze({
+        h: 'No account, no iLok, no email registration',
+        p: Object.freeze([
+          'The installer is a signed and notarised package. You download it, you run it, the plug-in is there. Nothing to activate, no address to hand over, no licence manager, nothing that expires or phones home.',
+          'Formats are Audio Unit, VST3 and Standalone for both products.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The three',
+        p: Object.freeze([
+          'StudioZIO Mastering Suite 2.1.1 is the nine-stage mastering console described above. Universal binary, macOS 11 or newer.',
+          'StudioZIO Tempo Delay 4.0.1 is a tempo-synced stereo delay whose left and right delay lines are genuinely independent, each with its own buffer and its own note division, so the two sides can sit on different rhythmic values against one tempo. Ping-pong routing, filters and soft-clip saturation inside the feedback loop, three character voicings, LFO modulation, ducking, mid/side width. 32 automatable parameters with stable identifiers, and 0 samples of reported latency. Apple Silicon only, macOS 12 or newer.',
+          'StudioZIO MixRack is a modular mixing environment bringing essential processing into one focused rack. In development, with no release date and nothing to download. It is named here because it exists, not because it is close.',
+          'Three focused instruments, not a bundle. Each one does a job you can name.'
+        ])
+      })
+    ])
   })
 ]);
 
