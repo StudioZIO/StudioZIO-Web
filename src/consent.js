@@ -17,7 +17,7 @@
 
   var COPY = {
     label: 'Cookie preference',
-    text: 'This site uses Google Analytics to count visits. No advertising, no profiling.',
+    text: 'This site uses Google Analytics to count visits and to measure which ads bring people here. You are not added to an advertising audience, and no profile is built about you.',
     accept: 'Accept',
     decline: 'Decline',
     reopen: 'Cookies'
