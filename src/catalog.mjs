@@ -7,6 +7,13 @@ export const MASTERING_SUITE_WEBSITE =
 export const TEMPO_DELAY_WEBSITE =
   'https://www.tempodelay.tech/';
 
+/* The artist surface. Not a product, which is why it appears in the footer
+   list and never in the header — but it is one of the four surfaces, and the
+   Organization graph here names ZIO as founder by @id. A reference that
+   nothing links to is a claim no crawler can follow, and until now this one
+   had no link anywhere on the site. */
+export const ZIO_WEBSITE = 'https://zio-audio.vercel.app/';
+
 export const products = Object.freeze([
   Object.freeze({
     slug: 'mastering-suite',
