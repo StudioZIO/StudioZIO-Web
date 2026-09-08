@@ -3,7 +3,8 @@ import {
   products,
   MASTERING_SUITE_WEBSITE,
   RELEASE_REPOSITORY_URL,
-  TEMPO_DELAY_WEBSITE
+  TEMPO_DELAY_WEBSITE,
+  ZIO_WEBSITE
 } from './catalog.mjs';
 import { mediaSeconds } from './media.mjs';
 import { notes, getNote } from './notes.mjs';
@@ -142,7 +143,17 @@ const NAVIGATION = [
    every page of the site, which is the part the crawler needs -- the three
    Mastering Suite pages that Search Console reports as "discovered, not
    indexed" are all pages nothing linked to. */
-const FOOTER_LINKS = [...NAVIGATION, ['Press kit', '/press/', 'press']];
+/* The footer list is the estate's shared index, and it is the same eight
+   entries on every surface so that any menu is reachable from any site. The
+   header stays six: the press kit and the artist site both belong here rather
+   than up there, for the reasons above and below. Changing this list means
+   changing it on all four surfaces in the same commit — a footer that differs
+   between properties is how a page ends up with nothing linking to it. */
+const FOOTER_LINKS = [
+  ...NAVIGATION,
+  ['Press kit', '/press/', 'press'],
+  ['ZIO', ZIO_WEBSITE, 'zio']
+];
 
 function navList(current, entries = NAVIGATION) {
   return entries.map(
