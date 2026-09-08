@@ -1,0 +1,38 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # There are no dependencies, so there is nothing to install. The step is
+      # here rather than omitted so that adding one later does not silently
+      # produce a build that never installed it.
+      - name: Install
+        run: npm ci --ignore-scripts || npm install --ignore-scripts
+
+      - name: Check
+        run: npm run check
+
+      # Separate from `check` on purpose. This one downloads the release
+      # assets, so it does not belong in the command a person runs many times a
+      # day - but it does belong on every push, because the failure it catches
+      # is invisible to every source-only check: a release re-cut under the
+      # same version number leaves the catalogue describing a file that is no
+      # longer there, and nothing 404s.
+      - name: Verify published downloads against their checksums
+        run: npm run verify:downloads

@@ -24,6 +24,16 @@ missing pages, redirects, canonical/sitemap drift, hidden cards and inconsistent
 structured data. Product versions and availability come from `src/catalog.mjs`;
 MixRack has no asserted release date or download.
 
+`npm run verify:downloads` is separate, and is not part of `check`. It
+downloads whatever `downloadUrl` points at and hashes it, so the only thing
+that can satisfy it is the real file. Every other check compares one part of
+the source against another — `validate.mjs` pins the same URL and SHA that
+`catalog.mjs` declares — which cannot catch a release re-cut under the same
+version number: the old tag keeps answering 200, nothing 404s, and the site
+publishes a checksum for a file nobody has. That happened with Mastering Suite
+2.1.1, which shipped twice five days apart. CI runs this on every push and pull
+request, so a stale checksum cannot reach `main`.
+
 ## Deploying
 
 This repository is the canonical source for `https://studiozio.vercel.app/`.
