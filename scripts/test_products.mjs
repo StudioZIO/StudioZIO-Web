@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { products } from '../src/catalog.mjs';
 
 const origin = 'https://studiozio.vercel.app';
-const paths = ['index.html', 'products/index.html', 'products/mixrack/index.html', 'contact/index.html', '404.html', 'sitemap.xml'];
+const paths = ['index.html', 'products/index.html', 'products/mixrack/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', '404.html', 'sitemap.xml'];
 const baseline = {
   files: Object.fromEntries(paths.map(path => [path, readFileSync(new URL(`../dist/${path}`, import.meta.url), 'utf8')])),
   hosting: JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
@@ -16,7 +16,7 @@ function verify({ files, hosting }) {
   assert.equal(hosting.trailingSlash, true);
   assert.ok(!hosting.redirects.some(({ source }) => ['/products', '/products/'].includes(source)), 'Catalogue redirected');
   const urls = [...files['sitemap.xml'].matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
-  assert.deepEqual(urls, ['/', '/products/', '/products/mixrack/', '/contact/'].map(path => origin + path));
+  assert.deepEqual(urls, ['/', '/products/', '/products/mixrack/', '/contact/', '/notes/', '/notes/expected-true-peak/', '/notes/oversampling-is-not-one-switch/'].map(path => origin + path));
   const blocks = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   assert.equal(blocks.length, 1);
   const collection = JSON.parse(blocks[0][1])['@graph'].find(node => node['@type'] === 'CollectionPage');
@@ -68,4 +68,5 @@ for (const [label, mutate] of mutations) {
   mutate(data);
   assert.throws(() => verify(data), undefined, `${label}: regression was accepted`);
 }
-console.log(`Products artifact contract PASS: 1 positive, ${mutations.length} negative cases; 3 cards, 4 sitemap URLs.`);
+const sitemapCount = [...baseline.files['sitemap.xml'].matchAll(/<loc>/g)].length;
+console.log(`Products artifact contract PASS: 1 positive, ${mutations.length} negative cases; ${products.length} cards, ${sitemapCount} sitemap URLs.`);

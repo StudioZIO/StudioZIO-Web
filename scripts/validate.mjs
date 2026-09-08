@@ -14,6 +14,8 @@ import {
   renderHome,
   renderMixRack,
   renderNotFound,
+  renderNote,
+  renderNotes,
   renderProducts,
   HUB_ORIGIN,
 } from '../src/site.mjs';
@@ -106,8 +108,10 @@ export function validateSource() {
   const mixRackPage = renderMixRack();
   const contact = renderContact();
   const notFound = renderNotFound();
-  const pages = [home, catalog, mixRackPage, contact, notFound];
-  const indexablePages = [home, catalog, mixRackPage, contact];
+  const notesIndex = renderNotes();
+  const notePages = ['expected-true-peak', 'oversampling-is-not-one-switch'].map(renderNote);
+  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, notFound];
+  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
