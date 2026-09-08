@@ -5,6 +5,7 @@ import {
   TEMPO_DELAY_WEBSITE
 } from './catalog.mjs';
 import { mediaSeconds } from './media.mjs';
+import { notes, getNote } from './notes.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -130,6 +131,7 @@ const NAVIGATION = [
   ['Products', '/products/', 'products'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
   ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
+  ['Notes', '/notes/', 'notes'],
   ['Contact', '/contact/', 'contact']
 ];
 
@@ -871,5 +873,83 @@ export function renderNotFound() {
         <div class="hero-actions"><a class="btn btn-primary" href="/">Return to the hub</a></div>
       </div>
     </section>`
+  });
+}
+
+
+/* ---------- technical notes ---------------------------------------------
+   Two things a plug-in asserts on its own surface -- that the delivered true
+   peak is not quite the ceiling, and that oversampling is set per stage --
+   explained somewhere that is not a product page. The list lives in
+   notes.mjs so the routes, the sitemap and the validator cannot disagree
+   about which notes exist. */
+
+function noteCard(note) {
+  return `<article class="card">
+          <h3><a href="/notes/${escapeHtml(note.slug)}/">${escapeHtml(note.heading)}</a></h3>
+          <p>${escapeHtml(note.standfirst)}</p>
+        </article>`;
+}
+
+export function renderNotes() {
+  return shell({
+    title: 'Technical notes — StudioZIO',
+    description:
+      'Short technical notes from StudioZIO on true-peak limiting and per-stage oversampling, explaining what the plug-ins report and why.',
+    canonical: `${HUB_ORIGIN}/notes/`,
+    current: 'notes',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">StudioZIO</p>
+          <h1>Technical notes</h1>
+          <p class="lede">The plug-ins report a few things that look odd until you know why. These are the explanations, written out rather than left on a product page.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="notes-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Notes</p>
+          <h2 id="notes-title">Measurement, explained</h2>
+        </div>
+        <div class="card-grid card-grid--2">${notes.map(noteCard).join('')}</div>
+        <p class="mt-lg">More about the plug-ins on the <a href="/products/">products page</a>, or <a href="/contact/">get in touch</a>.</p>
+      </div>
+    </section>`
+  });
+}
+
+export function renderNote(slug) {
+  const note = getNote(slug);
+  const sections = note.body
+    .map(
+      (part, index) => `<section class="section" aria-labelledby="note-h-${index}">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="note-h-${index}">${escapeHtml(part.h)}</h2>
+        </div>
+        ${part.p.map((line) => `<p class="lede">${escapeHtml(line)}</p>`).join('')}
+      </div>
+    </section>`
+    )
+    .join('');
+
+  return shell({
+    title: `${note.title} — StudioZIO`,
+    description: note.description,
+    canonical: `${HUB_ORIGIN}/notes/${note.slug}/`,
+    current: '',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Technical note</p>
+          <h1>${escapeHtml(note.heading)}</h1>
+          <p><a href="/notes/">All technical notes</a></p>
+          <p class="lede">${escapeHtml(note.standfirst)}</p>
+        </div>
+      </div>
+    </section>
+    ${sections}`
   });
 }

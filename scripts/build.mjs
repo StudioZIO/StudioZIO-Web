@@ -7,6 +7,8 @@ import {
   renderHome,
   renderMixRack,
   renderNotFound,
+  renderNote,
+  renderNotes,
   renderProducts,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
@@ -29,6 +31,9 @@ const routes = [
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
   { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRack, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
+  { file: 'notes/index.html', url: '/notes/', render: renderNotes, indexable: true },
+  { file: 'notes/expected-true-peak/index.html', url: '/notes/expected-true-peak/', render: () => renderNote('expected-true-peak'), indexable: true },
+  { file: 'notes/oversampling-is-not-one-switch/index.html', url: '/notes/oversampling-is-not-one-switch/', render: () => renderNote('oversampling-is-not-one-switch'), indexable: true },
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
 ];
 
