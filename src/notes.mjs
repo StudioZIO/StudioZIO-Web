@@ -88,10 +88,11 @@ export const notes = Object.freeze([
         ])
       }),
       Object.freeze({
-        h: 'What the status bar is for',
+        h: 'Which is why there is no dial to turn',
         p: Object.freeze([
-          'There is one oversampling control on the header and it applies to the limiter only. It is deliberately a request rather than a command: at high sample rates, or under certain buffer conditions, the ratio you asked for is not always the ratio that runs.',
-          'So the status bar reports what is actually running, not what was selected. Those two can differ, and a plug-in that shows you the setting instead of the state is showing you your own intention reflected back — which is exactly the thing you were trying to verify.'
+          'Mastering Suite has no oversampling quality control. Each stage runs at a fixed, separately validated factor — saturation 4x, soft clipping 16x, hard clipping 8x with polyBLAMP correction, true-peak detection 16x — and none of them is selectable. For each stage there is one right answer, and offering a wrong one is not a feature.',
+          'An OVERSAMPLE setting does survive in the plug-in, and it is a leftover: it is kept so that sessions saved before the per-stage architecture still load, and it no longer affects processing at all. The status bar states the factors that are actually running, which is the number worth reading.',
+          'That is the argument, sitting in a control that does nothing. A quality dial is a question handed back to the person who bought the plug-in to avoid having to answer it. Answering it once per stage, and then reporting the answer, is the more useful thing to ship.'
         ])
       })
     ])
