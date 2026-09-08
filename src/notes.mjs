@@ -198,6 +198,123 @@ export const notes = Object.freeze([
         ])
       })
     ])
+  }),
+  Object.freeze({
+    slug: 'two-delay-lines-not-one',
+    heading: 'Two delay lines, not one delay with a spread control',
+    title: 'Two delay lines, not one with a spread',
+    description:
+      'Most stereo delays are a single delay time with an offset dialled around it. Two genuinely independent lines is a different instrument, not a wider one.',
+    standfirst:
+      'Put a quarter note on the left against a dotted eighth on the right and what you get is a pattern, not a widening effect.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What most stereo delays actually are',
+        p: Object.freeze([
+          'Open almost any stereo delay and you will find one delay time and a control that pushes the two sides apart from it — spread, offset, stereo, whatever it is called. The two channels are locked together and the stereo image comes from the difference you dial in around a single value.',
+          'That is a good design for what it does. It widens. It cannot produce a rhythm, because both sides are still counting the same subdivision.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What two lines gives you instead',
+        p: Object.freeze([
+          'Tempo Delay decouples them. The left and the right each have their own note division — sixteen per channel, straight, dotted and triplet — or their own free time anywhere from 1 to 5000 milliseconds, and their own feedback amount.',
+          'A quarter on one side against a dotted eighth on the other is a three-against-four figure that drifts out of phase and back into alignment on a cycle you can hear. That is not a wider version of a delay. It is a different thing arriving on the same track.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Why this is not just two mono delays',
+        p: Object.freeze([
+          'You could put a mono delay on each side of a split and get two independent times. What you would not get is the two of them talking to each other, or a way to treat the result as one image.',
+          'The ping-pong toggle swaps the feedback matrix from parallel repeats to cross-channel ones, so each line feeds the other and a single tap walks across the field. And a mid/side width matrix from 0 to 200 per cent sits after the whole thing, so the result can be collapsed to mono or opened out as one decision rather than two.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Where it stops being useful',
+        p: Object.freeze([
+          'Two uncorrelated repeat trains at high feedback stop being a rhythm quite quickly. Each side is producing its own series, the two series do not line up, and past a certain density the ear gives up on counting and hears a wash instead.',
+          'The settings that keep the effect legible usually have one side carrying more feedback than the other, so there is a dominant pulse and a second one commenting on it. That is a musical judgement rather than a rule, but it is the one worth starting from.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'inside-the-feedback-loop',
+    heading: 'What lives inside the feedback loop',
+    title: 'What lives inside the feedback loop',
+    description:
+      'A filter inside a delay’s feedback path is applied again on every repeat. That compounding is the difference between a delay that darkens and one that is just dull.',
+    standfirst:
+      'The same filter setting is gentle on the first repeat and drastic by the eighth. That is not a fault. It is what inside the loop means.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'Inside and after are different places',
+        p: Object.freeze([
+          'A filter placed after a delay touches every repeat exactly once. The tail gets darker than the source, and it stays that darkness all the way down.',
+          'A filter placed inside the feedback path is a different arrangement. Every pass through the loop goes through it again. Six repeats through a low-pass is that low-pass applied six times, and the last repeat is not a little darker than the first — it is somewhere else entirely.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What Tempo Delay puts in there',
+        p: Object.freeze([
+          'A 12 dB per octave high-pass and a 12 dB per octave low-pass, each sweepable across the full 20 Hz to 20 kHz range, and a soft-clipping saturation stage. All three sit inside the feedback path rather than after it.',
+          'So the repeats are carved again as they decay, and driven again as they decay. The tail does not just get quieter; it moves.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Why that is the right place for them',
+        p: Object.freeze([
+          'Because it is where they were on the machines this kind of effect is descended from. Tape lost high frequencies on every pass because the tape was in the loop. Bucket-brigade delays lost bandwidth the same way, for the same structural reason. The characteristic sound of those units is not a filter setting, it is a filter applied repeatedly.',
+          'The three character voicings are that same idea packaged: Digital keeps full bandwidth and stays transparent, Tape is warmer through the top with musical saturation, Analog is darker with stronger colouration. They are not equaliser presets sitting after the delay. They change what the loop does to the signal each time round.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The practical consequence: small moves',
+        p: Object.freeze([
+          'Because the effect compounds with repeat count, a filter setting that sounds mild on the first repeat can be the dominant character by the sixth. The instinct to turn it further because "it is barely doing anything" is usually wrong, and the evidence arrives four repeats later.',
+          'The other thing to know is that filtering inside a loop also changes how much energy survives each pass. The same feedback number decays at very different rates depending on where the filters are set, so the two controls are not independent even though they look it. Narrow the band and the tail shortens without you touching feedback.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'zero-reported-latency',
+    heading: 'Zero reported latency, and what it does not mean',
+    title: 'What zero reported latency means',
+    description:
+      'A delay reporting zero latency is not a delay with no delay. It means the host has nothing to compensate for, which is a narrower and more useful claim.',
+    standfirst:
+      'The delay is still delayed. The number is about what the host has to move, not about what you hear.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What the number actually is',
+        p: Object.freeze([
+          'Every plug-in tells the host how many samples it holds the signal up before anything comes out the other side. Lookahead limiters hold up a few milliseconds so they can see a peak coming. Linear-phase equalisers hold up rather more. Oversampled processes hold up whatever their filters cost.',
+          'The host takes that number and delays every other track by the same amount, so nothing drifts out of alignment. That is delay compensation, and the number driving it is a report rather than a setting. The plug-in states it; the host acts on it.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Why a delay can honestly report zero',
+        p: Object.freeze([
+          'The obvious objection is that a delay is made of delay. But the wet signal being late is the effect, not latency: it is what you asked for, and moving the whole track to compensate for it would undo the thing you wanted.',
+          'What matters for compensation is whether the plug-in holds the signal up before producing any output at all. Tempo Delay does not. What arrives in a block leaves in that block, and it reports 0 samples.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Why it changes where you can put it',
+        p: Object.freeze([
+          'A plug-in that reports latency makes the host shift things. In a well-behaved session that is invisible and correct. It stops being invisible on parallel paths — a send running alongside the dry signal, a duplicated track, a bus feeding another bus — where the compensation has to be right on both branches for the two to stay in phase.',
+          'Anything reporting zero sidesteps that question entirely. It can go on a send, in parallel with the dry, or in the middle of a chain, and nothing moves because of it.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What the claim does not cover',
+        p: Object.freeze([
+          'It says nothing about the rest of your chain. Put a lookahead limiter after it and that limiter still reports its own latency and the host still compensates for that.',
+          'It is also not a statement about processing cost. Latency and CPU are unrelated: a plug-in can be expensive and report zero, or cheap and report thousands of samples. It is one number, about one plug-in, and here it is zero.'
+        ])
+      })
+    ])
   })
 ]);
 

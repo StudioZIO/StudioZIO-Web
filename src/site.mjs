@@ -905,7 +905,7 @@ export function renderNotes() {
   return shell({
     title: 'Technical notes — StudioZIO',
     description:
-      'Technical notes from StudioZIO on true-peak limiting, per-stage oversampling and AAX signing, explaining what the plug-ins report and why.',
+      'Technical notes from StudioZIO on true-peak limiting, oversampling, delay design and AAX signing: what the plug-ins report, and why they behave that way.',
     canonical: `${HUB_ORIGIN}/notes/`,
     current: 'notes',
     content: `<section class="hero tech-grid">
@@ -921,7 +921,7 @@ export function renderNotes() {
       <div class="shell">
         <div class="section-head">
           <p class="eyebrow">Notes</p>
-          <h2 id="notes-title">Measurement, explained</h2>
+          <h2 id="notes-title">Measurement and design, explained</h2>
         </div>
         <div class="card-grid card-grid--2">${notes.map(noteCard).join('')}</div>
         <p class="mt-lg">More about the plug-ins on the <a href="/products/">products page</a>, or <a href="/contact/">get in touch</a>.</p>
