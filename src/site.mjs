@@ -312,7 +312,7 @@ function shell({ title, description, canonical, current, content, scripts = '', 
       <nav aria-label="Footer">
         <ul>${navList(current, FOOTER_LINKS)}</ul>
       </nav>
-      <p class="copy">© 2026 StudioZIO</p>
+      <p class="copy">© 2026</p>
     </div>
   </footer>
 </body>

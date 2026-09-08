@@ -710,7 +710,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .social-link svg { width: 19px; height: 19px; }
 .kvr-link svg { width: 28px; height: 18px; }
 .social-link:hover, .social-link:focus-visible, .kvr-link:hover, .kvr-link:focus-visible { color: var(--foreground); border-color: var(--border); }
-.site-footer nav ul { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+.site-footer nav ul { display: flex; flex-wrap: wrap; gap: 1rem; }
 .site-footer nav a {
   font-family: var(--font-mono);
   font-size: 0.625rem;
