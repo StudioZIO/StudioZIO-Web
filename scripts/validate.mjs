@@ -9,6 +9,7 @@ import {
   RELEASE_REPOSITORY_URL,
   TEMPO_DELAY_WEBSITE
 } from '../src/catalog.mjs';
+import { notes } from '../src/notes.mjs';
 import {
   renderContact,
   renderHome,
@@ -16,6 +17,7 @@ import {
   renderNotFound,
   renderNote,
   renderNotes,
+  renderPress,
   renderProducts,
   HUB_ORIGIN,
 } from '../src/site.mjs';
@@ -109,9 +111,12 @@ export function validateSource() {
   const contact = renderContact();
   const notFound = renderNotFound();
   const notesIndex = renderNotes();
-  const notePages = ['expected-true-peak', 'oversampling-is-not-one-switch'].map(renderNote);
-  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, notFound];
-  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages];
+  // Every note in notes.mjs, not a list repeated here: the build derives its
+  // routes the same way, so a note can never be published unvalidated.
+  const notePages = notes.map((note) => renderNote(note.slug));
+  const press = renderPress();
+  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, notFound];
+  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');

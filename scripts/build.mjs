@@ -1,6 +1,7 @@
 import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { notes } from '../src/notes.mjs';
 import {
   HUB_ORIGIN,
   renderContact,
@@ -9,6 +10,7 @@ import {
   renderNotFound,
   renderNote,
   renderNotes,
+  renderPress,
   renderProducts,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
@@ -32,8 +34,17 @@ const routes = [
   { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRack, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: 'notes/index.html', url: '/notes/', render: renderNotes, indexable: true },
-  { file: 'notes/expected-true-peak/index.html', url: '/notes/expected-true-peak/', render: () => renderNote('expected-true-peak'), indexable: true },
-  { file: 'notes/oversampling-is-not-one-switch/index.html', url: '/notes/oversampling-is-not-one-switch/', render: () => renderNote('oversampling-is-not-one-switch'), indexable: true },
+  /* Derived from notes.mjs rather than written out here. Adding a note used
+     to mean editing this list, the validator's page list and the sitemap
+     expectation in the same commit, and forgetting one of them shipped a
+     page nothing linked to. Now the note list is the only place it exists. */
+  ...notes.map((note) => ({
+    file: `notes/${note.slug}/index.html`,
+    url: `/notes/${note.slug}/`,
+    render: () => renderNote(note.slug),
+    indexable: true
+  })),
+  { file: 'press/index.html', url: '/press/', render: renderPress, indexable: true },
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
 ];
 

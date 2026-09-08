@@ -96,6 +96,102 @@ export const notes = Object.freeze([
         ])
       })
     ])
+  }),
+  Object.freeze({
+    slug: 'where-aax-support-stands',
+    heading: 'Where AAX support stands',
+    title: 'Where AAX support stands',
+    description:
+      'The Pro Tools build compiles, passes Avid\'s validator and loads in the developer build. What is missing is a signature, and that is paperwork, not engineering.',
+    standfirst:
+      'The engineering is finished. What is left is three agreements and a wait, none of which are code.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What works',
+        p: Object.freeze([
+          'The most common question about Mastering Suite is whether it runs in Pro Tools. The honest answer has two halves, and the interesting half is not the one people expect.',
+          'There is an arm64 AAX build. It compiles against AAX SDK 2.9.0 with JUCE, it exposes 33 parameters across 6 effect variants, and it passes Avid\'s AAX Validator 2024.6.0.',
+          'It also loads and runs. Pro Tools has a developer build — a separate application, marked for development only with saving disabled — which will host unsigned plug-ins for exactly this purpose. In it, Mastering Suite works. So the plug-in is not theoretical, and the remaining work is not DSP.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What is missing',
+        p: Object.freeze([
+          'A signature. Every AAX plug-in that loads in a normal Pro Tools installation carries a cryptographic signature from PACE, the company that provides Avid\'s plug-in security. Without it Pro Tools refuses to load the binary, and there is no user-side setting that changes this. It is not a warning that can be clicked through.',
+          'Getting to a signature means three things, and none of them are code. Commercial AAX developer status with Avid, which is distinct from the developer programme that grants SDK access and test licences: it is the agreement that makes you a party allowed to ship.',
+          'A PACE signing licence, held on a physical iLok. The signing tool authenticates against an iLok 3 USB key and cloud licences do not cover it. The key has been ordered.',
+          'And a per-product identifier: every shipping AAX product carries a unique code issued for it, so that hosts and the security layer can tell products apart across versions and vendors.',
+          'Each is a form, an agreement and a wait. Together they are the entire remaining distance between a build that works and a build you can install.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Why there is no date',
+        p: Object.freeze([
+          'Because the timeline is not mine. Each step depends on a response from a party who owes me nothing and has their own queue. Naming a month would mean inventing a commitment on someone else\'s behalf, and a missed date announced in advance does more damage than no date at all.',
+          'What can be said: the engineering is done, the developer licences are in place and installed, the iLok is ordered, and the applications are in. When it is signed, it ships, and it will be free like everything else.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What to do until then',
+        p: Object.freeze([
+          'If you are on Pro Tools, nothing here helps you yet, and I would rather say so than let you download an installer and find out afterwards.',
+          'If you are on Logic, Live, Reaper, Studio One, Bitwig, Cubase or anything else that hosts AU or VST3 on macOS, the plug-in is finished and free today. The AAX work adds a host; it does not change the product.',
+          'And if you are a developer reading this because you are about to walk the same path: the engineering was never the hard part. Budget your time for the paperwork.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'what-studiozio-is-building',
+    heading: 'What StudioZIO is building',
+    title: 'What these plug-ins are and are not',
+    description:
+      'Three focused macOS plug-ins, free, with no account and no registration, and the reasoning behind the way each one is laid out and what it refuses to hide.',
+    standfirst:
+      'One person, two finished plug-ins and a third in development, with the limits stated before the download rather than after it.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'The shared idea',
+        p: Object.freeze([
+          'Every StudioZIO plug-in is laid out in the order the audio takes. That sounds like an interface preference. It is closer to an argument.',
+          'Most processing chains are presented as a set of features — a panel of modules, a rack of slots, tabs across the top — and the order they run in is either hidden, or configurable, or simply not the point. The result is that you can operate the thing for months without being able to say what happens first.',
+          'Mastering Suite puts the nine stages on a rail in signal order: mid/side engine, saturation, Pink Match, VCA glue compressor, maximizer, three-band tone EQ, clipper, lookahead true-peak limiter, output. One stage is open at a time. The rail does not reorder, because the order is the design. When something sounds wrong, knowing where you are in the chain is most of the diagnosis.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Measurement is not a separate product',
+        p: Object.freeze([
+          'The meter column stays visible no matter which stage you have open: integrated and short-term loudness, loudness range, crest factor, true peak per channel, stereo correlation.',
+          'This is not a feature-list item, it is a position about how these tools should work. The industry norm is that you process in one plug-in and measure in another, which means the moment you make a change and the moment you find out what it did are separated by a window switch. Putting the measurement next to the control is not generosity; it is the only arrangement in which you can learn what the control does.',
+          'The same principle produces the smaller decisions. The expected true-peak figure beside the limiter ceiling, which reports the peak the render will really deliver rather than the one you asked for. The status bar reporting the oversampling ratio that is running rather than the one that was selected. In both cases the plug-in knows something, and the choice is whether to say it.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Naming the limits',
+        p: Object.freeze([
+          'macOS only. There is no build for any other platform and no timeline for one. If that is a problem, it is better to find out here than after a download.',
+          'Tempo Delay is Apple Silicon only. Mastering Suite is a universal binary and runs on Intel Macs; Tempo Delay does not.',
+          'AAX is not signed yet. The build compiles, passes Avid\'s validator and loads in the Pro Tools developer build, but it will not load in a normal Pro Tools installation, because that requires a signing chain that is a separate commercial process. It is in progress and there is no date.',
+          'Stating these plainly costs some downloads. It costs fewer than a bad first five minutes does, and a free plug-in has nothing to sell except whether you trust what it tells you.'
+        ])
+      }),
+      Object.freeze({
+        h: 'No account, no iLok, no email registration',
+        p: Object.freeze([
+          'The installer is a signed and notarised package. You download it, you run it, the plug-in is there. Nothing to activate, no address to hand over, no licence manager, nothing that expires or phones home.',
+          'Formats are Audio Unit, VST3 and Standalone for both products.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The three',
+        p: Object.freeze([
+          'StudioZIO Mastering Suite 2.1.1 is the nine-stage mastering console described above. Universal binary, macOS 11 or newer.',
+          'StudioZIO Tempo Delay 4.0.1 is a tempo-synced stereo delay whose left and right delay lines are genuinely independent, each with its own buffer and its own note division, so the two sides can sit on different rhythmic values against one tempo. Ping-pong routing, filters and soft-clip saturation inside the feedback loop, three character voicings, LFO modulation, ducking, mid/side width. 32 automatable parameters with stable identifiers, and 0 samples of reported latency. Apple Silicon only, macOS 12 or newer.',
+          'StudioZIO MixRack is a modular mixing environment bringing essential processing into one focused rack. In development, with no release date and nothing to download. It is named here because it exists, not because it is close.',
+          'Three focused instruments, not a bundle. Each one does a job you can name.'
+        ])
+      })
+    ])
   })
 ]);
 
