@@ -1223,7 +1223,6 @@ export function renderCommunity() {
           <p class="eyebrow">Community</p>
           <h1>StudioZIO Community</h1>
           <p class="lede">Questions, ideas, compatibility reports and public product status &mdash; connected to the StudioZIO development process.</p>
-          ${communityNav('community')}
         </div>
       </div>
     </section>
