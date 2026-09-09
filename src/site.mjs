@@ -1392,6 +1392,9 @@ export function renderCommunityIdeas() {
 }
 
 export function renderCommunityCompatibility() {
+  const mastering = getProduct('mastering-suite');
+  const tempo = getProduct('tempo-delay');
+
   return shell({
     title: 'Compatibility Lab — StudioZIO Community',
     description:
@@ -1418,7 +1421,7 @@ export function renderCommunityCompatibility() {
           <article class="panel product-spec-card">
             <div class="product-spec-head">
               <h3>Mastering Suite</h3>
-              <span class="chip">v2.1.1</span>
+              <span class="chip">v${mastering.version}</span>
             </div>
             <dl class="spec-grid">
               <div>
@@ -1442,7 +1445,7 @@ export function renderCommunityCompatibility() {
           <article class="panel product-spec-card">
             <div class="product-spec-head">
               <h3>Tempo Delay</h3>
-              <span class="chip">v4.0.1</span>
+              <span class="chip">v${tempo.version}</span>
             </div>
             <dl class="spec-grid spec-grid--tempo-delay">
               <div>
