@@ -1444,7 +1444,7 @@ export function renderCommunityCompatibility() {
               <h3>Tempo Delay</h3>
               <span class="chip">v4.0.1</span>
             </div>
-            <dl class="spec-grid">
+            <dl class="spec-grid spec-grid--tempo-delay">
               <div>
                 <dt>Minimum OS</dt>
                 <dd>macOS 12+</dd>

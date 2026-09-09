@@ -1104,6 +1104,14 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .spec-full {
   grid-column: 1 / -1;
 }
+@media (min-width: 980px) {
+  .spec-grid--tempo-delay::after {
+    content: "";
+    grid-column: 2 / -1;
+    grid-row: 2;
+    background: var(--surface-raised);
+  }
+}
 
 .host-card {
   padding: 1.5rem 1.75rem;
