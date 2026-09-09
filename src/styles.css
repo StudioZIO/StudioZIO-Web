@@ -316,7 +316,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--muted-foreground);
 }
 .nav-compact .panel a:hover, .nav-compact .panel a[aria-current="page"] { color: var(--foreground); }
-@media (min-width: 860px) {
+@media (min-width: 940px) {
   .nav-links { display: block; }
   .nav-compact { display: none; }
 }

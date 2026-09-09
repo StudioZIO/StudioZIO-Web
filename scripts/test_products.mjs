@@ -21,7 +21,7 @@ function verify({ files, hosting }) {
      need this line edited -- but the surrounding order is still asserted
      literally, because a note silently dropping out of the sitemap is exactly
      the regression this file exists to catch. */
-  const expectedUrls = ['/', '/products/', '/products/mixrack/', '/contact/', '/notes/', ...notes.map(note => `/notes/${note.slug}/`), '/press/'];
+  const expectedUrls = ['/', '/products/', '/products/mixrack/', '/contact/', '/notes/', ...notes.map(note => `/notes/${note.slug}/`), '/press/', '/community/'];
   assert.deepEqual(urls, expectedUrls.map(path => origin + path));
   const blocks = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   assert.equal(blocks.length, 1);

@@ -11,6 +11,7 @@ import {
 } from '../src/catalog.mjs';
 import { notes } from '../src/notes.mjs';
 import {
+  renderCommunity,
   renderContact,
   renderHome,
   renderMixRack,
@@ -115,8 +116,9 @@ export function validateSource() {
   // routes the same way, so a note can never be published unvalidated.
   const notePages = notes.map((note) => renderNote(note.slug));
   const press = renderPress();
-  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, notFound];
-  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press];
+  const community = renderCommunity();
+  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community, notFound];
+  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');

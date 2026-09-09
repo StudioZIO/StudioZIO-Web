@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { notes } from '../src/notes.mjs';
 import {
   HUB_ORIGIN,
+  renderCommunity,
   renderContact,
   renderHome,
   renderMixRack,
@@ -45,6 +46,7 @@ const routes = [
     indexable: true
   })),
   { file: 'press/index.html', url: '/press/', render: renderPress, indexable: true },
+  { file: 'community/index.html', url: '/community/', render: renderCommunity, indexable: true },
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
 ];
 

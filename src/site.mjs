@@ -148,6 +148,16 @@ const NAVIGATION = [
   ['Contact', '/contact/', 'contact']
 ];
 
+const HEADER_NAVIGATION = [
+  ['Hub', '/', 'hub'],
+  ['Products', '/products/', 'products'],
+  ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
+  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
+  ['Notes', '/notes/', 'notes'],
+  ['Community', '/community/', 'community'],
+  ['Contact', '/contact/', 'contact']
+];
+
 /* The press kit sits in the footer rather than the header. Journalists go
    looking for it and customers never do, and the header already carries two
    off-site product links. A footer entry still puts a link to the page on
@@ -298,12 +308,12 @@ function shell({ title, description, canonical, current, content, scripts = '', 
     <div class="shell bar">
       ${logo()}
       <nav class="nav-links" aria-label="Primary">
-        <ul>${navList(current)}</ul>
+        <ul>${navList(current, HEADER_NAVIGATION)}</ul>
       </nav>
       <details class="nav-compact">
         <summary aria-label="Menu" aria-controls="compact-menu"><span class="open" aria-hidden="true">≡</span><span class="shut" aria-hidden="true">×</span></summary>
         <nav class="panel" id="compact-menu" aria-label="Primary">
-          <ul>${navList(current)}</ul>
+          <ul>${navList(current, HEADER_NAVIGATION)}</ul>
         </nav>
       </details>
     </div>
@@ -1177,6 +1187,79 @@ export function renderPress() {
         <p>Elsewhere: the <a href="https://www.kvraudio.com/developer/studiozio">KVR developer page</a> carries release notes and development posts, and <a href="${escapeHtml(
           INSTAGRAM_URL
         )}">Instagram</a> carries the shorter material.</p>
+      </div>
+    </section>`
+  });
+}
+
+export function renderCommunity() {
+  return shell({
+    title: 'StudioZIO Community — Questions, Ideas & Status',
+    description:
+      'Questions, ideas, compatibility reports and public product status — connected to the StudioZIO development process.',
+    canonical: `${HUB_ORIGIN}/community/`,
+    current: 'community',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Community</p>
+          <h1>StudioZIO Community</h1>
+          <p class="lede">Questions, ideas, compatibility reports and public product status &mdash; connected to the StudioZIO development process.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="community-topics-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Community</p>
+          <h2 id="community-topics-title">Questions, ideas and product status</h2>
+        </div>
+        <div class="card-grid card-grid--2">
+          <article class="panel module-card">
+            <h3>Questions</h3>
+            <p>Public questions and answers about using StudioZIO products.</p>
+          </article>
+          <article class="panel module-card">
+            <h3>Ideas</h3>
+            <p>A public place to share and discuss product ideas.</p>
+          </article>
+          <article class="panel module-card">
+            <h3>Compatibility Lab</h3>
+            <p>Public compatibility information for hosts, macOS versions, formats and hardware.</p>
+          </article>
+          <article class="panel module-card">
+            <h3>Known Issues</h3>
+            <p>Current public product-status information and documented limitations.</p>
+          </article>
+          <article class="panel module-card">
+            <h3>Roadmap</h3>
+            <p>Public direction and status for StudioZIO products.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="community-resources-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">StudioZIO</p>
+          <h2 id="community-resources-title">Existing resources</h2>
+        </div>
+        <dl class="spec-grid">
+          <div>
+            <dt><a href="/notes/">Technical Notes</a></dt>
+            <dd>Existing explanations of StudioZIO measurement, design and platform behavior.</dd>
+          </div>
+          <div>
+            <dt><a href="/contact/">Contact / Support</a></dt>
+            <dd>Private support, bug reports, licensing/download matters and direct feature inquiries.</dd>
+          </div>
+          <div>
+            <dt><a href="/products/">Products</a></dt>
+            <dd>Current StudioZIO product catalog and authoritative product destinations.</dd>
+          </div>
+        </dl>
       </div>
     </section>`
   });
