@@ -168,7 +168,7 @@ export const notes = Object.freeze([
         p: Object.freeze([
           'The meter column stays visible no matter which stage you have open: integrated and short-term loudness, loudness range, crest factor, true peak per channel, stereo correlation.',
           'This is not a feature-list item, it is a position about how these tools should work. The industry norm is that you process in one plug-in and measure in another, which means the moment you make a change and the moment you find out what it did are separated by a window switch. Putting the measurement next to the control is not generosity; it is the only arrangement in which you can learn what the control does.',
-          'The same principle produces the smaller decisions. The expected true-peak figure beside the limiter ceiling, which reports the peak the render will really deliver rather than the one you asked for. The status bar reporting the oversampling ratio that is running rather than the one that was selected. In both cases the plug-in knows something, and the choice is whether to say it.'
+          'The same principle produces the smaller decisions. EXPECTED TP is a ceiling-derived estimate, not a measurement of the rendered audio or a guarantee of its delivered peak. Stage rates are fixed per stage; the legacy Oversampling control remains only for older session recall and does not alter processing in 2.1.1. In both cases the plug-in knows something, and the choice is whether to say it.'
         ])
       }),
       Object.freeze({
