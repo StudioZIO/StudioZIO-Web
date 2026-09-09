@@ -25,7 +25,7 @@ import {
 const expectedUrl =
   'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-flicker-hold-2026.09.08/StudioZIO-Mastering-Suite-2.1.1.pkg';
 const expectedSha =
-  '97dcd2f55e317054fd15dbbee098a755623838345fc37cb89b114864d1e3da5d';
+  '2345deeb3d9cf97e80ca12109de120af9b2896f14799f4e67825e148a1feb7b1';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
 const KVR_URLS = [
   'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio',
