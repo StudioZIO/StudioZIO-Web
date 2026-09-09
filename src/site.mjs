@@ -34,6 +34,17 @@ const KVR_MASTERING_URL =
   'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio';
 const KVR_TEMPO_URL =
   'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio';
+const HOMEBREW_URL = 'https://brew.sh/';
+const HOMEBREW_CASKS = Object.freeze({
+  'mastering-suite': 'studiozio-mastering-suite',
+  'tempo-delay': 'studiozio-tempo-delay'
+});
+
+function homebrewInstall(product) {
+  const cask = HOMEBREW_CASKS[product.slug];
+  if (!cask) return '';
+  return `<p class="form-hint">Alternative: <a href="${HOMEBREW_URL}">Homebrew</a> · <code>brew tap StudioZIO/studiozio &amp;&amp; brew install --cask ${cask}</code></p>`;
+}
 
 /* Google tag for the "Hub" data stream of the StudioZIO Analytics property.
    Three files, in this order, because the site is served under
@@ -569,6 +580,7 @@ function productCard(product) {
         <p>${escapeHtml(product.description)}</p>
         <div class="chip-row">${chips}</div>
         <a class="btn" href="${escapeHtml(product.detailsUrl)}">${detailsLabel}</a>
+        ${isShipping ? homebrewInstall(product) : ''}
         ${product.price === 'Free' ? `<p class="form-hint">${escapeHtml(FREE_PROMISE)}</p>` : ''}
       </div>
     </article>`;
@@ -935,7 +947,7 @@ export function renderNotes() {
           <h2 id="notes-title">Measurement and design, explained</h2>
         </div>
         <div class="card-grid card-grid--2">${notes.map(noteCard).join('')}</div>
-        <p class="mt-lg">More about the plug-ins on the <a href="/products/">products page</a>, or <a href="/contact/">get in touch</a>.</p>
+        <p class="mt-lg">More about the plug-ins on the <a href="/products/">products page</a>, or <a href="${HOMEBREW_URL}">install via Homebrew</a> with the cask commands shown there. For help, <a href="/contact/">get in touch</a>.</p>
       </div>
     </section>`
   });
