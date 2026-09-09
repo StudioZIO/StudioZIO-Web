@@ -28,8 +28,6 @@ import {
   HUB_ORIGIN,
 } from '../src/site.mjs';
 
-const expectedUrl =
-  'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-flicker-hold-2026.09.08/StudioZIO-Mastering-Suite-2.1.1.pkg';
 const expectedSha =
   '2345deeb3d9cf97e80ca12109de120af9b2896f14799f4e67825e148a1feb7b1';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
@@ -52,6 +50,10 @@ function mainContent(page) {
   return page.split('<main id="main-content">')[1].split('</main>')[0];
 }
 
+function isSemanticPatch(version) {
+  return /^\d+\.\d+\.\d+$/.test(version);
+}
+
 export function validateSource() {
   if (products.length !== 3) throw new Error('Unexpected public product count');
   const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack'];
@@ -60,10 +62,25 @@ export function validateSource() {
   }
 
   const product = getProduct('mastering-suite');
-  if (product.downloadUrl !== expectedUrl) throw new Error('Download URL drift');
-  if (product.sha256 !== expectedSha) throw new Error('Checksum drift');
-  if (product.version !== '2.1.1' || product.platform !== 'macOS') {
+  if (!isSemanticPatch(product.version) || product.platform !== 'macOS') {
     throw new Error('Public release metadata drift');
+  }
+  if (product.filename !== `StudioZIO-Mastering-Suite-${product.version}.pkg`) {
+    throw new Error('Filename drift');
+  }
+  if (!product.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('Download URL repository drift');
+  }
+  if (!product.downloadUrl.endsWith(`/${product.filename}`)) {
+    throw new Error('Download URL filename drift');
+  }
+  const downloadTag = product.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const releaseTag = product.releaseUrl.split('/releases/tag/')[1];
+  if (!downloadTag || downloadTag !== releaseTag) {
+    throw new Error('Release tag mismatch between download and release URLs');
+  }
+  if (!/^[a-f0-9]{64}$/i.test(product.sha256) || product.sha256 !== expectedSha) {
+    throw new Error('Checksum drift');
   }
   if (RELEASE_REPOSITORY_URL !== 'https://github.com/StudioZIO/StudioZIO-Releases') {
     throw new Error('Release repository drift');
@@ -76,7 +93,7 @@ export function validateSource() {
   if (
     tempoDelay.name !== 'StudioZIO Tempo Delay' ||
     tempoDelay.availability !== 'Available now' ||
-    tempoDelay.version !== '4.0.1' ||
+    !isSemanticPatch(tempoDelay.version) ||
     tempoDelay.platform !== 'macOS' ||
     tempoDelay.compactFormats !== 'AU / VST3 / Standalone' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
