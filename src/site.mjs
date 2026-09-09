@@ -1234,26 +1234,26 @@ export function renderCommunity() {
           <h2 id="community-topics-title">Questions, ideas and product status</h2>
         </div>
         <div class="card-grid card-grid--2">
-          <article class="panel module-card">
-            <h3><a href="/community/questions/">Questions</a></h3>
+          <a class="panel module-card" href="/community/questions/">
+            <h3>Questions</h3>
             <p>Public questions and answers about using StudioZIO products.</p>
-          </article>
-          <article class="panel module-card">
-            <h3><a href="/community/ideas/">Ideas</a></h3>
+          </a>
+          <a class="panel module-card" href="/community/ideas/">
+            <h3>Ideas</h3>
             <p>A public place to share and discuss product ideas.</p>
-          </article>
-          <article class="panel module-card">
-            <h3><a href="/community/compatibility/">Compatibility Lab</a></h3>
+          </a>
+          <a class="panel module-card" href="/community/compatibility/">
+            <h3>Compatibility Lab</h3>
             <p>Public compatibility information for hosts, macOS versions, formats and hardware.</p>
-          </article>
-          <article class="panel module-card">
-            <h3><a href="/community/known-issues/">Known Issues</a></h3>
+          </a>
+          <a class="panel module-card" href="/community/known-issues/">
+            <h3>Known Issues</h3>
             <p>Current public product-status information and documented limitations.</p>
-          </article>
-          <article class="panel module-card">
-            <h3><a href="/community/roadmap/">Roadmap</a></h3>
+          </a>
+          <a class="panel module-card" href="/community/roadmap/">
+            <h3>Roadmap</h3>
             <p>Public direction and status for StudioZIO products.</p>
-          </article>
+          </a>
         </div>
       </div>
     </section>
