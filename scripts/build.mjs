@@ -5,6 +5,11 @@ import { notes } from '../src/notes.mjs';
 import {
   HUB_ORIGIN,
   renderCommunity,
+  renderCommunityQuestions,
+  renderCommunityIdeas,
+  renderCommunityCompatibility,
+  renderCommunityKnownIssues,
+  renderCommunityRoadmap,
   renderContact,
   renderHome,
   renderMixRack,
@@ -47,6 +52,11 @@ const routes = [
   })),
   { file: 'press/index.html', url: '/press/', render: renderPress, indexable: true },
   { file: 'community/index.html', url: '/community/', render: renderCommunity, indexable: true },
+  { file: 'community/questions/index.html', url: '/community/questions/', render: renderCommunityQuestions, indexable: true },
+  { file: 'community/ideas/index.html', url: '/community/ideas/', render: renderCommunityIdeas, indexable: true },
+  { file: 'community/compatibility/index.html', url: '/community/compatibility/', render: renderCommunityCompatibility, indexable: true },
+  { file: 'community/known-issues/index.html', url: '/community/known-issues/', render: renderCommunityKnownIssues, indexable: true },
+  { file: 'community/roadmap/index.html', url: '/community/roadmap/', render: renderCommunityRoadmap, indexable: true },
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
 ];
 

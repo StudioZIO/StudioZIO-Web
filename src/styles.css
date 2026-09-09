@@ -413,10 +413,12 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--muted-foreground);
 }
 .chip--flag { color: var(--foreground); border-color: var(--border); }
+.chip--destructive { color: var(--destructive); border-color: oklch(0.598 0.185 22 / 30%); }
 .chip--bare { border: 0; background: none; padding-inline: 0; }
 .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .chip--flag .dot { background: var(--primary); }
 .chip--live .dot { background: var(--primary); animation: pulse-dot 2.4s ease-in-out infinite; }
+.chip--destructive .dot { background: var(--destructive); }
 
 /* ---------- panels ------------------------------------------------------ */
 .panel {
@@ -1013,4 +1015,179 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .ab-card.is-blocked .ab-flag::after { content: " · playback blocked"; }
 @media (prefers-reduced-motion: reduce) {
   .ab-meter-fill, .ab-progress-fill { transition: none; }
+}
+
+/* ---------- community --------------------------------------------------- */
+.community-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.community-nav a {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.community-nav a:hover,
+.community-nav a:focus-visible {
+  color: var(--foreground);
+}
+.community-nav a[aria-current="page"] {
+  color: var(--primary-text);
+  font-weight: 500;
+}
+
+.code-block {
+  margin: 0.75rem 0;
+  padding: 0.85rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  overflow-x: auto;
+}
+.code-block code {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+.mono-note {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+.actionable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.actionable-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.actionable-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--muted-foreground);
+}
+
+.product-spec-card {
+  padding: 1.75rem;
+}
+.product-spec-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.product-spec-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+.spec-full {
+  grid-column: 1 / -1;
+}
+
+.host-card {
+  padding: 1.5rem 1.75rem;
+}
+.host-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.host-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+}
+.host-card p {
+  margin: 0.75rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.issue-card {
+  padding: 1.5rem 1.75rem;
+}
+.issue-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.issue-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+}
+.issue-card > p {
+  margin: 0.75rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.issue-workaround {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+.issue-workaround .issue-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.issue-workaround p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--foreground);
+}
+
+.roadmap-card {
+  padding: 1.5rem 1.75rem;
+}
+.roadmap-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.roadmap-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+}
+.roadmap-card p {
+  margin: 0.75rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }

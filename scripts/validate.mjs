@@ -12,6 +12,11 @@ import {
 import { notes } from '../src/notes.mjs';
 import {
   renderCommunity,
+  renderCommunityQuestions,
+  renderCommunityIdeas,
+  renderCommunityCompatibility,
+  renderCommunityKnownIssues,
+  renderCommunityRoadmap,
   renderContact,
   renderHome,
   renderMixRack,
@@ -33,7 +38,7 @@ const KVR_URLS = [
   'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio'
 ];
 const forbidden = [
-  /github\.com\/StudioZIO\/(?!StudioZIO-Releases)/i,
+  /github\.com\/StudioZIO\/(?!(StudioZIO-Releases|Support))/i,
   /\/Users\/mert\//i,
   /StudioZIO-Master-Plugin-Suite/i,
   /\bCodex\b/i,
@@ -117,8 +122,20 @@ export function validateSource() {
   const notePages = notes.map((note) => renderNote(note.slug));
   const press = renderPress();
   const community = renderCommunity();
-  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community, notFound];
-  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community];
+  const communityQuestions = renderCommunityQuestions();
+  const communityIdeas = renderCommunityIdeas();
+  const communityCompatibility = renderCommunityCompatibility();
+  const communityKnownIssues = renderCommunityKnownIssues();
+  const communityRoadmap = renderCommunityRoadmap();
+  const communityPages = [
+    communityQuestions,
+    communityIdeas,
+    communityCompatibility,
+    communityKnownIssues,
+    communityRoadmap
+  ];
+  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community, ...communityPages, notFound];
+  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community, ...communityPages];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -213,9 +230,23 @@ export function validateSource() {
     throw new Error('MixRack page exposes release or download behavior');
   }
 
-  for (const forbiddenClaim of ['Windows', 'testimonial', 'award-winning', 'benchmark']) {
+  for (const forbiddenClaim of ['testimonial', 'award-winning', 'benchmark']) {
     if (pages.some((page) => page.includes(forbiddenClaim))) {
       throw new Error(`Unsupported public claim: ${forbiddenClaim}`);
+    }
+  }
+  const APPROVED_WINDOWS_STATEMENTS = [
+    'No Windows or Linux builds are currently planned',
+    'Windows and Linux builds are not currently planned',
+  ];
+
+  for (const page of pages) {
+    let sanitizedPage = page;
+    for (const statement of APPROVED_WINDOWS_STATEMENTS) {
+      sanitizedPage = sanitizedPage.replaceAll(statement, '');
+    }
+    if (sanitizedPage.includes('Windows')) {
+      throw new Error('Unsupported public claim: Windows');
     }
   }
 

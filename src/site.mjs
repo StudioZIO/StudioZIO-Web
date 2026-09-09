@@ -187,7 +187,7 @@ function navList(current, entries = NAVIGATION) {
 
 function chip(label, tone = '') {
   return `<span class="chip${tone ? ` chip--${tone}` : ''}">${
-    tone === 'flag' ? '<span class="dot" aria-hidden="true"></span>' : ''
+    tone === 'flag' || tone === 'destructive' ? '<span class="dot" aria-hidden="true"></span>' : ''
   }${escapeHtml(label)}</span>`;
 }
 
@@ -1192,6 +1192,24 @@ export function renderPress() {
   });
 }
 
+const COMMUNITY_NAVIGATION = [
+  ['Community', '/community/', 'community'],
+  ['Questions', '/community/questions/', 'questions'],
+  ['Ideas', '/community/ideas/', 'ideas'],
+  ['Compatibility Lab', '/community/compatibility/', 'compatibility'],
+  ['Known Issues', '/community/known-issues/', 'known-issues'],
+  ['Roadmap', '/community/roadmap/', 'roadmap']
+];
+
+function communityNav(currentSubpage) {
+  return `<nav class="community-nav" aria-label="Community navigation">
+    ${COMMUNITY_NAVIGATION.map(
+      ([label, href, id]) =>
+        `<a href="${href}"${id === currentSubpage ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`
+    ).join('')}
+  </nav>`;
+}
+
 export function renderCommunity() {
   return shell({
     title: 'StudioZIO Community — Questions, Ideas & Status',
@@ -1205,6 +1223,7 @@ export function renderCommunity() {
           <p class="eyebrow">Community</p>
           <h1>StudioZIO Community</h1>
           <p class="lede">Questions, ideas, compatibility reports and public product status &mdash; connected to the StudioZIO development process.</p>
+          ${communityNav('community')}
         </div>
       </div>
     </section>
@@ -1217,23 +1236,23 @@ export function renderCommunity() {
         </div>
         <div class="card-grid card-grid--2">
           <article class="panel module-card">
-            <h3>Questions</h3>
+            <h3><a href="/community/questions/">Questions</a></h3>
             <p>Public questions and answers about using StudioZIO products.</p>
           </article>
           <article class="panel module-card">
-            <h3>Ideas</h3>
+            <h3><a href="/community/ideas/">Ideas</a></h3>
             <p>A public place to share and discuss product ideas.</p>
           </article>
           <article class="panel module-card">
-            <h3>Compatibility Lab</h3>
+            <h3><a href="/community/compatibility/">Compatibility Lab</a></h3>
             <p>Public compatibility information for hosts, macOS versions, formats and hardware.</p>
           </article>
           <article class="panel module-card">
-            <h3>Known Issues</h3>
+            <h3><a href="/community/known-issues/">Known Issues</a></h3>
             <p>Current public product-status information and documented limitations.</p>
           </article>
           <article class="panel module-card">
-            <h3>Roadmap</h3>
+            <h3><a href="/community/roadmap/">Roadmap</a></h3>
             <p>Public direction and status for StudioZIO products.</p>
           </article>
         </div>
@@ -1260,6 +1279,485 @@ export function renderCommunity() {
             <dd>Current StudioZIO product catalog and authoritative product destinations.</dd>
           </div>
         </dl>
+      </div>
+    </section>`
+  });
+}
+
+export function renderCommunityQuestions() {
+  return shell({
+    title: 'Where and how to ask — StudioZIO Community',
+    description:
+      'Bug reports and technical questions reach the person who writes the code. There are no support tickets, accounts or queues.',
+    canonical: `${HUB_ORIGIN}/community/questions/`,
+    current: 'community',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Community &middot; Support</p>
+          <h1>Where and how to ask</h1>
+          <p class="lede">Bug reports and technical questions reach the person who writes the code. There are no support tickets, accounts or queues.</p>
+          ${communityNav('questions')}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="channels-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="channels-title">Choosing the right channel</h2>
+        </div>
+        <p>Public technical questions and bug reports belong on the official StudioZIO Support issue tracker on GitHub.</p>
+        <p class="mt-sm">If your matter involves private details, sensitive project information or a direct inquiry, use the StudioZIO contact form.</p>
+        <div class="hero-actions mt-md">
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues">Open a public issue</a>
+          <a class="btn" href="/contact/">Contact privately</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="actionable-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="actionable-title">What makes a report actionable</h2>
+        </div>
+        <ul class="actionable-list">
+          <li>Plug-in and version</li>
+          <li>Host DAW and exact version</li>
+          <li>macOS version and Mac model</li>
+          <li>Apple Silicon or Intel where relevant</li>
+          <li>Plug-in format: AU, VST3 or Standalone</li>
+          <li>Shortest sequence that reproduces the issue</li>
+          <li>Crash report from Console.app if a crash occurred</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="discovery-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="discovery-title">Before reporting that a plug-in does not appear</h2>
+        </div>
+        <pre class="code-block"><code>auval -a | grep -i studiozio</code></pre>
+        <pre class="code-block"><code>killall -9 AudioComponentRegistrar</code></pre>
+        <p class="mono-note mt-md">Tempo Delay is Apple Silicon only and will not appear on an Intel Mac.</p>
+      </div>
+    </section>`
+  });
+}
+
+export function renderCommunityIdeas() {
+  return shell({
+    title: 'Share an idea — StudioZIO Community',
+    description:
+      'StudioZIO accepts feature requests and workflow observations through the public Support tracker on GitHub.',
+    canonical: `${HUB_ORIGIN}/community/ideas/`,
+    current: 'community',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Community &middot; Product Feedback</p>
+          <h1>Share an idea</h1>
+          <p class="lede">StudioZIO accepts feature requests and workflow observations through the public Support tracker.</p>
+          ${communityNav('ideas')}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="useful-request-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="useful-request-title">What makes a useful request</h2>
+        </div>
+        <p>Describe the musical or technical problem you are trying to solve rather than prescribing a particular control.</p>
+        <p class="mt-sm">The underlying problem may have a signal-flow or architectural solution that the proposed control does not anticipate.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="what-next-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="what-next-title">What happens next</h2>
+        </div>
+        <p>Feature requests are reviewed through the public Support tracker.</p>
+        <p class="mt-sm">Submission does not guarantee implementation or a delivery date.</p>
+        <p class="mt-sm">StudioZIO does not operate a public voting queue.</p>
+        <p class="mt-sm">Crashes and incorrect audio-processing behavior take priority over workflow enhancements.</p>
+        <div class="hero-actions mt-md">
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues">Share an idea on GitHub</a>
+          <a class="btn" href="/contact/">Submit private feedback</a>
+        </div>
+      </div>
+    </section>`
+  });
+}
+
+export function renderCommunityCompatibility() {
+  return shell({
+    title: 'Compatibility Lab — StudioZIO Community',
+    description:
+      'Verified platform, format and host information for current StudioZIO products on macOS.',
+    canonical: `${HUB_ORIGIN}/community/compatibility/`,
+    current: 'community',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Community &middot; System Verification</p>
+          <h1>Compatibility Lab</h1>
+          <p class="lede">Verified platform, format and host information for current StudioZIO products.</p>
+          ${communityNav('compatibility')}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="specs-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="specs-title">Current product specifications</h2>
+        </div>
+        <div class="card-grid card-grid--2">
+          <article class="panel product-spec-card">
+            <div class="product-spec-head">
+              <h3>Mastering Suite</h3>
+              <span class="chip">v2.1.1</span>
+            </div>
+            <dl class="spec-grid">
+              <div>
+                <dt>Minimum OS</dt>
+                <dd>macOS 11+</dd>
+              </div>
+              <div>
+                <dt>Architecture</dt>
+                <dd>Universal &mdash; Apple Silicon and Intel</dd>
+              </div>
+              <div>
+                <dt>Formats</dt>
+                <dd>AUv2 &middot; VST3 &middot; Standalone</dd>
+              </div>
+              <div class="spec-full">
+                <dt>AAX / Pro Tools</dt>
+                <dd>Not supported in standard Pro Tools installations &mdash; AAX build is not PACE-signed</dd>
+              </div>
+            </dl>
+          </article>
+          <article class="panel product-spec-card">
+            <div class="product-spec-head">
+              <h3>Tempo Delay</h3>
+              <span class="chip">v4.0.1</span>
+            </div>
+            <dl class="spec-grid">
+              <div>
+                <dt>Minimum OS</dt>
+                <dd>macOS 12+</dd>
+              </div>
+              <div>
+                <dt>Architecture</dt>
+                <dd>Apple Silicon (arm64) only</dd>
+              </div>
+              <div>
+                <dt>Formats</dt>
+                <dd>AUv2 &middot; VST3 &middot; Standalone</dd>
+              </div>
+              <div>
+                <dt>Reported processing latency</dt>
+                <dd>0 samples</dd>
+              </div>
+              <div class="spec-full">
+                <dt>AAX / Pro Tools</dt>
+                <dd>Not supported in standard Pro Tools installations &mdash; AAX build is unsigned</dd>
+              </div>
+            </dl>
+          </article>
+          <article class="panel product-spec-card">
+            <div class="product-spec-head">
+              <h3>MixRack</h3>
+              <span class="chip">In development</span>
+            </div>
+            <dl class="spec-grid">
+              <div>
+                <dt>Status</dt>
+                <dd>In development</dd>
+              </div>
+              <div>
+                <dt>Platform</dt>
+                <dd>macOS</dd>
+              </div>
+              <div>
+                <dt>Planned formats</dt>
+                <dd>AU &middot; VST3 &middot; Standalone</dd>
+              </div>
+              <div class="spec-full">
+                <dt>Compatibility matrix</dt>
+                <dd>Not yet published</dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="hosts-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="hosts-title">Host verification</h2>
+        </div>
+        <p>StudioZIO distinguishes between configurations with direct test evidence and hosts that have not yet received formal verification.</p>
+        <div class="card-grid card-grid--2 mt-md">
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>REAPER</h3>
+              ${chip('StudioZIO Verified', 'flag')}
+            </div>
+            <p>AU and VST3 host testing exists for current StudioZIO products.</p>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>Logic Pro</h3>
+              ${chip('StudioZIO Verified', 'flag')}
+            </div>
+            <p>AU validation and host smoke testing exist.</p>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>Pro Tools</h3>
+              ${chip('Not Supported')}
+            </div>
+            <p>Current AAX builds are not signed for standard Pro Tools installations.</p>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>Ableton Live</h3>
+              ${chip('Not yet StudioZIO verified')}
+            </div>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>Cubase</h3>
+              ${chip('Not yet StudioZIO verified')}
+            </div>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>Studio One</h3>
+              ${chip('Not yet StudioZIO verified')}
+            </div>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>FL Studio</h3>
+              ${chip('Not yet StudioZIO verified')}
+            </div>
+          </article>
+          <article class="panel host-card">
+            <div class="host-card-head">
+              <h3>Bitwig</h3>
+              ${chip('Not yet StudioZIO verified')}
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="community-verification-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="community-verification-title">Community verification</h2>
+        </div>
+        <p>Independent host reports can help expand the compatibility record without being presented as StudioZIO laboratory verification.</p>
+        <div class="hero-actions mt-md">
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues/new?template=independent-use-feedback.md">Submit host feedback</a>
+        </div>
+      </div>
+    </section>`
+  });
+}
+
+export function renderCommunityKnownIssues() {
+  return shell({
+    title: 'Known issues and platform limits — StudioZIO Community',
+    description:
+      'Documented platform boundaries and host-specific behavior for current StudioZIO releases.',
+    canonical: `${HUB_ORIGIN}/community/known-issues/`,
+    current: 'community',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Community &middot; Transparency</p>
+          <h1>Known issues and platform limits</h1>
+          <p class="lede">Documented platform boundaries and host-specific behavior for current StudioZIO releases.</p>
+          ${communityNav('known-issues')}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="defect-status-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="defect-status-title">Published defect status</h2>
+        </div>
+        <p>One active host-specific UI defect is currently known in Logic Pro: vertical plug-in resizing can oscillate up and down instead of settling cleanly.</p>
+        <p class="mt-sm">Other current entries on this page are platform limits or host-specific behaviors rather than open defects.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="known-limits-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="known-limits-title">Known limits and active defects</h2>
+        </div>
+        <div class="card-grid">
+          <article class="panel issue-card">
+            <div class="issue-card-head">
+              <h3>Logic Pro vertical resize oscillation</h3>
+              <div class="chip-row">
+                ${chip('Active Defect', 'destructive')}
+                <span class="chip chip--destructive">Open</span>
+              </div>
+            </div>
+            <p>In Logic Pro, vertical plug-in resizing can sometimes oscillate up and down rather than settling cleanly at the requested height.</p>
+            <div class="issue-workaround">
+              <span class="issue-label">Workaround</span>
+              <p>Not yet publicly established.</p>
+            </div>
+          </article>
+
+          <article class="panel issue-card">
+            <div class="issue-card-head">
+              <h3>AAX builds are not signed for Pro Tools</h3>
+              <div class="chip-row">
+                ${chip('Known Limit')}
+              </div>
+            </div>
+            <p>Mastering Suite and Tempo Delay have AAX builds, but the required PACE signing chain is not complete. Standard Pro Tools installations will not load the current unsigned AAX bundles.</p>
+            <div class="issue-workaround">
+              <span class="issue-label">Workaround</span>
+              <p>Use AU or VST3 in a compatible macOS host.</p>
+            </div>
+          </article>
+
+          <article class="panel issue-card">
+            <div class="issue-card-head">
+              <h3>Tempo Delay is Apple Silicon only</h3>
+              <div class="chip-row">
+                ${chip('Unsupported Configuration')}
+              </div>
+            </div>
+            <p>Tempo Delay is built for arm64 Apple Silicon Macs. There is no Intel x86_64 binary.</p>
+            <div class="issue-workaround">
+              <span class="issue-label">Workaround</span>
+              <p>There is no Tempo Delay build for Intel Macs. Mastering Suite remains a universal binary.</p>
+            </div>
+          </article>
+
+          <article class="panel issue-card">
+            <div class="issue-card-head">
+              <h3>macOS-only platform support</h3>
+              <div class="chip-row">
+                ${chip('Unsupported Configuration')}
+              </div>
+            </div>
+            <p>Current StudioZIO software targets macOS. No Windows or Linux builds are currently planned.</p>
+          </article>
+
+          <article class="panel issue-card">
+            <div class="issue-card-head">
+              <h3>Logic Pro transport-stop delay tails</h3>
+              <div class="chip-row">
+                ${chip('Host-Specific Behavior')}
+              </div>
+            </div>
+            <p>When playback stops on some direct-track insert scenarios with short source regions, Logic Pro may stop processing the plug-in, interrupting long Tempo Delay tails.</p>
+            <div class="issue-workaround">
+              <span class="issue-label">Workaround</span>
+              <p>Use Tempo Delay on an Aux/Bus return with 100% Wet when uninterrupted post-transport delay tails are required.</p>
+            </div>
+          </article>
+        </div>
+        <div class="hero-actions mt-lg">
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues/new?template=bug_report.md">Report an undocumented issue</a>
+        </div>
+      </div>
+    </section>`
+  });
+}
+
+export function renderCommunityRoadmap() {
+  return shell({
+    title: 'Public roadmap — StudioZIO Community',
+    description:
+      'Public status for released software and work that has already been announced at StudioZIO.',
+    canonical: `${HUB_ORIGIN}/community/roadmap/`,
+    current: 'community',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Community &middot; Product Direction</p>
+          <h1>Public roadmap</h1>
+          <p class="lede">Public status for released software and work that has already been announced.</p>
+          ${communityNav('roadmap')}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="shipped-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="shipped-title">Shipped</h2>
+        </div>
+        <div class="card-grid card-grid--2">
+          <article class="panel roadmap-card">
+            <div class="roadmap-card-head">
+              <h3>StudioZIO Mastering Suite 2.1.1</h3>
+              ${chip('Shipped')}
+            </div>
+            <p>Current production release. Universal macOS binary for Apple Silicon and Intel. AUv2, VST3 and Standalone.</p>
+          </article>
+          <article class="panel roadmap-card">
+            <div class="roadmap-card-head">
+              <h3>StudioZIO Tempo Delay 4.0.1</h3>
+              ${chip('Shipped')}
+            </div>
+            <p>Current production release for Apple Silicon Macs running macOS 12+. AUv2, VST3 and Standalone.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="development-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="development-title">In development</h2>
+        </div>
+        <div class="card-grid card-grid--2">
+          <article class="panel roadmap-card">
+            <div class="roadmap-card-head">
+              <h3>StudioZIO MixRack</h3>
+              ${chip('In Development')}
+            </div>
+            <p>A new StudioZIO mixing environment currently in development for macOS. AU, VST3 and Standalone formats are planned. No release date has been announced.</p>
+          </article>
+          <article class="panel roadmap-card">
+            <div class="roadmap-card-head">
+              <h3>AAX release path</h3>
+              ${chip('In Development')}
+            </div>
+            <p>AAX builds exist for current StudioZIO plug-ins, but public Pro Tools delivery still requires completion of the PACE signing path.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="scope-title">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="scope-title">Current platform scope</h2>
+        </div>
+        <p>Current StudioZIO releases target macOS.</p>
+        <p class="mt-sm">Tempo Delay remains Apple Silicon only.</p>
+        <p class="mt-sm">Windows and Linux builds are not currently planned.</p>
+        <div class="hero-actions mt-md">
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/StudioZIO-Releases">Track releases on GitHub</a>
+        </div>
       </div>
     </section>`
   });
