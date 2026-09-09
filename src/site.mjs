@@ -1309,7 +1309,7 @@ export function renderCommunityQuestions() {
         <p>Public technical questions and bug reports belong on the official StudioZIO Support issue tracker on GitHub.</p>
         <p class="mt-sm">If your matter involves private details, sensitive project information or a direct inquiry, use the StudioZIO contact form.</p>
         <div class="hero-actions mt-md">
-          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues">Open a public issue</a>
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues/new?template=question.md">Open a public issue</a>
           <a class="btn" href="/contact/">Contact privately</a>
         </div>
       </div>
@@ -1383,7 +1383,7 @@ export function renderCommunityIdeas() {
         <p class="mt-sm">StudioZIO does not operate a public voting queue.</p>
         <p class="mt-sm">Crashes and incorrect audio-processing behavior take priority over workflow enhancements.</p>
         <div class="hero-actions mt-md">
-          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues">Share an idea on GitHub</a>
+          <a class="btn btn-primary" href="https://github.com/StudioZIO/Support/issues/new?template=feature_request.md">Share an idea on GitHub</a>
           <a class="btn" href="/contact/">Submit private feedback</a>
         </div>
       </div>
