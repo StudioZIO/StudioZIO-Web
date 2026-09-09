@@ -33,7 +33,7 @@ export const products = Object.freeze([
     releaseUrl:
       'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.1.1-flicker-hold-2026.09.08',
     sha256:
-      '97dcd2f55e317054fd15dbbee098a755623838345fc37cb89b114864d1e3da5d',
+      '2345deeb3d9cf97e80ca12109de120af9b2896f14799f4e67825e148a1feb7b1',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
