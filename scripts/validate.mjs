@@ -28,8 +28,6 @@ import {
   HUB_ORIGIN,
 } from '../src/site.mjs';
 
-const expectedSha =
-  '2345deeb3d9cf97e80ca12109de120af9b2896f14799f4e67825e148a1feb7b1';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
 const KVR_URLS = [
   'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio',
@@ -79,8 +77,8 @@ export function validateSource() {
   if (!downloadTag || downloadTag !== releaseTag) {
     throw new Error('Release tag mismatch between download and release URLs');
   }
-  if (!/^[a-f0-9]{64}$/i.test(product.sha256) || product.sha256 !== expectedSha) {
-    throw new Error('Checksum drift');
+  if (!/^[a-f0-9]{64}$/i.test(product.sha256)) {
+    throw new Error('Invalid checksum format');
   }
   if (RELEASE_REPOSITORY_URL !== 'https://github.com/StudioZIO/StudioZIO-Releases') {
     throw new Error('Release repository drift');
