@@ -214,7 +214,7 @@ const organizationNode = {
   name: 'StudioZIO',
   url: `${HUB_ORIGIN}/`,
   description:
-    'Independent audio software company building native Audio Unit, VST3 and Standalone plug-ins for macOS.',
+    'Independent audio software company building native Audio Unit, VST3, AAX and Standalone plug-ins for macOS.',
   logo: `${HUB_ORIGIN}/assets/og/og-studiozio.png`,
   /* The artist site's copy of this same @id already named this founder. Both
      copies now say it, so the two properties describe one Organization
@@ -380,7 +380,7 @@ function masteringSuiteMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Mastering Suite</span>
-        <span class="chip-row">${chip('AU · VST3')}${chip('Notarized', 'flag')}</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
@@ -413,7 +413,7 @@ function tempoDelayMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Tempo Delay</span>
-        <span class="chip-row">${chip('AU · VST3')}${chip('Host sync', 'flag')}</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Host sync', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
@@ -922,7 +922,7 @@ export function renderNotFound() {
 /* ---------- technical notes ---------------------------------------------
    Things the plug-ins assert on their own surface -- that EXPECTED TP is a
    ceiling-derived reference, that oversampling is set per stage, that
-   AAX is built but unsigned -- explained somewhere that is not a product
+   AAX support and Pro Tools validation -- explained somewhere that is not a product
    page. The list lives in notes.mjs and the routes, the sitemap and the
    validator are all derived from it, so they cannot disagree about which
    notes exist. */
@@ -938,7 +938,7 @@ export function renderNotes() {
   return shell({
     title: 'Technical notes — StudioZIO',
     description:
-      'Technical notes from StudioZIO on true-peak limiting, oversampling, delay design and AAX signing: what the plug-ins report, and why they behave that way.',
+      'Technical notes from StudioZIO on true-peak limiting, oversampling, delay design and AAX support: what the plug-ins report, and why they behave that way.',
     canonical: `${HUB_ORIGIN}/notes/`,
     current: 'notes',
     content: `<section class="hero tech-grid">
@@ -1168,10 +1168,9 @@ export function renderPress() {
           <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
-          <div><dt>Intel support</dt><dd>Mastering Suite has an Intel build. Tempo Delay does not.</dd></div>
-          <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools.</dd></div>
+          <div><dt>Architecture</dt><dd>Both plug-ins are Apple Silicon (arm64) only. There are no Intel builds.</dd></div>
+          <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
         </dl>
-        <p class="mt-md">The Pro Tools line is the one most often reported wrong, and the reasons are written out in <a href="/notes/where-aax-support-stands/">a note on where that stands</a>.</p>
       </div>
     </section>
 
@@ -1325,7 +1324,7 @@ export function renderCommunityQuestions() {
           <li>Host DAW and exact version</li>
           <li>macOS version and Mac model</li>
           <li>Apple Silicon or Intel where relevant</li>
-          <li>Plug-in format: AU, VST3 or Standalone</li>
+          <li>Plug-in format: AU, VST3, AAX or Standalone</li>
           <li>Shortest sequence that reproduces the issue</li>
           <li>Crash report from Console.app if a crash occurred</li>
         </ul>
@@ -1339,7 +1338,7 @@ export function renderCommunityQuestions() {
         </div>
         <pre class="code-block"><code>auval -a | grep -i studiozio</code></pre>
         <pre class="code-block"><code>killall -9 AudioComponentRegistrar</code></pre>
-        <p class="mono-note mt-md">Tempo Delay is Apple Silicon only and will not appear on an Intel Mac.</p>
+        <p class="mono-note mt-md">Both plug-ins are Apple Silicon only and will not appear on an Intel Mac.</p>
       </div>
     </section>`
   });
@@ -1430,11 +1429,11 @@ export function renderCommunityCompatibility() {
               </div>
               <div>
                 <dt>Architecture</dt>
-                <dd>Universal &mdash; Apple Silicon and Intel</dd>
+                <dd>Apple Silicon (arm64) only</dd>
               </div>
               <div>
                 <dt>Formats</dt>
-                <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
+                <dd>AUv2 &middot; VST3 &middot; AAX</dd>
               </div>
               <div class="spec-full">
                 <dt>AAX / Pro Tools</dt>
@@ -1626,15 +1625,15 @@ export function renderCommunityKnownIssues() {
 
           <article class="panel issue-card">
             <div class="issue-card-head">
-              <h3>Tempo Delay is Apple Silicon only</h3>
+              <h3>Both plug-ins are Apple Silicon only</h3>
               <div class="chip-row">
                 ${chip('Unsupported Configuration')}
               </div>
             </div>
-            <p>Tempo Delay is built for arm64 Apple Silicon Macs. There is no Intel x86_64 binary.</p>
+            <p>Mastering Suite and Tempo Delay are built for arm64 Apple Silicon Macs. There are no Intel x86_64 binaries.</p>
             <div class="issue-workaround">
               <span class="issue-label">Workaround</span>
-              <p>There is no Tempo Delay build for Intel Macs. Mastering Suite remains a universal binary.</p>
+              <p>There are no builds for Intel Macs.</p>
             </div>
           </article>
 
@@ -1699,14 +1698,21 @@ export function renderCommunityRoadmap() {
               <h3>StudioZIO Mastering Suite 2.1.1</h3>
               ${chip('Shipped')}
             </div>
-            <p>Current production release. Universal macOS binary for Apple Silicon and Intel. AUv2, VST3 and Standalone.</p>
+            <p>Current production release. Apple Silicon (arm64) macOS binary. AUv2, VST3 and AAX.</p>
           </article>
           <article class="panel roadmap-card">
             <div class="roadmap-card-head">
               <h3>StudioZIO Tempo Delay 4.0.1</h3>
               ${chip('Shipped')}
             </div>
-            <p>Current production release for Apple Silicon Macs running macOS 12+. AUv2, VST3 and Standalone.</p>
+            <p>Current production release for Apple Silicon Macs running macOS 12+. AUv2, VST3, AAX and Standalone.</p>
+          </article>
+          <article class="panel roadmap-card">
+            <div class="roadmap-card-head">
+              <h3>AAX release</h3>
+              ${chip('Shipped')}
+            </div>
+            <p>AAX formats are now publicly available and validated in Pro Tools.</p>
           </article>
         </div>
       </div>
@@ -1725,13 +1731,6 @@ export function renderCommunityRoadmap() {
             </div>
             <p>A new StudioZIO mixing environment currently in development for macOS. AU, VST3 and Standalone formats are planned. No release date has been announced.</p>
           </article>
-          <article class="panel roadmap-card">
-            <div class="roadmap-card-head">
-              <h3>AAX release path</h3>
-              ${chip('Shipped')}
-            </div>
-            <p>AAX formats are now publicly available and validated in Pro Tools.</p>
-          </article>
         </div>
       </div>
     </section>
@@ -1742,7 +1741,7 @@ export function renderCommunityRoadmap() {
           <h2 id="scope-title">Current platform scope</h2>
         </div>
         <p>Current StudioZIO releases target macOS.</p>
-        <p class="mt-sm">Tempo Delay remains Apple Silicon only.</p>
+        <p class="mt-sm">Both plug-ins are Apple Silicon only.</p>
         <p class="mt-sm">Windows and Linux builds are not currently planned.</p>
         <div class="hero-actions mt-md">
           <a class="btn btn-primary" href="https://github.com/StudioZIO/StudioZIO-Releases">Track releases on GitHub</a>

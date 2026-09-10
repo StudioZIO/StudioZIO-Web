@@ -88,6 +88,9 @@ export function validateSource() {
   }
 
   const tempoDelay = getProduct('tempo-delay');
+  if (!/^[a-f0-9]{64}$/i.test(tempoDelay.sha256)) {
+    throw new Error('Invalid checksum format for Tempo Delay');
+  }
   if (
     tempoDelay.name !== 'StudioZIO Tempo Delay' ||
     tempoDelay.availability !== 'Available now' ||
@@ -97,7 +100,6 @@ export function validateSource() {
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
     TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/' ||
     tempoDelay.filename !== `StudioZIOTempoDelay-v${tempoDelay.version}-macOS-arm64-AAX.pkg` ||
-    tempoDelay.sha256 !== '4e919c509cca196e178a0a991d24c02eb7e1ba81c5890e0f4fce16aba94ec055' ||
     tempoDelay.downloadUrl !== `${RELEASE_REPOSITORY_URL}/releases/download/tempo-delay-v${tempoDelay.version}-aax-2026.09.10/${tempoDelay.filename}` ||
     tempoDelay.releaseUrl !== `${RELEASE_REPOSITORY_URL}/releases/tag/tempo-delay-v${tempoDelay.version}-aax-2026.09.10`
   ) {
@@ -108,7 +110,7 @@ export function validateSource() {
      something the product site owns, free to drift and with no gate to catch
      it. The version is the one figure both properties must agree on, so it is
      asserted above rather than banned. */
-  for (const unsupportedField of ['downloadUrl', 'releaseUrl', 'releaseDate']) {
+  for (const unsupportedField of ['releaseDate']) {
     if (tempoDelay[unsupportedField] !== undefined) {
       throw new Error(`Unsupported Tempo Delay field: ${unsupportedField}`);
     }

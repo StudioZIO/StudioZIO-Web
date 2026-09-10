@@ -21,10 +21,10 @@ export const products = Object.freeze([
     shortName: 'Mastering Suite',
     version: '2.1.1',
     platform: 'macOS',
-    /* Stated per product, not assumed. Mastering Suite ships a universal
-       binary; Tempo Delay is arm64 only, and a hub that says only "macOS"
-       for both sends Intel owners to a download that will not run. */
-    architecture: 'Universal — Apple Silicon and Intel',
+    /* Stated per product, not assumed. Both products are arm64 only,
+       and a hub that says only "macOS" sends Intel owners to a download
+       that will not run. */
+    architecture: 'Apple Silicon (arm64) only — no Intel build',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX']),
     compactFormats: 'AU / VST3 / AAX',
     filename: 'StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
