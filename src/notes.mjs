@@ -173,7 +173,7 @@ export const notes = Object.freeze([
         h: 'No account, no iLok, no email registration',
         p: Object.freeze([
           'The installer is a signed and notarised package. You download it, you run it, the plug-in is there. Nothing to activate, no address to hand over, no licence manager, nothing that expires or phones home.',
-          'Formats are Audio Unit, VST3 and AAX for both products, plus Standalone for Tempo Delay.'
+          'Formats are Audio Unit, VST3, AAX and Standalone for both products.'
         ])
       }),
       Object.freeze({

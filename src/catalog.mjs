@@ -25,8 +25,8 @@ export const products = Object.freeze([
        and a hub that says only "macOS" sends Intel owners to a download
        that will not run. */
     architecture: 'Apple Silicon (arm64) only — no Intel build',
-    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX']),
-    compactFormats: 'AU / VST3 / AAX',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
     filename: 'StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
     downloadUrl:
       'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-aax-2026.09.10/StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
@@ -49,8 +49,8 @@ export const products = Object.freeze([
     shortName: 'Tempo Delay',
     platform: 'macOS',
     architecture: 'Apple Silicon (arm64) only — no Intel build',
-    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX']),
-    compactFormats: 'AU / VST3 / AAX',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
     price: 'Free',
     version: '4.0.1',
     filename: 'StudioZIOTempoDelay-v4.0.1-macOS-arm64-AAX.pkg',

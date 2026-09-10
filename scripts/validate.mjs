@@ -96,7 +96,7 @@ export function validateSource() {
     tempoDelay.availability !== 'Available now' ||
     !isSemanticPatch(tempoDelay.version) ||
     tempoDelay.platform !== 'macOS' ||
-    tempoDelay.compactFormats !== 'AU / VST3 / AAX' ||
+    tempoDelay.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
     TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/' ||
     tempoDelay.filename !== `StudioZIOTempoDelay-v${tempoDelay.version}-macOS-arm64-AAX.pkg` ||

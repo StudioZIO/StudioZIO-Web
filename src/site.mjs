@@ -1433,7 +1433,7 @@ export function renderCommunityCompatibility() {
               </div>
               <div>
                 <dt>Formats</dt>
-                <dd>AUv2 &middot; VST3 &middot; AAX</dd>
+                <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
               <div class="spec-full">
                 <dt>AAX / Pro Tools</dt>
@@ -1698,7 +1698,7 @@ export function renderCommunityRoadmap() {
               <h3>StudioZIO Mastering Suite 2.1.1</h3>
               ${chip('Shipped')}
             </div>
-            <p>Current production release. Apple Silicon (arm64) macOS binary. AUv2, VST3 and AAX.</p>
+            <p>Current production release. Apple Silicon (arm64) macOS binary. AUv2, VST3, AAX and Standalone.</p>
           </article>
           <article class="panel roadmap-card">
             <div class="roadmap-card-head">
