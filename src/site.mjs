@@ -1168,7 +1168,7 @@ export function renderPress() {
           <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
-          <div><dt>Architecture</dt><dd>Both plug-ins are Apple Silicon (arm64) only. There are no Intel builds.</dd></div>
+          <div><dt>Architecture</dt><dd>Mastering Suite is Universal (Apple Silicon and Intel). Tempo Delay is Apple Silicon only.</dd></div>
           <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
         </dl>
       </div>
@@ -1338,7 +1338,7 @@ export function renderCommunityQuestions() {
         </div>
         <pre class="code-block"><code>auval -a | grep -i studiozio</code></pre>
         <pre class="code-block"><code>killall -9 AudioComponentRegistrar</code></pre>
-        <p class="mono-note mt-md">Both plug-ins are Apple Silicon only and will not appear on an Intel Mac.</p>
+        <p class="mono-note mt-md">Tempo Delay is Apple Silicon only and will not appear on an Intel Mac.</p>
       </div>
     </section>`
   });
@@ -1429,7 +1429,7 @@ export function renderCommunityCompatibility() {
               </div>
               <div>
                 <dt>Architecture</dt>
-                <dd>Apple Silicon (arm64) only</dd>
+                <dd>Universal — Apple Silicon and Intel</dd>
               </div>
               <div>
                 <dt>Formats</dt>
@@ -1625,12 +1625,12 @@ export function renderCommunityKnownIssues() {
 
           <article class="panel issue-card">
             <div class="issue-card-head">
-              <h3>Both plug-ins are Apple Silicon only</h3>
+              <h3>Architecture support</h3>
               <div class="chip-row">
                 ${chip('Unsupported Configuration')}
               </div>
             </div>
-            <p>Mastering Suite and Tempo Delay are built for arm64 Apple Silicon Macs. There are no Intel x86_64 binaries.</p>
+            <p>Mastering Suite is Universal for Apple Silicon and Intel. Tempo Delay is built for arm64 Apple Silicon Macs only.</p>
             <div class="issue-workaround">
               <span class="issue-label">Workaround</span>
               <p>There are no builds for Intel Macs.</p>
@@ -1698,7 +1698,7 @@ export function renderCommunityRoadmap() {
               <h3>StudioZIO Mastering Suite 2.1.1</h3>
               ${chip('Shipped')}
             </div>
-            <p>Current production release. Apple Silicon (arm64) macOS binary. AUv2, VST3, AAX and Standalone.</p>
+            <p>Current production release. Universal macOS binary (Apple Silicon and Intel). AUv2, VST3, AAX and Standalone.</p>
           </article>
           <article class="panel roadmap-card">
             <div class="roadmap-card-head">
@@ -1741,7 +1741,7 @@ export function renderCommunityRoadmap() {
           <h2 id="scope-title">Current platform scope</h2>
         </div>
         <p>Current StudioZIO releases target macOS.</p>
-        <p class="mt-sm">Both plug-ins are Apple Silicon only.</p>
+        <p class="mt-sm">Tempo Delay is Apple Silicon only.</p>
         <p class="mt-sm">Windows and Linux builds are not currently planned.</p>
         <div class="hero-actions mt-md">
           <a class="btn btn-primary" href="https://github.com/StudioZIO/StudioZIO-Releases">Track releases on GitHub</a>

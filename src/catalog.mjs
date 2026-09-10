@@ -21,10 +21,10 @@ export const products = Object.freeze([
     shortName: 'Mastering Suite',
     version: '2.1.1',
     platform: 'macOS',
-    /* Stated per product, not assumed. Both products are arm64 only,
+    /* Stated per product, not assumed. Mastering is Universal, but Tempo is arm64 only,
        and a hub that says only "macOS" sends Intel owners to a download
        that will not run. */
-    architecture: 'Apple Silicon (arm64) only — no Intel build',
+    architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
     filename: 'StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
