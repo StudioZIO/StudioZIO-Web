@@ -1521,7 +1521,7 @@ export function renderCommunityCompatibility() {
           <article class="panel host-card">
             <div class="host-card-head">
               <h3>Pro Tools</h3>
-              ${chip('StudioZIO Verified')}
+              ${chip('StudioZIO Verified', 'flag')}
             </div>
             <p>AAX formats are validated in Pro Tools.</p>
           </article>
