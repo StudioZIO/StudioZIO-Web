@@ -963,6 +963,13 @@ export function renderNotes() {
   });
 }
 
+function formatNoteParagraph(line) {
+  return escapeHtml(line).replace(
+    /&lt;a href=&quot;([^&"]+)&quot;&gt;(.*?)&lt;\/a&gt;/g,
+    '<a href="$1">$2</a>'
+  );
+}
+
 export function renderNote(slug) {
   const note = getNote(slug);
   const sections = note.body
@@ -972,7 +979,7 @@ export function renderNote(slug) {
         <div class="section-head">
           <h2 id="note-h-${index}">${escapeHtml(part.h)}</h2>
         </div>
-        ${part.p.map((line) => `<p class="lede">${escapeHtml(line)}</p>`).join('')}
+        ${part.p.map((line) => `<p class="lede">${formatNoteParagraph(line)}</p>`).join('')}
       </div>
     </section>`
     )

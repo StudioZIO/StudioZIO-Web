@@ -7,6 +7,202 @@
 
 export const notes = Object.freeze([
   Object.freeze({
+    slug: 'aax-is-now-live',
+    heading: 'AAX is now live',
+    title: 'AAX is now live',
+    description:
+      'AAX is now available for StudioZIO Mastering Suite 2.1.1 and Tempo Delay 4.0.1, with both releases validated in Pro Tools.',
+    standfirst:
+      'AAX is now available for Mastering Suite and Tempo Delay, with both releases validated in Pro Tools.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What shipped',
+        p: Object.freeze([
+          'AAX is now available for both current StudioZIO products. This is not a separate experimental branch or an invite-only beta. The AAX targets have been integrated into the standard build pipeline and merged into the primary release distribution.',
+          'When you download and run the official macOS installer, it deploys an AAX plug-in bundle directly to the standard Avid plug-in directory alongside the Audio Unit, VST3, and Standalone outputs.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Mastering Suite 2.1.1',
+        p: Object.freeze([
+          'Mastering Suite 2.1.1 is distributed across four distinct outputs: AU, VST3, AAX, and a Standalone application.',
+          'The release is a Universal macOS build, containing native executable slices for both Apple Silicon (arm64) and Intel (x86_64). It runs natively on current Apple Silicon hardware while preserving complete compatibility with Intel-based workstations.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Tempo Delay 4.0.1',
+        p: Object.freeze([
+          'Tempo Delay 4.0.1 is similarly distributed as AU, VST3, AAX, and a Standalone application.',
+          'Unlike Mastering Suite, the DSP executable for Tempo Delay is compiled exclusively for Apple Silicon (arm64). There is no Intel build. That architectural boundary remains identical to prior releases.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Pro Tools validation',
+        p: Object.freeze([
+          'Producing an AAX binary and confirming that a host loads and runs it reliably are two separate engineering facts. Both releases have been directly tested and validated in Pro Tools.',
+          'Validation covers realtime audio processing, automation parameter mapping, and offline session state recall. As documented in <a href="/notes/where-aax-support-stands/">Where AAX support stands</a>, AAX plug-ins require PACE signing to be recognized by Pro Tools. However, neither release requires an iLok account, dongle, or user registration.',
+          'For more details on host testing boundaries, see <a href="/notes/what-we-mean-by-studiozio-verified/">What we mean by StudioZIO Verified</a>.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'what-we-mean-by-studiozio-verified',
+    heading: 'What we mean by StudioZIO Verified',
+    title: 'What we mean by StudioZIO Verified',
+    description:
+      'Compatible is not the same as directly tested. StudioZIO Verified marks the host environments for which we have direct test evidence.',
+    standfirst:
+      'Compatible is not the same as directly tested. StudioZIO Verified marks the host environments for which we have direct test evidence.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'Format compliance versus host testing',
+        p: Object.freeze([
+          'Audio plug-in formats are defined by formal specifications. A plug-in that passes the Audio Unit validation utility, the VST3 validator, or the AAX validator satisfies the structural requirements of the format. In theory, any conforming host should load it seamlessly.',
+          'In practice, every digital audio workstation implements host-side scheduling, process threading, buffer resizing, and UI hosting differently. Format compliance establishes that a plug-in conforms to the API specification; it does not guarantee how a specific host interacts with it under session load.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The StudioZIO Verified standard',
+        p: Object.freeze([
+          'On our compatibility surfaces, a host marked with the StudioZIO Verified badge indicates that we have direct, firsthand test evidence for that specific environment.',
+          'Currently, REAPER, Logic Pro, and Pro Tools are StudioZIO Verified. For these hosts, we have executed repeatable test suites covering audio thread stability, sample rate transitions from 44.1 kHz to 192 kHz, parameter automation recording and playback, state persistence across session saves, and bypass switching.'
+        ])
+      }),
+      Object.freeze({
+        h: 'What the label does not claim',
+        p: Object.freeze([
+          'StudioZIO Verified is a statement of our own internal testing. It is not a vendor endorsement or official certification. For instance, our AAX validation in Pro Tools reflects our test passes; it is not an Avid Certified designation.',
+          'It also does not claim that every point release or historical version of a DAW behaves identically. Testing is conducted on current modern releases on macOS.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Unverified is not incompatible',
+        p: Object.freeze([
+          'Hosts that do not carry the StudioZIO Verified mark, such as Ableton Live, Bitwig Studio, or Cubase, are not incompatible. Because our plug-ins adhere strictly to the AUv2 and VST3 standards, they generally run without issue in conforming DAWs.',
+          'However, we do not apply the verified status until we have completed and documented explicit test protocols in-house. To review current test status or report community host findings, visit the <a href="/community/compatibility/">Community Compatibility</a> page.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'why-release-truth-starts-with-the-artifact',
+    heading: 'Why release truth starts with the artifact',
+    title: 'Why release truth starts with the artifact',
+    description:
+      'Formats and architectures are derived from the final shipped artifact, not filenames, summaries or assumptions.',
+    standfirst:
+      'Formats and architectures are derived from the final shipped artifact, not filenames, summaries or assumptions.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'The risk of assumption',
+        p: Object.freeze([
+          'In software distribution, documentation and marketing copy frequently drift away from the compiled reality. A build configuration might specify an architecture target, a release note might abbreviate the format list, or an installer filename might inherit a legacy naming convention.',
+          'When public documentation relies on build scripts or filenames rather than inspectable binaries, inaccuracies accumulate. An abbreviated summary might omit the Standalone application, or a package name might suggest a single architecture when the binaries inside are universal.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Inspecting the final payload',
+        p: Object.freeze([
+          'At StudioZIO, public capability claims must derive directly from the final, immutable release artifact. Before a release is approved for publication, the signed and notarized package is downloaded and expanded in a clean, read-only inspection environment.',
+          'We inventory the exact payloads installed to disk across four capability targets: Audio Unit (.component), VST3 (.vst3), AAX (.aaxplugin), and the Standalone application (.app). If an output does not exist in the expanded payload, it cannot be claimed on any public surface.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Binary architecture inspection',
+        p: Object.freeze([
+          'Payload presence is only half the verification. Each contained executable is inspected directly using Mach-O analysis tools like lipo and file.',
+          'This establishes whether each binary contains arm64 slices, x86_64 slices, or both. We never infer architecture from the installer filename. If the binaries are universal, the release is universal, even if the installer package filename contains an arm64 token for historical reasons.'
+        ])
+      }),
+      Object.freeze({
+        h: 'The Release Truth Manifest',
+        p: Object.freeze([
+          'The results of this inspection are recorded in a permanent, version-controlled Release Truth Manifest. Downstream web pages, product catalogs, and release notes must read their capability claims from this manifest rather than manual transcription.',
+          'To see how this applies to our current lineup, read <a href="/notes/universal-vs-apple-silicon-what-actually-ships/">Universal vs Apple Silicon</a>, or review the overall workflow in <a href="/notes/inside-the-studiozio-release-pipeline/">Inside the StudioZIO release pipeline</a>.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'universal-vs-apple-silicon-what-actually-ships',
+    heading: 'Universal vs Apple Silicon: what actually ships',
+    title: 'Universal vs Apple Silicon: what actually ships',
+    description:
+      'Mastering Suite ships Universal. Tempo Delay is Apple Silicon only. The difference comes from the binaries, not the installer name.',
+    standfirst:
+      'Mastering Suite ships Universal. Tempo Delay is Apple Silicon only. The difference comes from the binaries, not the installer name.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What the terms mean',
+        p: Object.freeze([
+          'On macOS, an executable file can contain machine code for more than one CPU architecture. A binary containing both Apple Silicon (arm64) and Intel (x86_64) slices is a Universal binary. The operating system loads the native slice matching the host machine automatically.',
+          'By contrast, an Apple Silicon-only binary contains only arm64 instructions. It executes natively on Apple Silicon Macs, but will not load on Intel hardware.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Mastering Suite 2.1.1 is Universal',
+        p: Object.freeze([
+          'Every component of <a href="https://studioziomasteringsuite.vercel.app/">StudioZIO Mastering Suite</a> 2.1.1 is built as a Universal binary. Whether you load the AUv2, VST3, AAX, or Standalone application, the binary contains dual architecture slices: arm64 and x86_64.',
+          'This means Mastering Suite runs without translation on Apple Silicon and provides native performance on legacy Intel systems on macOS 11 or higher.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Tempo Delay 4.0.1 is Apple Silicon only',
+        p: Object.freeze([
+          '<a href="https://www.tempodelay.tech/">StudioZIO Tempo Delay</a> 4.0.1 is compiled specifically for Apple Silicon (arm64). All four outputs (AU, VST3, AAX, and Standalone) contain exclusively arm64 code.',
+          'There is no Intel slice in the executable, and it will not run on Intel Macs. Stating this limit plainly ensures users on Intel systems do not download an installer that cannot run in their environment.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Filenames are not architecture evidence',
+        p: Object.freeze([
+          'The Mastering Suite installer package is named StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg. That name arose during build orchestration, but binary analysis reveals that all payloads inside are dual-slice Universal binaries.',
+          'Because published release artifacts are immutable, we do not rename or repackage a verified, notarized installer merely to alter a cosmetic label. The architecture truth comes from the binaries within the payload, verified directly during release inspection.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
+    slug: 'inside-the-studiozio-release-pipeline',
+    heading: 'Inside the StudioZIO release pipeline',
+    title: 'Inside the StudioZIO release pipeline',
+    description:
+      'From frozen artifact to live release: inspection, manifests, signing, validation, CI and public verification.',
+    standfirst:
+      'From frozen artifact to live release: inspection, manifests, signing, validation, CI and public verification.',
+    body: Object.freeze([
+      Object.freeze({
+        h: 'From candidate to frozen artifact',
+        p: Object.freeze([
+          'A release begins when a build candidate successfully clears compilation, static analysis, and local host testing. At this point, the build artifacts are packaged into the final macOS installer .pkg format and cryptographically frozen.',
+          'The installer SHA-256 hash is computed immediately. From this second forward, the artifact is immutable: no byte changes, repackaging, or re-signing are permitted without restarting the release cycle.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Inspection and manifest generation',
+        p: Object.freeze([
+          'Before any public repository or website is updated, the frozen installer is unpacked in a sandbox environment. Each output bundle is checked for presence and code integrity.',
+          'Binary analysis verifies architecture slices across all formats. Apple notarization tickets and Developer ID signatures are validated. The confirmed findings are written to a Release Truth Manifest in the release repository, creating an auditable record of the exact binaries shipped.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Automated CI and checksum gates',
+        p: Object.freeze([
+          'Once the manifest is committed, downstream properties synchronize. The catalog entries and product pages derive their version numbers, format badges, and architecture claims from the manifest.',
+          'Our continuous integration pipeline validates structural integrity, executes automated tests across our <a href="/products/">product catalog</a>, and downloads the public release assets from GitHub to verify that live bytes match the registered SHA-256 checksums exactly.'
+        ])
+      }),
+      Object.freeze({
+        h: 'Rendered DOM and public cutover',
+        p: Object.freeze([
+          'The final gate occurs in the browser. Headless Chromium testing verifies that rendered pages on both desktop and mobile viewports display coherent typography, correct host support tags, and zero contradictory text.',
+          'Only after the live site, download mirrors, and third-party listings on KVR reflect verified truth is the release considered complete. For details on verified DAWs, consult <a href="/community/compatibility/">Compatibility</a>.'
+        ])
+      })
+    ])
+  }),
+  Object.freeze({
     slug: 'expected-true-peak',
     heading: 'What EXPECTED TP tells you',
     title: 'EXPECTED TP is not an output measurement',
