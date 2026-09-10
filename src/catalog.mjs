@@ -25,15 +25,15 @@ export const products = Object.freeze([
        binary; Tempo Delay is arm64 only, and a hub that says only "macOS"
        for both sends Intel owners to a download that will not run. */
     architecture: 'Universal — Apple Silicon and Intel',
-    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
-    compactFormats: 'AU / VST3 / Standalone',
-    filename: 'StudioZIO-Mastering-Suite-2.1.1.pkg',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX']),
+    compactFormats: 'AU / VST3 / AAX',
+    filename: 'StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-flicker-hold-2026.09.08/StudioZIO-Mastering-Suite-2.1.1.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-aax-2026.09.10/StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.1.1-flicker-hold-2026.09.08',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.1.1-aax-2026.09.10',
     sha256:
-      '2345deeb3d9cf97e80ca12109de120af9b2896f14799f4e67825e148a1feb7b1',
+      '7ac80cb1a340a92b1dc606254604b58b83907b0a1d594e29a77a39d807319ceb',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
@@ -49,11 +49,17 @@ export const products = Object.freeze([
     shortName: 'Tempo Delay',
     platform: 'macOS',
     architecture: 'Apple Silicon (arm64) only — no Intel build',
-    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
-    compactFormats: 'AU / VST3 / Standalone',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX']),
+    compactFormats: 'AU / VST3 / AAX',
     price: 'Free',
     version: '4.0.1',
-    // Installer provenance is maintained on the authoritative product site.
+    filename: 'StudioZIOTempoDelay-v4.0.1-macOS-arm64-AAX.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.0.1-aax-2026.09.10/StudioZIOTempoDelay-v4.0.1-macOS-arm64-AAX.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.0.1-aax-2026.09.10',
+    sha256:
+      '4e919c509cca196e178a0a991d24c02eb7e1ba81c5890e0f4fce16aba94ec055',
     availability: 'Available now',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',

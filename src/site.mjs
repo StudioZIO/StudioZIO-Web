@@ -1169,7 +1169,7 @@ export function renderPress() {
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
           <div><dt>Intel support</dt><dd>Mastering Suite has an Intel build. Tempo Delay does not.</dd></div>
-          <div><dt>Pro Tools</dt><dd>Both plug-ins have AAX builds that pass Avid&rsquo;s validator on every functional test. Neither is signed yet, so neither loads in a standard Pro Tools installation.</dd></div>
+          <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools.</dd></div>
         </dl>
         <p class="mt-md">The Pro Tools line is the one most often reported wrong, and the reasons are written out in <a href="/notes/where-aax-support-stands/">a note on where that stands</a>.</p>
       </div>
@@ -1434,11 +1434,11 @@ export function renderCommunityCompatibility() {
               </div>
               <div>
                 <dt>Formats</dt>
-                <dd>AUv2 &middot; VST3 &middot; Standalone</dd>
+                <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
               <div class="spec-full">
                 <dt>AAX / Pro Tools</dt>
-                <dd>Not supported in standard Pro Tools installations &mdash; AAX build is not PACE-signed</dd>
+                <dd>AAX validated in Pro Tools</dd>
               </div>
             </dl>
           </article>
@@ -1458,7 +1458,7 @@ export function renderCommunityCompatibility() {
               </div>
               <div>
                 <dt>Formats</dt>
-                <dd>AUv2 &middot; VST3 &middot; Standalone</dd>
+                <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
               <div>
                 <dt>Reported processing latency</dt>
@@ -1466,7 +1466,7 @@ export function renderCommunityCompatibility() {
               </div>
               <div class="spec-full">
                 <dt>AAX / Pro Tools</dt>
-                <dd>Not supported in standard Pro Tools installations &mdash; AAX build is unsigned</dd>
+                <dd>AAX validated in Pro Tools</dd>
               </div>
             </dl>
           </article>
@@ -1522,9 +1522,9 @@ export function renderCommunityCompatibility() {
           <article class="panel host-card">
             <div class="host-card-head">
               <h3>Pro Tools</h3>
-              ${chip('Not Supported')}
+              ${chip('StudioZIO Verified')}
             </div>
-            <p>Current AAX builds are not signed for standard Pro Tools installations.</p>
+            <p>AAX formats are validated in Pro Tools.</p>
           </article>
           <article class="panel host-card">
             <div class="host-card-head">
@@ -1623,19 +1623,6 @@ export function renderCommunityKnownIssues() {
             </div>
           </article>
 
-          <article class="panel issue-card">
-            <div class="issue-card-head">
-              <h3>AAX builds are not signed for Pro Tools</h3>
-              <div class="chip-row">
-                ${chip('Known Limit')}
-              </div>
-            </div>
-            <p>Mastering Suite and Tempo Delay have AAX builds, but the required PACE signing chain is not complete. Standard Pro Tools installations will not load the current unsigned AAX bundles.</p>
-            <div class="issue-workaround">
-              <span class="issue-label">Workaround</span>
-              <p>Use AU or VST3 in a compatible macOS host.</p>
-            </div>
-          </article>
 
           <article class="panel issue-card">
             <div class="issue-card-head">
@@ -1741,9 +1728,9 @@ export function renderCommunityRoadmap() {
           <article class="panel roadmap-card">
             <div class="roadmap-card-head">
               <h3>AAX release path</h3>
-              ${chip('In Development')}
+              ${chip('Shipped')}
             </div>
-            <p>AAX builds exist for current StudioZIO plug-ins, but public Pro Tools delivery still requires completion of the PACE signing path.</p>
+            <p>AAX formats are now publicly available and validated in Pro Tools.</p>
           </article>
         </div>
       </div>

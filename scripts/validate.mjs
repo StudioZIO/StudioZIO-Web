@@ -63,7 +63,7 @@ export function validateSource() {
   if (!isSemanticPatch(product.version) || product.platform !== 'macOS') {
     throw new Error('Public release metadata drift');
   }
-  if (product.filename !== `StudioZIO-Mastering-Suite-${product.version}.pkg`) {
+  if (product.filename !== `StudioZIO-Mastering-Suite-v${product.version}-macOS-arm64.pkg`) {
     throw new Error('Filename drift');
   }
   if (!product.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
@@ -93,9 +93,13 @@ export function validateSource() {
     tempoDelay.availability !== 'Available now' ||
     !isSemanticPatch(tempoDelay.version) ||
     tempoDelay.platform !== 'macOS' ||
-    tempoDelay.compactFormats !== 'AU / VST3 / Standalone' ||
+    tempoDelay.compactFormats !== 'AU / VST3 / AAX' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
-    TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/'
+    TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/' ||
+    tempoDelay.filename !== `StudioZIOTempoDelay-v${tempoDelay.version}-macOS-arm64-AAX.pkg` ||
+    tempoDelay.sha256 !== '4e919c509cca196e178a0a991d24c02eb7e1ba81c5890e0f4fce16aba94ec055' ||
+    tempoDelay.downloadUrl !== `${RELEASE_REPOSITORY_URL}/releases/download/tempo-delay-v${tempoDelay.version}-aax-2026.09.10/${tempoDelay.filename}` ||
+    tempoDelay.releaseUrl !== `${RELEASE_REPOSITORY_URL}/releases/tag/tempo-delay-v${tempoDelay.version}-aax-2026.09.10`
   ) {
     throw new Error('Tempo Delay public metadata drift');
   }
