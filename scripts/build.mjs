@@ -87,6 +87,9 @@ await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/con
 // The MixRack release-notice form. Same origin, same reason, and the same
 // fetch-not-POST shape that `form-action 'none'` forces.
 await cp(resolve(projectRoot, 'src/notify.js'), resolve(outputRoot, 'assets/notify.js'));
+// The MixRack tester-interest form. Same origin and shape as notify.js, kept
+// separate because it posts a distinct intent and fields.
+await cp(resolve(projectRoot, 'src/tester.js'), resolve(outputRoot, 'assets/tester.js'));
 // The A/B listener and the renders it plays. Same-origin for the same reason,
 // and because `media-src` inherits the `default-src 'self'` in vercel.json.
 await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));

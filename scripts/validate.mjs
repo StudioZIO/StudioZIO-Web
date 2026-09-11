@@ -386,6 +386,28 @@ export function validateSource() {
     }
   }
 
+  // Same three parts for the MixRack tester-interest form, same reason. It is
+  // a distinct form from the release notice above -- both live on the same
+  // page, so the form-count/status-count check below covers it too.
+  for (const required of [
+    'class="panel-float tester-form"',
+    '<script src="/assets/tester.js" defer></script>',
+    'name="email"',
+    'name="daw"',
+    'name="macos_version"',
+    'name="architecture"',
+    'class="form-status"'
+  ]) {
+    if (!mixRackPage.includes(required)) {
+      throw new Error(`MixRack page is missing a submission-critical part: ${required}`);
+    }
+  }
+  for (const [index, page] of pages.entries()) {
+    if (page !== mixRackPage && page.includes('/assets/tester.js')) {
+      throw new Error(`Page ${index} loads the tester script but has no form`);
+    }
+  }
+
   /* The trap this site is built to fall into: `form-action 'none'` in
      vercel.json means a native form submission is refused by the browser, and
      refused silently -- the form renders, validates, submits, and the message
@@ -416,11 +438,15 @@ export function validateSource() {
      without the policy changing with it, the form breaks in production and
      nowhere else. */
   const endpoints = new Set(
-    [readFileSync(resolve(sourceRoot, 'contact.js'), 'utf8'), readFileSync(resolve(sourceRoot, 'notify.js'), 'utf8')]
+    [
+      readFileSync(resolve(sourceRoot, 'contact.js'), 'utf8'),
+      readFileSync(resolve(sourceRoot, 'notify.js'), 'utf8'),
+      readFileSync(resolve(sourceRoot, 'tester.js'), 'utf8')
+    ]
       .flatMap((code) => [...code.matchAll(/ENDPOINT = '([^']+)'/g)].map((m) => m[1]))
   );
   if (endpoints.size !== 1) {
-    throw new Error(`Expected both forms to post to one endpoint; found ${[...endpoints].join(', ')}`);
+    throw new Error(`Expected all forms to post to one endpoint; found ${[...endpoints].join(', ')}`);
   }
   const policy = readFileSync(resolve(sourceRoot, '..', 'vercel.json'), 'utf8');
   for (const endpoint of endpoints) {

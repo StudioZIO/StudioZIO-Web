@@ -813,15 +813,16 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 
 /* ---------- forms -------------------------------------------------------
-   The site's input surfaces: the support form and the MixRack release
-   notice. Controls inherit the panel/token set rather than introducing a
-   second visual language: same radius, same hairline, same focus ring as
-   the buttons beside them. Both forms share the shell so the second one
-   cannot drift into a look of its own. */
+   The site's input surfaces: the support form, the MixRack release notice,
+   and the MixRack tester-interest form. Controls inherit the panel/token set
+   rather than introducing a second visual language: same radius, same
+   hairline, same focus ring as the buttons beside them. All three forms
+   share the shell so none can drift into a look of its own. */
 .support-form,
-.notify-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
-/* One short field does not want the full 1100px shell; the support form has
-   a grid of them and does. */
+.notify-form,
+.tester-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
+/* One short field does not want the full 1100px shell; the support form and
+   the tester form have a grid of them and do. */
 .notify-form { max-width: 34rem; }
 .form-grid { display: grid; gap: 1.25rem; }
 @media (min-width: 700px) {

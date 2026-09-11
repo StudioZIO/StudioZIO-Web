@@ -757,7 +757,7 @@ export function renderMixRack() {
       'StudioZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
     canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: '',
-    scripts: '<script src="/assets/notify.js" defer></script>',
+    scripts: '<script src="/assets/notify.js" defer></script><script src="/assets/tester.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -814,6 +814,98 @@ export function renderMixRack() {
 
         <noscript>
           <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming an address was recorded.</p>
+        </noscript>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="mixrack-tester-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Testing interest</p>
+          <h2 id="mixrack-tester-title">Interested in testing MixRack?</h2>
+          <p class="lede">StudioZIO MixRack is still in active development and no test build is being distributed yet. A small tester pool is being assembled, and selected people may be contacted for a future beta or release-candidate build. Submitting interest does not guarantee selection, and the details below are used only to evaluate and contact potential testers.</p>
+        </div>
+        <form class="panel-float tester-form" novalidate="false">
+          <div class="form-hp" aria-hidden="true">
+            <label for="tester-company">Company</label>
+            <input id="tester-company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form-grid form-grid--2">
+            <div class="form-row">
+              <label class="form-label" for="tester-email">Email <span class="req">required</span></label>
+              <input id="tester-email" name="email" class="field" type="email" required autocomplete="email">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="tester-daw">Primary DAW <span class="req">required</span></label>
+              <input id="tester-daw" name="daw" class="field field-mono" type="text" required placeholder="Logic Pro">
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--2">
+            <div class="form-row">
+              <label class="form-label" for="tester-macos">macOS version <span class="req">required</span></label>
+              <input id="tester-macos" name="macos_version" class="field field-mono" type="text" required placeholder="macOS 14">
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="tester-architecture">Mac architecture <span class="req">required</span></label>
+              <select id="tester-architecture" name="architecture" class="field" required>
+                <option value="">Select…</option>
+                <option value="Apple Silicon">Apple Silicon</option>
+                <option value="Intel">Intel</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid--3">
+            <div class="form-row">
+              <label class="form-label" for="tester-experience">Experience</label>
+              <select id="tester-experience" name="experience" class="field">
+                <option value="">Prefer not to say</option>
+                <option value="Producer">Producer</option>
+                <option value="Mixing engineer">Mixing engineer</option>
+                <option value="Mastering engineer">Mastering engineer</option>
+                <option value="Developer / technical user">Developer / technical user</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="tester-phase">Interested in</label>
+              <select id="tester-phase" name="phase_interest" class="field">
+                <option value="either">Either</option>
+                <option value="beta">Beta</option>
+                <option value="release-candidate">Release Candidate</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="tester-focus">Testing focus</label>
+              <select id="tester-focus" name="testing_focus" class="field">
+                <option value="">No preference</option>
+                <option value="Workflow / usability">Workflow / usability</option>
+                <option value="Stability / crashes">Stability / crashes</option>
+                <option value="DAW compatibility">DAW compatibility</option>
+                <option value="CPU / performance">CPU / performance</option>
+                <option value="Automation / recall">Automation / recall</option>
+                <option value="General use">General use</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label" for="tester-note">What would you most want to test?</label>
+            <textarea id="tester-note" name="optional_note" class="field field-area" rows="3"></textarea>
+            <p class="form-hint">Optional — a sentence is plenty.</p>
+          </div>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Register testing interest</button>
+          </div>
+        </form>
+
+        <noscript>
+          <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming your interest was recorded.</p>
         </noscript>
       </div>
     </section>`
