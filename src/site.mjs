@@ -673,7 +673,7 @@ export function renderHome() {
   return shell({
     title: 'StudioZIO — Audio Plugins Built on Visible Signal Flow',
     description:
-      'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU and VST3, plus the upcoming StudioZIO MixRack.',
+      'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU, VST3, AAX and Standalone, plus the upcoming StudioZIO MixRack.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
@@ -1660,7 +1660,7 @@ export function renderCommunityKnownIssues() {
             <p>Mastering Suite is Universal for Apple Silicon and Intel. Tempo Delay is built for arm64 Apple Silicon Macs only.</p>
             <div class="issue-workaround">
               <span class="issue-label">Workaround</span>
-              <p>There are no builds for Intel Macs.</p>
+              <p>Mastering Suite runs on Intel Macs; its build is Universal. Tempo Delay does not, and there is no Intel build of it.</p>
             </div>
           </article>
 
