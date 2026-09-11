@@ -419,6 +419,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .chip--flag .dot { background: var(--primary); }
 .chip--live .dot { background: var(--primary); animation: pulse-dot 2.4s ease-in-out infinite; }
 .chip--destructive .dot { background: var(--destructive); }
+/* A defect that is fixed and needs nothing from the reader. It takes the
+   instrument cyan rather than --destructive: red on a closed entry reads as
+   "this is still broken" to anyone scanning the page, which is the opposite
+   of what it records. Text uses the lighter --primary-text step because chips
+   set 10px type, where --primary itself only just clears AA. */
+.chip--closed { color: var(--primary-text); border-color: var(--ring); }
+.chip--closed .dot { background: var(--primary); }
 
 /* ---------- panels ------------------------------------------------------ */
 .panel {
