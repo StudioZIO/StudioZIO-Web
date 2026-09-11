@@ -63,7 +63,11 @@ export function validateSource() {
   if (!isSemanticPatch(product.version) || product.platform !== 'macOS') {
     throw new Error('Public release metadata drift');
   }
-  if (product.filename !== `StudioZIO-Mastering-Suite-v${product.version}-macOS-arm64.pkg`) {
+  // The installer is named by the release pipeline, which emits
+  // StudioZIO-Mastering-Suite-<version>.pkg. The earlier
+  // -v<version>-macOS-arm64 name came from a hand-run build and was
+  // misleading besides: every format in the package is Universal, not arm64.
+  if (product.filename !== `StudioZIO-Mastering-Suite-${product.version}.pkg`) {
     throw new Error('Filename drift');
   }
   if (!product.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
