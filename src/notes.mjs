@@ -157,8 +157,8 @@ export const notes = Object.freeze([
       Object.freeze({
         h: 'Filenames are not architecture evidence',
         p: Object.freeze([
-          'The Mastering Suite installer package is named StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg. That name arose during build orchestration, but binary analysis reveals that all payloads inside are dual-slice Universal binaries.',
-          'Because published release artifacts are immutable, we do not rename or repackage a verified, notarized installer merely to alter a cosmetic label. The architecture truth comes from the binaries within the payload, verified directly during release inspection.'
+          'A Mastering Suite 2.1.1 installer published in September 2026 was named StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg. That name arose during build orchestration, but binary analysis showed every payload inside to be a dual-slice Universal binary.',
+          'Because published release artifacts are immutable, we did not rename or repackage a verified, notarized installer merely to alter a cosmetic label. The current installer is named StudioZIO-Mastering-Suite-2.1.1.pkg, the name the release pipeline emits. Either way, the architecture truth comes from the binaries within the payload, verified directly during release inspection.'
         ])
       })
     ])
