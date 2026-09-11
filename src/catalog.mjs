@@ -27,13 +27,13 @@ export const products = Object.freeze([
     architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
-    filename: 'StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
+    filename: 'StudioZIO-Mastering-Suite-2.1.1.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-aax-2026.09.10/StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/mastering-suite-v2.1.1-install-fix-2026.09.11/StudioZIO-Mastering-Suite-2.1.1.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.1.1-aax-2026.09.10',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mastering-suite-v2.1.1-install-fix-2026.09.11',
     sha256:
-      '7ac80cb1a340a92b1dc606254604b58b83907b0a1d594e29a77a39d807319ceb',
+      'b054098c4f6565e5e469efd41554425d468830a001c9d4c531e72ab8c50f4cf1',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
