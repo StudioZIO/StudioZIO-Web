@@ -72,8 +72,8 @@ export const products = Object.freeze([
     shortName: 'StudioZIO MixRack',
     manufacturer: 'StudioZIO',
     platform: 'macOS',
-    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'Standalone']),
-    compactFormats: 'AU / VST3 / Standalone',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
     availability: 'Coming soon',
     description:
       'A modular mixing environment that brings essential processing into one focused rack.',

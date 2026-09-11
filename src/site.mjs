@@ -754,10 +754,10 @@ export function renderMixRack() {
   return shell({
     title: 'StudioZIO MixRack — Coming Soon | StudioZIO',
     description:
-      'StudioZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, and Standalone formats.',
+      'StudioZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, AAX and Standalone formats.',
     canonical: `${HUB_ORIGIN}/products/mixrack/`,
     current: '',
-    scripts: '<script src="/assets/notify.js" defer></script><script src="/assets/tester.js" defer></script>',
+    scripts: '<script src="/assets/notify.js" defer></script><script src="/assets/tester.js" defer></script><script src="/assets/video.js" defer></script>',
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -769,6 +769,30 @@ export function renderMixRack() {
             ${chip(product.manufacturer)}${chip(product.platform)}${chip('Coming Soon', 'flag')}
           </div>
         </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="mixrack-video-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Preview</p>
+          <h2 id="mixrack-video-title">A look inside the rack</h2>
+          <p class="lede">Two minutes with the MixRack window as it stands in development: the eight modules, the module browser, reordering, factory presets, A/B and the output meters.</p>
+        </div>
+        <figure class="panel-float video-card">
+          <button class="video-facade" type="button" data-video-src="/assets/media/mixrack-intro.mp4"
+            data-video-label="StudioZIO MixRack introduction, two minutes, music only">
+            <img class="video-poster" src="/assets/media/mixrack-intro-poster.webp" width="1920" height="1080"
+              alt="StudioZIO MixRack, coming soon" loading="lazy" decoding="async">
+            <span class="video-play"><span class="video-play-icon" aria-hidden="true"></span><span class="video-play-label">Play the preview · </span>1:58</span>
+          </button>
+          <noscript>
+            <video class="video-player" controls preload="none" playsinline width="1920" height="1080"
+              poster="/assets/media/mixrack-intro-poster.webp">
+              <source src="/assets/media/mixrack-intro.mp4" type="video/mp4">
+            </video>
+          </noscript>
+          <figcaption class="video-caption">The film loads only when you press play. Interface shown from the development build. Music: “Enigma”.</figcaption>
+        </figure>
       </div>
     </section>
     <section class="section" aria-labelledby="mixrack-spec-title">
@@ -1848,7 +1872,7 @@ export function renderCommunityRoadmap() {
               <h3>StudioZIO MixRack</h3>
               ${chip('In Development')}
             </div>
-            <p>A new StudioZIO mixing environment currently in development for macOS. AU, VST3 and Standalone formats are planned. No release date has been announced.</p>
+            <p>A new StudioZIO mixing environment currently in development for macOS. AU, VST3, AAX and Standalone formats are planned. No release date has been announced.</p>
           </article>
         </div>
       </div>
