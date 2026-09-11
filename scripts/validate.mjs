@@ -126,7 +126,7 @@ export function validateSource() {
     mixRack.manufacturer !== 'StudioZIO' ||
     mixRack.availability !== 'Coming soon' ||
     mixRack.platform !== 'macOS' ||
-    mixRack.compactFormats !== 'AU / VST3 / Standalone'
+    mixRack.compactFormats !== 'AU / VST3 / AAX / Standalone'
   ) {
     throw new Error('MixRack public metadata drift');
   }
@@ -240,11 +240,31 @@ export function validateSource() {
     'macOS',
     'Audio Unit (AU)',
     'VST3',
+    'AAX',
     'Standalone'
   ]) {
     if (!mixRackMain.includes(required)) {
       throw new Error(`MixRack fact missing: ${required}`);
     }
+  }
+
+  /* The MixRack preview video: the file and its poster must exist and be what
+     their names claim, and the element must reserve its frame. A missing path
+     is invisible until a visitor presses play and nothing happens. */
+  {
+    const mediaDir = resolve(dirname(fileURLToPath(import.meta.url)), '../src/media');
+    for (const required of ['data-video-src="/assets/media/mixrack-intro.mp4"', 'src="/assets/media/mixrack-intro-poster.webp"', 'width="1920" height="1080"', 'preload="none"']) {
+      if (!mixRackMain.includes(required)) throw new Error(`MixRack video is missing: ${required}`);
+    }
+    if (!mixRackPage.includes('<script src="/assets/video.js" defer></script>')) throw new Error('MixRack page does not load the click-to-play script');
+    const mp4 = readFileSync(resolve(mediaDir, 'mixrack-intro.mp4'));
+    if (mp4.toString('latin1', 4, 8) !== 'ftyp' || mp4.length < 1_000_000) throw new Error('MixRack video is not a real MP4');
+    if (mp4.length > 12_000_000) throw new Error('MixRack video is heavier than a web preview should be');
+    const poster = readFileSync(resolve(mediaDir, 'mixrack-intro-poster.webp'));
+    if (poster.toString('latin1', 0, 4) !== 'RIFF' || poster.toString('latin1', 8, 12) !== 'WEBP') throw new Error('MixRack poster is not a WebP');
+    // Nothing may fetch the film before the click: the only <video> on the page lives inside <noscript>.
+    const outsideNoscript = mixRackMain.replace(/<noscript>[\s\S]*?<\/noscript>/g, '');
+    if (/<video\b/.test(outsideNoscript)) throw new Error('MixRack video element would load before the visitor presses play');
   }
   if (
     mixRackMain.includes('button-download') ||

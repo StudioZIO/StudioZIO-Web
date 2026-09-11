@@ -90,6 +90,9 @@ await cp(resolve(projectRoot, 'src/notify.js'), resolve(outputRoot, 'assets/noti
 // The MixRack tester-interest form. Same origin and shape as notify.js, kept
 // separate because it posts a distinct intent and fields.
 await cp(resolve(projectRoot, 'src/tester.js'), resolve(outputRoot, 'assets/tester.js'));
+// The MixRack preview: builds the <video> only when the visitor presses play,
+// so the page itself carries nothing but the poster image.
+await cp(resolve(projectRoot, 'src/video.js'), resolve(outputRoot, 'assets/video.js'));
 // The A/B listener and the renders it plays. Same-origin for the same reason,
 // and because `media-src` inherits the `default-src 'self'` in vercel.json.
 await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));
