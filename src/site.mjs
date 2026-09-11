@@ -187,7 +187,9 @@ function navList(current, entries = NAVIGATION) {
 
 function chip(label, tone = '') {
   return `<span class="chip${tone ? ` chip--${tone}` : ''}">${
-    tone === 'flag' || tone === 'destructive' ? '<span class="dot" aria-hidden="true"></span>' : ''
+    tone === 'flag' || tone === 'destructive' || tone === 'closed'
+      ? '<span class="dot" aria-hidden="true"></span>'
+      : ''
   }${escapeHtml(label)}</span>`;
 }
 
@@ -1604,6 +1606,7 @@ export function renderCommunityKnownIssues() {
           <h2 id="defect-status-title">Published defect status</h2>
         </div>
         <p>One active host-specific UI defect is currently known in Logic Pro: vertical plug-in resizing can oscillate up and down instead of settling cleanly.</p>
+        <p class="mt-sm">One defect is closed: the Mastering Suite installer published on 10 September 2026 installed nothing, and was replaced on 11 September 2026.</p>
         <p class="mt-sm">Other current entries on this page are platform limits or host-specific behaviors rather than open defects.</p>
       </div>
     </section>
@@ -1626,6 +1629,23 @@ export function renderCommunityKnownIssues() {
             <div class="issue-workaround">
               <span class="issue-label">Workaround</span>
               <p>Not yet publicly established.</p>
+            </div>
+          </article>
+
+          <article class="panel issue-card">
+            <div class="issue-card-head">
+              <h3>Mastering Suite installer published 10 September 2026 installed nothing</h3>
+              <div class="chip-row">
+                ${chip('Defect — Closed', 'closed')}
+                <span class="chip chip--bare">Reported 10 September 2026</span>
+                <span class="chip chip--bare">Fixed 11 September 2026</span>
+              </div>
+            </div>
+            <p>The Mastering Suite 2.1.1 installer published on 10 September 2026 &mdash; the release that added the AAX format &mdash; installed only its AAX component. Inside that package the Audio Unit, VST3 and Standalone payloads were stored as folders rather than archives, so the macOS Installer had nothing to unpack and skipped all three while still showing its success screen. Running it repeatedly changed nothing, and it wrote nothing to the system that needed cleaning up afterwards.</p>
+            <p class="mt-sm">The plug-in code was never affected. The packaging was corrected and republished the next day as <a class="accent-text" href="${RELEASE_REPOSITORY_URL}/releases/tag/mastering-suite-v2.1.1-install-fix-2026.09.11">mastering-suite-v2.1.1-install-fix-2026.09.11</a>, same version, signed and notarized, with all four formats installing. The 10 September release remains published as historical evidence and should not be installed.</p>
+            <div class="issue-workaround">
+              <span class="issue-label">Resolution</span>
+              <p>Download the current installer again from the <a class="accent-text" href="${MASTERING_SUITE_WEBSITE}">Mastering Suite site</a>. Nothing needs uninstalling first.</p>
             </div>
           </article>
 
