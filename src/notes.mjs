@@ -5,9 +5,18 @@
    Each note is data rather than markup so the page shell, the build routes,
    the sitemap and the validator all read the same list and cannot drift. */
 
+/* Every note carries the day it went onto the site. The dates were read from
+   this file's own history rather than chosen: the library was published in
+   one go on 11 September 2026. They are written out here rather than derived
+   at build time so the build never depends on git, and so a wrong one can be
+   corrected on its own line.
+
+   The feed, the sitemap's lastmod and each note's structured data all read
+   this field, so they cannot disagree about when a note appeared. */
 export const notes = Object.freeze([
   Object.freeze({
     slug: 'aax-is-now-live',
+    published: '2026-09-11',
     heading: 'AAX is now live',
     title: 'AAX is now live',
     description:
@@ -48,6 +57,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'what-we-mean-by-studiozio-verified',
+    published: '2026-09-11',
     heading: 'What we mean by StudioZIO Verified',
     title: 'What we mean by StudioZIO Verified',
     description:
@@ -87,6 +97,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'why-release-truth-starts-with-the-artifact',
+    published: '2026-09-11',
     heading: 'Why release truth starts with the artifact',
     title: 'Why release truth starts with the artifact',
     description:
@@ -126,6 +137,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'universal-vs-apple-silicon-what-actually-ships',
+    published: '2026-09-11',
     heading: 'Universal vs Apple Silicon: what actually ships',
     title: 'Universal vs Apple Silicon: what actually ships',
     description:
@@ -156,6 +168,9 @@ export const notes = Object.freeze([
       }),
       Object.freeze({
         h: 'Filenames are not architecture evidence',
+        /* The question underneath the whole note is "will this run on my
+           Mac", so the figure asks that and answers it from the slices. */
+        figure: 'binary-architecture',
         p: Object.freeze([
           'A Mastering Suite 2.1.1 installer published in September 2026 was named StudioZIO-Mastering-Suite-v2.1.1-macOS-arm64.pkg. That name arose during build orchestration, but binary analysis showed every payload inside to be a dual-slice Universal binary.',
           'Because published release artifacts are immutable, we did not rename or repackage a verified, notarized installer merely to alter a cosmetic label. The current installer is named StudioZIO-Mastering-Suite-2.1.1.pkg, the name the release pipeline emits. Either way, the architecture truth comes from the binaries within the payload, verified directly during release inspection.'
@@ -165,6 +180,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'inside-the-studiozio-release-pipeline',
+    published: '2026-09-11',
     heading: 'Inside the StudioZIO release pipeline',
     title: 'Inside the StudioZIO release pipeline',
     description:
@@ -204,6 +220,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'expected-true-peak',
+    published: '2026-09-11',
     heading: 'What EXPECTED TP tells you',
     title: 'EXPECTED TP is not an output measurement',
     description:
@@ -253,6 +270,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'oversampling-is-not-one-switch',
+    published: '2026-09-11',
     heading: 'Oversampling is not one switch',
     title: 'Oversampling is not one switch',
     description:
@@ -302,6 +320,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'where-aax-support-stands',
+    published: '2026-09-11',
     heading: 'Where AAX support stands',
     title: 'AAX is now available',
     description:
@@ -342,6 +361,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'what-studiozio-is-building',
+    published: '2026-09-11',
     heading: 'What StudioZIO is building',
     title: 'What these plug-ins are and are not',
     description:
@@ -393,6 +413,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'two-delay-lines-not-one',
+    published: '2026-09-11',
     heading: 'Two delay lines, not one delay with a spread control',
     title: 'Two delay lines, not one with a spread',
     description:
@@ -409,6 +430,10 @@ export const notes = Object.freeze([
       }),
       Object.freeze({
         h: 'What two lines gives you instead',
+        /* The three-against-four this paragraph describes, worked out rather
+           than asserted: pick the two divisions and the figure says when the
+           lines meet again. */
+        figure: 'two-delay-lines',
         p: Object.freeze([
           'Tempo Delay decouples them. The left and the right each have their own note division — sixteen per channel, straight, dotted and triplet — or their own free time anywhere from 1 to 5000 milliseconds, and their own feedback amount.',
           'A quarter on one side against a dotted eighth on the other is a three-against-four figure that drifts out of phase and back into alignment on a cycle you can hear. That is not a wider version of a delay. It is a different thing arriving on the same track.'
@@ -432,6 +457,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'inside-the-feedback-loop',
+    published: '2026-09-11',
     heading: 'What lives inside the feedback loop',
     title: 'What lives inside the feedback loop',
     description:
@@ -471,6 +497,7 @@ export const notes = Object.freeze([
   }),
   Object.freeze({
     slug: 'zero-reported-latency',
+    published: '2026-09-11',
     heading: 'Zero reported latency, and what it does not mean',
     title: 'What zero reported latency means',
     description:

@@ -1034,6 +1034,116 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .tpfig-row dd { text-align: left; }
 }
 
+/* ---------- two delay lines ---------------------------------------------
+   Two lanes, one window: the window is however long the two divisions take to
+   meet again, so the taps always fill the width and the eye compares patterns
+   rather than lengths. */
+.dlfig, .archfig {
+  margin: 2rem 0 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.1rem;
+}
+/* Seven divisions do not fit in half a column, and a dial that wraps onto a
+   second row stops reading as one row of choices. Each side gets the full
+   width instead. */
+.dlfig-dials { display: grid; gap: 1rem; }
+.dlfig-plot {
+  display: grid;
+  gap: 6px;
+  border-radius: 8px;
+  background: var(--surface-control);
+  padding: 0.85rem;
+}
+.dlfig-lane {
+  position: relative;
+  display: block;
+  height: 34px;
+  border-radius: 4px;
+  background: var(--surface-overlay);
+}
+.dlfig-tap {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: var(--at);
+  width: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+.dlfig-lane--right .dlfig-tap { background: color-mix(in oklab, var(--primary) 55%, transparent); }
+/* Locked to one time, the two lanes are the same lane twice, and saying so
+   quietly is more honest than drawing a difference that is not there. */
+.dlfig[data-mode="one"] .dlfig-lane--right .dlfig-tap { background: color-mix(in oklab, var(--primary) 30%, transparent); }
+.dlfig-readout {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* ---------- what is inside the binary ---------------------------------- */
+.archfig-products { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.archfig-product {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, auto) minmax(0, 1fr);
+  grid-template-areas: "name slices verdict" "kind kind verdict";
+  align-items: center;
+  gap: 0.3rem 0.9rem;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--primary);
+  border-radius: 8px;
+  background: var(--surface-control);
+  padding: 0.7rem 0.85rem;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.archfig-name { grid-area: name; font-size: 0.9375rem; color: var(--foreground); }
+.archfig-slices { grid-area: slices; display: flex; gap: 0.35rem; }
+.archfig-slice {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  color: var(--primary-text);
+}
+.archfig-kind {
+  grid-area: kind;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.archfig-verdict {
+  grid-area: verdict;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-text);
+  text-align: right;
+}
+/* A product that cannot load is the one fact a reader on an Intel Mac needs
+   before they download anything, so it is the one that is allowed to shout. */
+.archfig-product[data-verdict="blocked"] { border-left-color: var(--destructive); }
+.archfig-product[data-verdict="blocked"] .archfig-verdict { color: var(--destructive); }
+.archfig-product[data-verdict="blocked"] .archfig-slice { color: var(--muted-foreground); }
+
+@media (max-width: 640px) {
+  .archfig-product {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "name" "slices" "kind" "verdict";
+  }
+  .archfig-verdict { text-align: left; }
+}
+
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: none; }
@@ -1073,7 +1183,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   /* The oversampling figure is driven by the reader, not by a timer, so it
      keeps working here; only the easing between states goes. */
   .osfig-lane, .osfig-stage, .osfig-pick,
-  .figdial-pick, .latfig-block { transition-duration: 0.001ms !important; }
+  .figdial-pick, .latfig-block, .archfig-product { transition-duration: 0.001ms !important; }
   .bands-row i { transform: scaleX(1); opacity: 1; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

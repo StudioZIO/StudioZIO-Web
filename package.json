@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
-    "typecheck": "node --check src/catalog.mjs && node --check src/site.mjs && node --check scripts/build.mjs && node --check scripts/dev.mjs && node --check scripts/validate.mjs && node --check scripts/verify_downloads.mjs && node --check src/search.js && node --check src/header-search.js && node --check src/os-figure.js && node --check src/tp-figure.js && node --check src/latency-figure.js && node --check scripts/search_text.mjs && node --check scripts/refresh_search_index.mjs",
+    "typecheck": "node --check src/catalog.mjs && node --check src/site.mjs && node --check scripts/build.mjs && node --check scripts/dev.mjs && node --check scripts/validate.mjs && node --check scripts/verify_downloads.mjs && node --check src/search.js && node --check src/header-search.js && node --check src/os-figure.js && node --check src/tp-figure.js && node --check src/latency-figure.js && node --check src/delay-lines-figure.js && node --check src/architecture-figure.js && node --check scripts/search_text.mjs && node --check scripts/refresh_search_index.mjs",
     "lint": "node scripts/validate.mjs",
     "test:products": "node scripts/test_products.mjs",
     "verify:downloads": "node scripts/verify_downloads.mjs",

@@ -195,6 +195,24 @@ export function validateSource() {
      that moves it ships with exactly the notes that carry one. A figure whose
      renderer went missing would otherwise fail at request time, on a page
      nobody was looking at. */
+  /* Every note is an article and says so, with a date that is the note's own.
+     Structured data that disagrees with the page is worse than none: it is
+     the version a search engine believes. */
+  for (const [index, note] of notes.entries()) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(note.published || '')) {
+      throw new Error(`Note ${note.slug} has no published date`);
+    }
+    const page = notePages[index];
+    const blocks = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+    if (blocks.length !== 1) throw new Error(`Note ${note.slug} carries ${blocks.length} structured-data blocks, wanted 1`);
+    const graph = JSON.parse(blocks[0][1])['@graph'];
+    const article = graph.find((node) => node['@type'] === 'TechArticle');
+    if (!article) throw new Error(`Note ${note.slug} declares no TechArticle`);
+    if (article.headline !== note.heading) throw new Error(`Note ${note.slug}: structured headline drift`);
+    if (article.datePublished !== note.published) throw new Error(`Note ${note.slug}: structured date drift`);
+    if (!article.image.endsWith(`og-note-${note.slug}.png`)) throw new Error(`Note ${note.slug}: structured image drift`);
+  }
+
   /* Each figure names the script that moves it and the markup that proves it
      rendered. A note carries exactly the scripts its figures need: no figure,
      no script; one figure, one script. */
@@ -209,6 +227,16 @@ export function validateSource() {
     'expected-tp-derivation': {
       script: 'tp-figure.js',
       markup: ['class="tpfig"', 'data-ceiling="-1.0"', 'tpfig-expected', 'Fixed allowance', 'not known from here']
+    },
+    'two-delay-lines': {
+      script: 'delay-lines-figure.js',
+      markup: ['class="dlfig"', 'data-left="1/4"', 'data-right="1/8."', 'dlfig-readout']
+    },
+    'binary-architecture': {
+      script: 'architecture-figure.js',
+      /* The slices are the note's subject and the catalogue's metadata; a
+         figure that lost one would answer the reader's question wrongly. */
+      markup: ['class="archfig"', 'data-slices="arm64 x86_64"', 'data-slices="arm64"', 'data-machine="intel"']
     },
     'reported-latency': {
       script: 'latency-figure.js',
@@ -688,7 +716,9 @@ export function validateSource() {
       return declared.slice(HUB_ORIGIN.length);
     })
   );
-  const fileRoutes = new Set(['/sitemap.xml', '/robots.txt']);
+  /* Files the build writes rather than pages it renders: they are real URLs,
+     they are simply not in the route table. */
+  const fileRoutes = new Set(['/sitemap.xml', '/robots.txt', '/feed.xml']);
   for (const [index, page] of pages.entries()) {
     for (const [, href] of page.matchAll(/href="([^"]*)"/g)) {
       if (!href.startsWith('/') || href.startsWith('/assets/')) continue;

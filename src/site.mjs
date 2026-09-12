@@ -312,6 +312,7 @@ function shell({ title, description, canonical, current, content, scripts = '', 
   <meta name="twitter:image:alt" content="${escapeHtml(socialImageAlt)}">
   <title>${escapeHtml(title)}</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="StudioZIO technical notes" href="/feed.xml">
   <link rel="stylesheet" href="${stylesheet}">
   <link rel="preload" href="/assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
   ${analytics}
@@ -937,6 +938,7 @@ export function renderNotes() {
       'Technical notes from StudioZIO on true-peak limiting, oversampling, delay design and AAX support: what the plug-ins report, and why they behave that way.',
     canonical: `${HUB_ORIGIN}/notes/`,
     current: 'notes',
+    jsonLd: notesJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -1119,12 +1121,118 @@ function latencyFigure() {
       </figure>`;
 }
 
+/* ---------- two delay lines, not one with a spread ----------------------
+   The note's claim is that two independent times make a pattern, and one time
+   with an offset cannot. That is arithmetic, so the figure does the
+   arithmetic: pick a division for each side and it says when the two lines
+   meet again and how many taps each lays down before they do.
+
+   Seven of the plug-in's sixteen divisions per channel are on the dial --
+   enough to put a quarter against a dotted eighth, which is the example the
+   note gives. The spread mode locks both sides to one division, because that
+   is exactly what a single-time delay does.
+
+   Without JavaScript the figure states the same facts in words and the
+   drawing simply does not appear: the numbers are the point, the plot is the
+   picture of them. */
+
+const DELAY_DIVISIONS = Object.freeze([
+  Object.freeze({ key: '1/4', label: '1/4', beats: '1' }),
+  Object.freeze({ key: '1/4.', label: '1/4.', beats: '3/2' }),
+  Object.freeze({ key: '1/4T', label: '1/4T', beats: '2/3' }),
+  Object.freeze({ key: '1/8', label: '1/8', beats: '1/2' }),
+  Object.freeze({ key: '1/8.', label: '1/8.', beats: '3/4' }),
+  Object.freeze({ key: '1/8T', label: '1/8T', beats: '1/3' }),
+  Object.freeze({ key: '1/16', label: '1/16', beats: '1/4' })
+]);
+
+function delayDial(side, current) {
+  return DELAY_DIVISIONS.map(
+    (division) => `<button class="figdial-pick" type="button" data-${side}="${division.key}" data-beats="${division.beats}" aria-pressed="${
+      division.key === current ? 'true' : 'false'
+    }">${escapeHtml(division.label)}</button>`
+  ).join('');
+}
+
+function delayLinesFigure() {
+  return `<figure class="dlfig" aria-labelledby="dlfig-title" data-mode="two">
+        <figcaption id="dlfig-title" class="osfig-head">
+          Give each side its own division and the two lines make a figure that drifts apart and comes back.
+          Lock them to one time, the way a single delay with a spread control does, and they cannot.
+          Seven of the sixteen divisions per channel are on the dials.
+        </figcaption>
+        <div class="figdial" role="group" aria-label="Delay design">
+          <button class="figdial-pick" type="button" data-mode="one" aria-pressed="false">One time + spread</button>
+          <button class="figdial-pick" type="button" data-mode="two" aria-pressed="true">Two lines</button>
+        </div>
+        <div class="dlfig-dials">
+          <div class="tpfig-dial">
+            <span class="tpfig-legend">Left</span>
+            <div class="figdial" role="group" aria-label="Left division">${delayDial('left', '1/4')}</div>
+          </div>
+          <div class="tpfig-dial">
+            <span class="tpfig-legend">Right</span>
+            <div class="figdial" role="group" aria-label="Right division">${delayDial('right', '1/8.')}</div>
+          </div>
+        </div>
+        <div class="dlfig-plot" aria-hidden="true">
+          <span class="dlfig-lane dlfig-lane--left"></span>
+          <span class="dlfig-lane dlfig-lane--right"></span>
+        </div>
+        <p class="dlfig-readout">Left 1/4, right 1/8. &mdash; three taps against four.</p>
+        <p class="osfig-summary" role="status">The two lines meet again every 3 beats.</p>
+      </figure>`;
+}
+
+/* ---------- what is inside the binary ----------------------------------
+   The note answers one question a visitor actually has: will this run on my
+   Mac. So the figure asks them which Mac, and answers it from the slices each
+   product ships -- Mastering Suite Universal, Tempo Delay arm64 only, which
+   is the note's subject and the catalogue's own metadata. */
+
+function architectureFigure() {
+  const machines = [
+    ['apple', 'Apple Silicon Mac'],
+    ['intel', 'Intel Mac']
+  ]
+    .map(
+      ([key, label]) => `<button class="figdial-pick" type="button" data-machine="${key}" aria-pressed="${
+        key === 'apple' ? 'true' : 'false'
+      }">${escapeHtml(label)}</button>`
+    )
+    .join('');
+
+  return `<figure class="archfig" aria-labelledby="archfig-title" data-machine="apple">
+        <figcaption id="archfig-title" class="osfig-head">
+          The architecture is in the binary, not in the installer's name. Choose the Mac you are on.
+        </figcaption>
+        <div class="figdial" role="group" aria-label="Your Mac">${machines}</div>
+        <ul class="archfig-products">
+          <li class="archfig-product" data-slices="arm64 x86_64" data-verdict="runs">
+            <span class="archfig-name">Mastering Suite 2.1.1</span>
+            <span class="archfig-slices"><span class="archfig-slice">arm64</span><span class="archfig-slice">x86_64</span></span>
+            <span class="archfig-kind">Universal &middot; macOS 11+</span>
+            <span class="archfig-verdict">runs natively</span>
+          </li>
+          <li class="archfig-product" data-slices="arm64" data-verdict="runs">
+            <span class="archfig-name">Tempo Delay 4.0.1</span>
+            <span class="archfig-slices"><span class="archfig-slice">arm64</span></span>
+            <span class="archfig-kind">Apple Silicon only &middot; macOS 12+</span>
+            <span class="archfig-verdict">runs natively</span>
+          </li>
+        </ul>
+        <p class="osfig-summary" role="status">Both run natively on Apple Silicon.</p>
+      </figure>`;
+}
+
 /* Each figure names the one script that moves it, so a note ships the moving
    part it needs and nothing else. */
 const NOTE_FIGURES = Object.freeze({
   'per-stage-oversampling': { render: oversamplingFigure, script: 'os-figure.js' },
   'expected-tp-derivation': { render: expectedTpFigure, script: 'tp-figure.js' },
-  'reported-latency': { render: latencyFigure, script: 'latency-figure.js' }
+  'reported-latency': { render: latencyFigure, script: 'latency-figure.js' },
+  'two-delay-lines': { render: delayLinesFigure, script: 'delay-lines-figure.js' },
+  'binary-architecture': { render: architectureFigure, script: 'architecture-figure.js' }
 });
 
 function noteFigure(name) {
@@ -1146,6 +1254,59 @@ function noteFigureScripts(note) {
       })
   );
   return [...wanted].map((file) => `<script src="/assets/${file}" defer></script>`).join('');
+}
+
+/* A note is an article, and until now it did not say so: the catalogue and the
+   press page carried structured data and the library carried none, so a search
+   engine saw twelve pages with no author, no date and no relation to the site
+   that published them.
+
+   TechArticle rather than Article, because that is what they are, and every
+   field here is already on the page: the heading, the standfirst, the day it
+   went up, the card it shares with. Nothing is asserted that a reader cannot
+   also see. */
+function noteJsonLd(note) {
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'TechArticle',
+      '@id': `${HUB_ORIGIN}/notes/${note.slug}/#article`,
+      headline: note.heading,
+      name: note.title,
+      description: note.description,
+      abstract: note.standfirst,
+      datePublished: note.published,
+      dateModified: note.published,
+      inLanguage: 'en',
+      image: `${HUB_ORIGIN}/assets/og/og-note-${note.slug}.png`,
+      author: { '@id': ORGANIZATION_ID },
+      publisher: { '@id': ORGANIZATION_ID },
+      isPartOf: { '@id': `${HUB_ORIGIN}/notes/#library` },
+      mainEntityOfPage: `${HUB_ORIGIN}/notes/${note.slug}/`
+    }
+  ]);
+}
+
+/* The library itself, so the twelve articles are a collection rather than
+   twelve unrelated pages. */
+function notesJsonLd() {
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'CollectionPage',
+      '@id': `${HUB_ORIGIN}/notes/#library`,
+      name: 'StudioZIO technical notes',
+      url: `${HUB_ORIGIN}/notes/`,
+      publisher: { '@id': ORGANIZATION_ID },
+      hasPart: notes.map((note) => ({
+        '@type': 'TechArticle',
+        '@id': `${HUB_ORIGIN}/notes/${note.slug}/#article`,
+        headline: note.heading,
+        datePublished: note.published,
+        url: `${HUB_ORIGIN}/notes/${note.slug}/`
+      }))
+    }
+  ]);
 }
 
 export function renderNote(slug) {
@@ -1178,6 +1339,7 @@ export function renderNote(slug) {
     /* Only the notes that carry a figure load its script, and only the one
        they carry: a note with no figure ships no extra byte. */
     scripts: noteFigureScripts(note),
+    jsonLd: noteJsonLd(note),
     socialImage: `/assets/og/og-note-${note.slug}.png`,
     socialImageAlt: `${note.heading} — a StudioZIO technical note`,
     content: `<section class="hero tech-grid">

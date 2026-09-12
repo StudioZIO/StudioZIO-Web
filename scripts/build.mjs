@@ -24,6 +24,18 @@ import { extract } from './search_text.mjs';
 import { validateSource } from './validate.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+/* The feed carries note headings and standfirsts written for people, so an
+   ampersand or a quotation mark in one of them would otherwise produce XML no
+   reader will parse. */
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
 const outputRoot = resolve(projectRoot, 'dist');
 
 validateSource();
@@ -109,6 +121,8 @@ await cp(resolve(projectRoot, 'src/header-search.js'), resolve(outputRoot, 'asse
 await cp(resolve(projectRoot, 'src/os-figure.js'), resolve(outputRoot, 'assets/os-figure.js'));
 await cp(resolve(projectRoot, 'src/tp-figure.js'), resolve(outputRoot, 'assets/tp-figure.js'));
 await cp(resolve(projectRoot, 'src/latency-figure.js'), resolve(outputRoot, 'assets/latency-figure.js'));
+await cp(resolve(projectRoot, 'src/delay-lines-figure.js'), resolve(outputRoot, 'assets/delay-lines-figure.js'));
+await cp(resolve(projectRoot, 'src/architecture-figure.js'), resolve(outputRoot, 'assets/architecture-figure.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 /* The search index, assembled here rather than fetched at runtime.
 
@@ -141,14 +155,64 @@ await writeFile(
   'utf8'
 );
 
-const indexableUrls = routes.filter((route) => route.indexable).map((route) => `${HUB_ORIGIN}${route.url}`);
+/* The sitemap now dates the notes. A crawler had no way to tell a note
+   written today from one that has sat there for months, because every URL
+   arrived without one. Only the notes carry a date, because only the notes
+   have one that means anything -- lastmod is optional per URL, and inventing
+   a date for the contact page would be worse than leaving it out. */
+const noteDates = new Map(notes.map((note) => [`/notes/${note.slug}/`, note.published]));
+const indexableRoutes = routes.filter((route) => route.indexable);
+const indexableUrls = indexableRoutes.map((route) => `${HUB_ORIGIN}${route.url}`);
 
 await writeFile(
   resolve(outputRoot, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n`
     + `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
-    + indexableUrls.map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>\n`).join('')
+    + indexableRoutes
+      .map((route) => {
+        const date = noteDates.get(route.url);
+        return `  <url>\n    <loc>${HUB_ORIGIN}${route.url}</loc>\n`
+          + (date ? `    <lastmod>${date}</lastmod>\n` : '')
+          + '  </url>\n';
+      })
+      .join('')
     + `</urlset>\n`,
+  'utf8'
+);
+
+/* The notes as a feed. A technical library that can only be read by visiting
+   it is a library most of its readers will visit once; this is the standard
+   way to be told when there is a new one, and it costs a static file.
+
+   Newest first, by the day each note went up. The description is the note's
+   own standfirst -- the feed says what the page says, and nothing more. */
+const feedItems = [...notes]
+  .sort((a, b) => (a.published < b.published ? 1 : a.published > b.published ? -1 : 0))
+  .map((note) => {
+    const url = `${HUB_ORIGIN}/notes/${note.slug}/`;
+    return `    <item>\n`
+      + `      <title>${escapeXml(note.heading)}</title>\n`
+      + `      <link>${url}</link>\n`
+      + `      <guid isPermaLink="true">${url}</guid>\n`
+      + `      <pubDate>${new Date(`${note.published}T09:00:00Z`).toUTCString()}</pubDate>\n`
+      + `      <description>${escapeXml(note.standfirst)}</description>\n`
+      + `    </item>\n`;
+  })
+  .join('');
+
+await writeFile(
+  resolve(outputRoot, 'feed.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n`
+    + `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n`
+    + `  <channel>\n`
+    + `    <title>StudioZIO technical notes</title>\n`
+    + `    <link>${HUB_ORIGIN}/notes/</link>\n`
+    + `    <atom:link href="${HUB_ORIGIN}/feed.xml" rel="self" type="application/rss+xml"/>\n`
+    + `    <description>Measurement and design notes from StudioZIO: what the plug-ins report, and why they behave that way.</description>\n`
+    + `    <language>en</language>\n`
+    + feedItems
+    + `  </channel>\n`
+    + `</rss>\n`,
   'utf8'
 );
 

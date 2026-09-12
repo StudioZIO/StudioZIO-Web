@@ -4,7 +4,7 @@ import { products } from '../src/catalog.mjs';
 import { notes } from '../src/notes.mjs';
 
 const origin = 'https://studiozio.vercel.app';
-const paths = ['index.html', 'products/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml'];
+const paths = ['index.html', 'products/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml', 'feed.xml'];
 const baseline = {
   files: Object.fromEntries(paths.map(path => [path, readFileSync(new URL(`../dist/${path}`, import.meta.url), 'utf8')])),
   hosting: JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
@@ -37,6 +37,30 @@ function verify({ files, hosting }) {
     '/search/'
   ];
   assert.deepEqual(urls, expectedUrls.map(path => origin + path));
+  /* The feed is a published artifact like the sitemap, and it goes stale the
+     same silent way: one note per item, each dated from the note's own field,
+     newest first. A feed that has drifted from the library is worse than no
+     feed, because a subscriber believes it. */
+  const feed = files['feed.xml'];
+  const feedItems = [...feed.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(match => match[1]);
+  assert.equal(feedItems.length, notes.length, 'Feed item count drift');
+  for (const note of notes) {
+    const item = feedItems.find(entry => entry.includes(`${origin}/notes/${note.slug}/`));
+    assert.ok(item, `Feed is missing ${note.slug}`);
+    assert.ok(item.includes('<pubDate>'), `Feed item ${note.slug} carries no date`);
+  }
+  assert.ok(feed.includes(`<atom:link href="${origin}/feed.xml"`), 'Feed does not declare itself');
+
+  /* Every note dates its own sitemap entry. A crawler with no date has to
+     guess, and it guesses badly. */
+  const dated = [...files['sitemap.xml'].matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)];
+  assert.equal(dated.length, notes.length, 'Sitemap lastmod count drift');
+  for (const [, loc, date] of dated) {
+    const note = notes.find(candidate => loc === `${origin}/notes/${candidate.slug}/`);
+    assert.ok(note, `Sitemap dates a URL that is not a note: ${loc}`);
+    assert.equal(date, note.published, `Sitemap date drift for ${note.slug}`);
+  }
+
   const blocks = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   assert.equal(blocks.length, 1);
   const collection = JSON.parse(blocks[0][1])['@graph'].find(node => node['@type'] === 'CollectionPage');
