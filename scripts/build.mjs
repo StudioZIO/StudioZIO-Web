@@ -104,6 +104,9 @@ await cp(resolve(projectRoot, 'src/search.js'), resolve(outputRoot, 'assets/sear
 // The header box, on every page: it carries a query to /search/ and does
 // nothing else. Same-origin for the same CSP reason as the rest.
 await cp(resolve(projectRoot, 'src/header-search.js'), resolve(outputRoot, 'assets/header-search.js'));
+// The per-stage oversampling figure's one moving part. Same-origin for the
+// same CSP reason; the figure is correct without it.
+await cp(resolve(projectRoot, 'src/os-figure.js'), resolve(outputRoot, 'assets/os-figure.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 /* The search index, assembled here rather than fetched at runtime.
 

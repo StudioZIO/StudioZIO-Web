@@ -966,6 +966,69 @@ function formatNoteParagraph(line) {
   );
 }
 
+/* ---------- note figures ------------------------------------------------
+   A note may attach a figure to one of its sections. There is one here, and
+   it is not an illustration of the text: it is the text's argument, handed to
+   the reader to try. The note says a single global oversampling switch has to
+   be wrong for at least one stage; the figure lets someone pick that switch
+   and watch which stages it is wrong for.
+
+   The four stages and their rates are the ones the note names and the ones
+   the plug-in ships. Nothing here is a guess: below its rate a stage aliases,
+   above it the stage spends processor on margin it will never use, and at it
+   the stage is what shipped.
+
+   It renders in its shipped state -- every stage at its own rate -- so a
+   visitor with no JavaScript reads the true picture and simply cannot move
+   it. os-figure.js adds the moving part. */
+
+const OVERSAMPLING_STAGES = Object.freeze([
+  Object.freeze({ key: 'saturation', label: 'Saturation', rate: 4, detail: 'antiderivative anti-aliasing' }),
+  Object.freeze({ key: 'soft-clip', label: 'Soft clipping', rate: 16, detail: 'widest harmonic spread' }),
+  Object.freeze({ key: 'hard-clip', label: 'Hard clipping', rate: 8, detail: 'polyBLAMP transition correction' }),
+  Object.freeze({ key: 'true-peak', label: 'True-peak detection', rate: 16, detail: '512 taps per phase' })
+]);
+
+const OVERSAMPLING_CHOICES = Object.freeze([1, 2, 4, 8, 16]);
+
+function oversamplingFigure() {
+  const dial = OVERSAMPLING_CHOICES.map(
+    (factor) => `<button class="osfig-pick" type="button" data-os="${factor}" aria-pressed="false">${factor}&times;</button>`
+  ).join('');
+
+  const stages = OVERSAMPLING_STAGES.map(
+    (stage) => `<li class="osfig-stage" data-stage="${stage.key}" data-rate="${stage.rate}" data-state="ok">
+            <span class="osfig-k">${escapeHtml(stage.label)}</span>
+            <span class="osfig-lane osfig-lane--${stage.rate}" aria-hidden="true"></span>
+            <span class="osfig-rate">${stage.rate}&times;</span>
+            <span class="osfig-verdict">as shipped</span>
+            <span class="osfig-detail">${escapeHtml(stage.detail)}</span>
+          </li>`
+  ).join('');
+
+  return `<figure class="osfig" aria-labelledby="osfig-title">
+        <figcaption id="osfig-title" class="osfig-head">
+          Most plug-ins offer one oversampling factor for everything inside. Choose one and see which
+          stages it is wrong for, or take the per-stage answer the plug-in ships.
+        </figcaption>
+        <div class="osfig-dial" role="group" aria-label="Oversampling factor for the whole plug-in">
+          ${dial}
+          <button class="osfig-pick osfig-pick--shipped" type="button" data-os="stage" aria-pressed="true">Per stage</button>
+        </div>
+        <ol class="osfig-stages">${stages}</ol>
+        <p class="osfig-summary" role="status">Every stage at the rate it needs &mdash; the one the plug-in ships.</p>
+      </figure>`;
+}
+
+const NOTE_FIGURES = Object.freeze({ 'per-stage-oversampling': oversamplingFigure });
+
+function noteFigure(name) {
+  if (!name) return '';
+  const render = NOTE_FIGURES[name];
+  if (!render) throw new Error(`Note figure "${name}" has no renderer`);
+  return render();
+}
+
 export function renderNote(slug) {
   const note = getNote(slug);
   const sections = note.body
@@ -976,6 +1039,7 @@ export function renderNote(slug) {
           <h2 id="note-h-${index}">${escapeHtml(part.h)}</h2>
         </div>
         ${part.p.map((line) => `<p class="lede">${formatNoteParagraph(line)}</p>`).join('')}
+        ${noteFigure(part.figure)}
       </div>
     </section>`
     )
@@ -992,6 +1056,11 @@ export function renderNote(slug) {
        which note it is before anyone clicks. Generated from the heading, so
        there is no second copy of the title to keep in step -- see
        src/og/README.md. */
+    /* Only the notes that carry a figure load its script, and only the one
+       they carry: a note with no figure ships no extra byte. */
+    scripts: note.body.some((part) => part.figure)
+      ? '<script src="/assets/os-figure.js" defer></script>'
+      : '',
     socialImage: `/assets/og/og-note-${note.slug}.png`,
     socialImageAlt: `${note.heading} — a StudioZIO technical note`,
     content: `<section class="hero tech-grid">

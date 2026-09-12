@@ -275,6 +275,11 @@ export const notes = Object.freeze([
       }),
       Object.freeze({
         h: 'Nine stages, nine answers',
+        /* The figure belongs to this section because this is where the four
+           rates are named. It draws what the paragraphs say and adds nothing:
+           the ticks under each stage are that stage's rate, so 16x reads as
+           four times denser than 4x rather than as a bigger number. */
+        figure: 'per-stage-oversampling',
         p: Object.freeze([
           'Saturation runs at 4x with antiderivative anti-aliasing. The ADAA part matters more than the ratio: rather than pushing aliasing up and filtering it, ADAA changes how the non-linearity is evaluated so that far less is produced in the first place. That is why 4x is enough here rather than 16x.',
           'Soft clipping runs at a fixed 16x. Fixed, not user-selectable — this stage generates the widest harmonic spread in the plug-in, and exposing a control that lets someone set it too low would be offering a choice with only one correct answer.',

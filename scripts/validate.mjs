@@ -191,6 +191,28 @@ export function validateSource() {
   /* The product sites are no longer in the header, so they are not on every
      page any more: the catalogue surfaces are where they have to be reachable
      from, and that is what is checked. */
+  /* A figure a note declares is a figure the build can draw, and the script
+     that moves it ships with exactly the notes that carry one. A figure whose
+     renderer went missing would otherwise fail at request time, on a page
+     nobody was looking at. */
+  for (const [index, note] of notes.entries()) {
+    const carries = note.body.some((part) => part.figure);
+    const page = notePages[index];
+    if (carries !== page.includes('/assets/os-figure.js')) {
+      throw new Error(`Note ${note.slug} ${carries ? 'declares a figure but does not load' : 'loads'} os-figure.js`);
+    }
+    if (!carries) continue;
+    for (const required of ['class="osfig"', 'data-os="stage"', 'osfig-summary']) {
+      if (!page.includes(required)) throw new Error(`Note ${note.slug}: the figure is missing ${required}`);
+    }
+    /* The figure states four rates. They are the plug-in's, and the note's
+       own prose states them a paragraph above; if the two ever drift, the one
+       a reader plays with is the one they will believe. */
+    for (const rate of ['data-rate="4"', 'data-rate="16"', 'data-rate="8"']) {
+      if (!page.includes(rate)) throw new Error(`Note ${note.slug}: the figure is missing ${rate}`);
+    }
+  }
+
   /* One card per note, named after the note. Sharing a single card across the
      library is what this replaced: twelve notes arrived in a timeline looking
      like the same link. */

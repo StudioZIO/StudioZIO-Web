@@ -802,6 +802,136 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .swatch--destructive { background: var(--destructive); }
 
 /* ---------- motion ------------------------------------------------------ */
+/* ---------- the per-stage oversampling figure ---------------------------
+   A figure the reader can move rather than one they watch. The dial is the
+   single global factor most plug-ins offer; the four rows are the stages the
+   note names. A row below its rate is wrong in the way that matters, so it is
+   the one colour on this site that means trouble; a row above it is merely
+   wasteful and stays quiet. */
+.osfig {
+  margin: 2rem 0 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.1rem;
+}
+.osfig-head {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+.osfig-dial { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.osfig-pick {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  min-height: 40px;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-control);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.osfig-pick:hover { border-color: var(--primary); color: var(--foreground); }
+.osfig-pick:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.osfig-pick[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--surface-overlay);
+  color: var(--foreground);
+}
+.osfig-pick--shipped { margin-left: auto; text-transform: uppercase; }
+
+.osfig-stages { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.osfig-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr) minmax(3.5rem, auto);
+  grid-template-areas: "k lane rate" "detail detail verdict";
+  align-items: center;
+  gap: 0.35rem 0.9rem;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--surface-control);
+  padding: 0.7rem 0.85rem;
+  transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+}
+.osfig-k { grid-area: k; font-size: 0.9375rem; color: var(--foreground); }
+.osfig-rate {
+  grid-area: rate;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--foreground);
+  text-align: right;
+}
+.osfig-detail {
+  grid-area: detail;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.osfig-verdict {
+  grid-area: verdict;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* The lane is the running rate drawn as sample ticks: the point of the figure
+   is that 16x is four times denser than 4x, not that it is a bigger number.
+   The tick spacing animates between choices, so the density is something the
+   reader watches change rather than has to compare from memory. */
+.osfig-lane {
+  grid-area: lane;
+  height: 22px;
+  border-radius: 4px;
+  background-image: linear-gradient(to right, var(--muted-foreground) 1px, transparent 1px);
+  background-repeat: repeat-x;
+  background-position: left center;
+  background-size: 50% 14px;
+  opacity: 0.55;
+  transition: background-size var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+}
+.osfig-lane--1 { background-size: 100% 14px; }
+.osfig-lane--2 { background-size: 50% 14px; }
+.osfig-lane--4 { background-size: 25% 14px; }
+.osfig-lane--8 { background-size: 12.5% 14px; }
+.osfig-lane--16 { background-size: 6.25% 14px; }
+
+.osfig-stage[data-state="ok"] { border-left-color: var(--primary); }
+.osfig-stage[data-state="ok"] .osfig-verdict { color: var(--primary-text); }
+.osfig-stage[data-state="ok"] .osfig-lane { opacity: 1; background-image: linear-gradient(to right, var(--primary) 1px, transparent 1px); }
+.osfig-stage[data-state="low"] { border-left-color: var(--destructive); background: var(--surface-overlay); }
+.osfig-stage[data-state="low"] .osfig-verdict { color: var(--destructive); }
+.osfig-stage[data-state="high"] .osfig-verdict { color: var(--muted-foreground); }
+.osfig-stage[data-state="high"] .osfig-lane { opacity: 0.35; }
+
+.osfig-summary { margin: 0; font-size: 0.9375rem; color: var(--muted-foreground); }
+
+@media (max-width: 640px) {
+  /* On a phone the verdict takes its own line rather than sharing one with
+     the stage's detail: "more than needed" and "polyBLAMP transition
+     correction" do not fit on 400 pixels together, and a row that scrolls
+     sideways is not a row anyone reads. */
+  .osfig-stage {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "k rate" "lane lane" "detail detail" "verdict verdict";
+  }
+  .osfig-verdict { text-align: left; white-space: normal; }
+  .osfig-pick--shipped { margin-left: 0; }
+}
+
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: none; }
@@ -838,6 +968,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   /* The rail and the band read as a still frame: every stage armed, every
      band at its learned position, nothing moving. */
   .rail .st { border-top-color: color-mix(in oklab, var(--primary) 45%, transparent); }
+  /* The oversampling figure is driven by the reader, not by a timer, so it
+     keeps working here; only the easing between states goes. */
+  .osfig-lane, .osfig-stage, .osfig-pick { transition-duration: 0.001ms !important; }
   .bands-row i { transform: scaleX(1); opacity: 1; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
