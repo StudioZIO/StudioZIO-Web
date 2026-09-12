@@ -1384,6 +1384,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
    share the shell so none can drift into a look of its own. */
 .support-form,
 .notify-form,
+.search-form,
 .tester-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
 /* One short field does not want the full 1100px shell; the support form and
    the tester form have a grid of them and do. */
@@ -1426,6 +1427,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .form-status:empty { display: none; }
 .form-status--sent { color: var(--primary-text); }
 .form-status--error { color: var(--destructive); }
+
+/* Empty until a query says something, so the box does not open with a gap
+   under it waiting to be filled. */
+.result-status { margin: 0; font-size: 0.9375rem; color: var(--muted-foreground); }
+.result-status:empty { display: none; }
 
 .form-note { margin: 1.25rem 0 0; font-size: 0.9375rem; color: var(--muted-foreground); }
 

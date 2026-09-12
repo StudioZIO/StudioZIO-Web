@@ -940,7 +940,7 @@ export function renderSearch() {
     </section>
     <section class="section">
       <div class="shell">
-        <div class="panel-float">
+        <div class="panel-float search-form">
           <div class="form-row">
             <label class="form-label" for="search-query">Search StudioZIO</label>
             <input id="search-query" class="field" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="oversampling, AAX, latency, install&hellip;">
