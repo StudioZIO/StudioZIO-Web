@@ -633,6 +633,99 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* The rack: the same cadence as the rail, but each cell carries a module name
+   and the group it belongs to, because that is what the plug-in's own preview
+   shows on screen. The IN and OUT nodes bracket the eight so the order reads
+   as a signal path rather than as a list. */
+.rack--8 { --rail-cycle: 4.8s; }
+.rack--8 .slot:nth-child(2) { animation-delay: 0.0s; }
+.rack--8 .slot:nth-child(3) { animation-delay: 0.28s; }
+.rack--8 .slot:nth-child(4) { animation-delay: 0.56s; }
+.rack--8 .slot:nth-child(5) { animation-delay: 0.84s; }
+.rack--8 .slot:nth-child(6) { animation-delay: 1.12s; }
+.rack--8 .slot:nth-child(7) { animation-delay: 1.4s; }
+.rack--8 .slot:nth-child(8) { animation-delay: 1.68s; }
+.rack--8 .slot:nth-child(9) { animation-delay: 1.96s; }
+/* Eight equal tenths of a card cannot hold "Transient Shaper" on one line,
+   and no way of breaking it reads as anything but a fault. The cells take the
+   width of their own names instead, and the row wraps on a narrow screen the
+   way a line of text does -- IN still first, OUT still last, order intact. */
+.rack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 2px;
+}
+.rack-node {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 0.4rem 0.16rem;
+  border: 1px dashed var(--hairline);
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.4688rem;
+  letter-spacing: 0.14em;
+  color: var(--muted-foreground);
+}
+.rack .slot {
+  flex: 0 1 auto;
+  border: 1px solid var(--hairline);
+  border-top: 2px solid transparent;
+  border-radius: 5px;
+  background: var(--surface-control);
+  padding: 0.34rem 0.26rem;
+  display: grid;
+  gap: 0.05rem;
+  align-content: start;
+  min-width: 0;
+  animation: stage-arm var(--rail-cycle) linear infinite;
+}
+.rack .slot-n {
+  font-family: var(--font-mono);
+  font-size: 0.4375rem;
+  letter-spacing: 0.1em;
+  color: var(--primary-text);
+}
+.rack .slot-name {
+  font-family: var(--font-mono);
+  font-size: 0.5312rem;
+  line-height: 1.25;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+/* Output meters, the pair the window shows. Decorative, like the bands and
+   the correlation bar on the other two mocks. */
+.meters { display: grid; gap: 0.3rem; }
+.meters-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.5312rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.meters-row { display: grid; gap: 4px; }
+.meters-row i {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--primary) 55%, transparent);
+  transform-origin: left center;
+  animation: meter-ride 3.2s ease-in-out infinite;
+}
+.meters-row i:nth-child(2) { animation-delay: 0.45s; }
+@keyframes meter-ride {
+  0%, 100% { transform: scaleX(0.42); }
+  30%      { transform: scaleX(0.86); }
+  55%      { transform: scaleX(0.63); }
+  78%      { transform: scaleX(0.91); }
+}
+
 .rail--8 { --rail-cycle: 4.8s; }
 .rail--8 .st:nth-child(1) { animation-delay: 0s; }
 .rail--8 .st:nth-child(2) { animation-delay: 0.28s; }
@@ -1231,7 +1324,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
   /* The rail and the band read as a still frame: every stage armed, every
      band at its learned position, nothing moving. */
-  .rail .st { border-top-color: color-mix(in oklab, var(--primary) 45%, transparent); }
+  .rail .st, .rack .slot { border-top-color: color-mix(in oklab, var(--primary) 45%, transparent); }
+  .meters-row i { transform: scaleX(0.7); }
   /* The oversampling figure is driven by the reader, not by a timer, so it
      keeps working here; only the easing between states goes. */
   .osfig-lane, .osfig-stage, .osfig-pick,

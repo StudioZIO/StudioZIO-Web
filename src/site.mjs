@@ -447,9 +447,60 @@ function tempoDelayMock() {
     </div>`;
 }
 
+/* MixRack is unreleased, so this mock draws only what its own preview film
+   already shows: the eight modules, in slot order, with the group each
+   belongs to. The film names them on screen -- module 01 of 08, Utility,
+   "Gain" -- so nothing here is a name this mock invented, and nothing beyond
+   the names and the order is claimed.
+
+   The sweep is the same one the other two mocks use, running IN to OUT in the
+   order the audio takes. */
+/* The four groups the film names -- Utility, EQ, Dynamics, Saturation -- do
+   not fit in a cell a tenth of a card wide, so the head carries the count and
+   the cells carry the names. */
+const MIXRACK_MODULES = Object.freeze([
+  'Gain',
+  'Three-Band EQ',
+  'Channel Mixer',
+  'Compressor',
+  'Gate',
+  'Transient Shaper',
+  'Clipper',
+  'Limiter'
+]);
+
+function mixRackMock() {
+  const slots = MIXRACK_MODULES.map(
+    (name, index) => `<span class="slot">
+          <span class="slot-n">${String(index + 1).padStart(2, '0')}</span>
+          <span class="slot-name">${escapeHtml(name)}</span>
+        </span>`
+  ).join('');
+
+  return `<div class="mock" aria-hidden="true">
+      <div class="mock-head">
+        <span class="mock-title"><span class="dot"></span>MixRack</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Coming soon', 'flag')}</span>
+      </div>
+      <div class="mock-body">
+        <div class="rail-head"><span>The rack</span><span>eight modules in four groups</span></div>
+        <div class="rack rack--8">
+          <span class="rack-node">IN</span>
+          ${slots}
+          <span class="rack-node">OUT</span>
+        </div>
+        <div class="meters">
+          <span class="meters-head"><span>Output meters</span><span>L / R</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+      </div>
+    </div>`;
+}
+
 const MOCKS = {
   'mastering-suite': masteringSuiteMock,
-  'tempo-delay': tempoDelayMock
+  'tempo-delay': tempoDelayMock,
+  mixrack: mixRackMock
 };
 
 /* ---------- A/B listening -----------------------------------------------
