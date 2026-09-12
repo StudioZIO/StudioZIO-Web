@@ -6,6 +6,16 @@
   "trailingSlash": true,
   "redirects": [
     {
+      "source": "/products/mixrack",
+      "destination": "https://studioziomixrack.vercel.app/",
+      "permanent": true
+    },
+    {
+      "source": "/products/mixrack/",
+      "destination": "https://studioziomixrack.vercel.app/",
+      "permanent": true
+    },
+    {
       "source": "/products/mastering-suite",
       "destination": "https://studioziomasteringsuite.vercel.app/",
       "permanent": true
