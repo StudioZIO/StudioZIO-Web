@@ -110,6 +110,9 @@ await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'))
 // Conversion measurement. One delegated listener, same file on all four
 // StudioZIO properties, same-origin for the same CSP reason as the rest.
 await cp(resolve(projectRoot, 'src/events.js'), resolve(outputRoot, 'assets/events.js'));
+// The reorderable rack on the product cards. Same-origin for the same CSP
+// reason; without it the rack is still the right eight modules in order.
+await cp(resolve(projectRoot, 'src/rack.js'), resolve(outputRoot, 'assets/rack.js'));
 // The search page's matcher. Same-origin for the same CSP reason; it is the
 // only script on the site that reads a file rather than sending one.
 await cp(resolve(projectRoot, 'src/search.js'), resolve(outputRoot, 'assets/search.js'));

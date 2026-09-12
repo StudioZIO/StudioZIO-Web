@@ -448,16 +448,20 @@ function tempoDelayMock() {
 }
 
 /* MixRack is unreleased, so this mock draws only what its own preview film
-   already shows: the eight modules, in slot order, with the group each
-   belongs to. The film names them on screen -- module 01 of 08, Utility,
-   "Gain" -- so nothing here is a name this mock invented, and nothing beyond
-   the names and the order is claimed.
+   already shows: the eight modules, in slot order, and the window's output
+   meters. The film names them on screen -- module 01 of 08, Utility, "Gain" --
+   so no name here was invented.
 
-   The sweep is the same one the other two mocks use, running IN to OUT in the
-   order the audio takes. */
-/* The four groups the film names -- Utility, EQ, Dynamics, Saturation -- do
-   not fit in a cell a tenth of a card wide, so the head carries the count and
-   the cells carry the names. */
+   It is the one mock a visitor can touch, because reordering is the thing the
+   plug-in is: "drag a slot to move it" is the film's own line. Dragging works
+   with a mouse or a finger, and the arrow keys do the same job for anyone not
+   using either. The slot numbers went with the interaction -- a number
+   printed beside a module that can be moved is a label that lies as soon as
+   it is moved.
+
+   Because it is interactive, this mock is not aria-hidden the way the other
+   two are: the decorative parts are hidden one by one instead, so nothing
+   focusable is ever inside a hidden subtree. */
 const MIXRACK_MODULES = Object.freeze([
   'Gain',
   'Three-Band EQ',
@@ -471,25 +475,24 @@ const MIXRACK_MODULES = Object.freeze([
 
 function mixRackMock() {
   const slots = MIXRACK_MODULES.map(
-    (name, index) => `<span class="slot">
-          <span class="slot-n">${String(index + 1).padStart(2, '0')}</span>
-          <span class="slot-name">${escapeHtml(name)}</span>
-        </span>`
+    (name) => `<button class="slot" type="button">${escapeHtml(name)}</button>`
   ).join('');
 
-  return `<div class="mock" aria-hidden="true">
-      <div class="mock-head">
+  return `<div class="mock mock--live">
+      <div class="mock-head" aria-hidden="true">
         <span class="mock-title"><span class="dot"></span>MixRack</span>
         <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Coming soon', 'flag')}</span>
       </div>
       <div class="mock-body">
-        <div class="rail-head"><span>The rack</span><span>eight modules in four groups</span></div>
-        <div class="rack rack--8">
-          <span class="rack-node">IN</span>
+        <div class="rail-head" aria-hidden="true"><span>The rack</span><span>eight modules in four groups</span></div>
+        <div class="rack rack--8" role="group" aria-label="MixRack signal chain, in order from input to output">
+          <span class="rack-node" aria-hidden="true">IN</span>
           ${slots}
-          <span class="rack-node">OUT</span>
+          <span class="rack-node" aria-hidden="true">OUT</span>
         </div>
-        <div class="meters">
+        <p class="rack-hint">Drag a module to move it, or focus one and use the arrow keys.</p>
+        <p class="rack-status" role="status" aria-live="polite"></p>
+        <div class="meters" aria-hidden="true">
           <span class="meters-head"><span>Output meters</span><span>L / R</span></span>
           <span class="meters-row"><i></i><i></i></span>
         </div>
@@ -632,6 +635,9 @@ function hearItFirst() {
 }
 
 const AB_SCRIPT = '<script src="/assets/ab.js" defer></script>';
+/* The rack is on both catalogue surfaces and nowhere else, so it loads on
+   both and nowhere else. */
+const RACK_SCRIPT = '<script src="/assets/rack.js" defer></script>';
 
 /* ---------- cards ------------------------------------------------------- */
 
@@ -745,7 +751,7 @@ export function renderHome() {
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
-    scripts: AB_SCRIPT,
+    scripts: `${AB_SCRIPT}${RACK_SCRIPT}`,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="hero-grid hero--stacked">
@@ -794,6 +800,7 @@ export function renderProducts() {
     canonical: `${HUB_ORIGIN}/products/`,
     current: 'products',
     jsonLd: productsJsonLd(),
+    scripts: RACK_SCRIPT,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">

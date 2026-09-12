@@ -647,9 +647,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .rack--8 .slot:nth-child(8) { animation-delay: 1.68s; }
 .rack--8 .slot:nth-child(9) { animation-delay: 1.96s; }
 /* Eight equal tenths of a card cannot hold "Transient Shaper" on one line,
-   and no way of breaking it reads as anything but a fault. The cells take the
-   width of their own names instead, and the row wraps on a narrow screen the
-   way a line of text does -- IN still first, OUT still last, order intact. */
+   and no way of breaking it reads as anything but a fault. So every cell is
+   the width of the longest name instead -- all eight identical, none broken --
+   and the row wraps on a narrow screen the way a line of text does, IN still
+   first, OUT still last, order intact. */
 .rack {
   display: flex;
   flex-wrap: wrap;
@@ -670,31 +671,53 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--muted-foreground);
 }
 .rack .slot {
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   border: 1px solid var(--hairline);
   border-top: 2px solid transparent;
   border-radius: 5px;
   background: var(--surface-control);
-  padding: 0.34rem 0.26rem;
+  padding: 0.5rem 0.45rem;
   display: grid;
-  gap: 0.05rem;
-  align-content: start;
+  align-content: center;
   min-width: 0;
-  animation: stage-arm var(--rail-cycle) linear infinite;
-}
-.rack .slot-n {
-  font-family: var(--font-mono);
-  font-size: 0.4375rem;
-  letter-spacing: 0.1em;
-  color: var(--primary-text);
-}
-.rack .slot-name {
   font-family: var(--font-mono);
   font-size: 0.5312rem;
   line-height: 1.25;
   color: var(--foreground);
+  text-align: left;
   white-space: nowrap;
+  /* The face is monospaced, so one measure in ch holds every name and makes
+     every cell the same width without a magic pixel number. "Transient
+     Shaper" is the longest at sixteen. */
+  /* border-box, so the measure has to carry the padding and the border with
+     it or the longest name pushes its own cell two pixels wider than the
+     rest. */
+  min-width: calc(16ch + 0.9rem + 2px);
+  cursor: grab;
+  touch-action: none;
+  animation: stage-arm var(--rail-cycle) linear infinite;
 }
+.rack .slot:hover { border-color: var(--primary); }
+.rack .slot:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+/* The one being carried leaves the sweep behind: a module that is moving
+   should not also be lighting up as though the signal were passing through
+   it. */
+.rack .slot[data-dragging="true"] {
+  cursor: grabbing;
+  border-color: var(--primary);
+  background: var(--surface-overlay);
+  animation: none;
+}
+.rack[data-dragging="true"] .slot { transition: none; }
+/* An instruction, not a label: the mono capitals the rest of the mock uses
+   for its headings would shout it, and it is the quietest thing here. */
+.rack-hint, .rack-status {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.rack-status:empty { display: none; }
 
 /* Output meters, the pair the window shows. Decorative, like the bands and
    the correlation bar on the other two mocks. */
