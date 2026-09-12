@@ -2,6 +2,7 @@ import {
   getProduct,
   products,
   MASTERING_SUITE_WEBSITE,
+  MIXRACK_WEBSITE,
   RELEASE_REPOSITORY_URL,
   TEMPO_DELAY_WEBSITE,
   ZIO_WEBSITE
@@ -142,8 +143,6 @@ function kvrLink(url, label) {
 const NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Products', '/products/', 'products'],
-  ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
-  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
   ['Notes', '/notes/', 'notes'],
   ['Contact', '/contact/', 'contact']
 ];
@@ -153,23 +152,22 @@ const HEADER_NAVIGATION = [
   ['Products', '/products/', 'products'],
   ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
   ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
+  ['MixRack', MIXRACK_WEBSITE, 'mixrack'],
   ['Notes', '/notes/', 'notes'],
   ['Community', '/community/', 'community'],
   ['Contact', '/contact/', 'contact']
 ];
 
-/* The press kit sits in the footer rather than the header. Journalists go
-   looking for it and customers never do, and the header already carries two
-   off-site product links. A footer entry still puts a link to the page on
-   every page of the site, which is the part the crawler needs -- the three
-   Mastering Suite pages that Search Console reports as "discovered, not
-   indexed" are all pages nothing linked to. */
-/* The footer list is the estate's shared index, and it is the same eight
-   entries on every surface so that any menu is reachable from any site. The
-   header stays six: the press kit and the artist site both belong here rather
-   than up there, for the reasons above and below. Changing this list means
-   changing it on all four surfaces in the same commit — a footer that differs
-   between properties is how a page ends up with nothing linking to it. */
+/* The three product sites live in the header, one row up, and the footer
+   carries none of them: with MixRack added the footer would have listed the
+   same three destinations twice on one screen. The owner asked for the
+   shorter list, and the same two lists now ship on every StudioZIO site, so
+   any menu is still reachable from any surface.
+   The press kit and the artist site sit here rather than in the header:
+   journalists go looking for the first and customers never do, and ZIO is a
+   Person the Organization graph names as founder, not a product. A footer
+   entry still puts a link on every page of the site, which is the part the
+   crawler needs. */
 const FOOTER_LINKS = [
   ...NAVIGATION,
   ['Press kit', '/press/', 'press'],
@@ -749,193 +747,6 @@ export function renderProducts() {
   });
 }
 
-export function renderMixRack() {
-  const product = getProduct('mixrack');
-  return shell({
-    title: 'StudioZIO MixRack — Coming Soon | StudioZIO',
-    description:
-      'StudioZIO MixRack is a modular mixing environment for macOS, coming soon from StudioZIO in AU, VST3, AAX and Standalone formats.',
-    canonical: `${HUB_ORIGIN}/products/mixrack/`,
-    current: '',
-    scripts: '<script src="/assets/notify.js" defer></script><script src="/assets/tester.js" defer></script><script src="/assets/video.js" defer></script>',
-    content: `<section class="hero tech-grid">
-      <div class="shell">
-        <div class="rise">
-          <p class="eyebrow">StudioZIO software · Coming Soon</p>
-          <h1>StudioZIO MixRack</h1>
-          <p><a href="/products/">All StudioZIO products</a></p>
-          <p class="lede">${escapeHtml(product.description)} Build a signal chain from StudioZIO processing modules and shape a mix from one unified interface.</p>
-          <div class="chip-row mt-lg">
-            ${chip(product.manufacturer)}${chip(product.platform)}${chip('Coming Soon', 'flag')}
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="mixrack-video-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Preview</p>
-          <h2 id="mixrack-video-title">A look inside the rack</h2>
-          <p class="lede">Two minutes with the MixRack window as it stands in development: the eight modules, the module browser, reordering, factory presets, A/B and the output meters.</p>
-        </div>
-        <figure class="panel-float video-card">
-          <button class="video-facade" type="button" data-video-src="/assets/media/mixrack-intro.mp4"
-            data-video-label="StudioZIO MixRack introduction, two minutes, music only">
-            <img class="video-poster" src="/assets/media/mixrack-intro-poster.webp" width="1920" height="1080"
-              alt="StudioZIO MixRack, coming soon" loading="lazy" decoding="async">
-            <span class="video-play"><span class="video-play-icon" aria-hidden="true"></span><span class="video-play-label">Play the preview · </span>1:58</span>
-          </button>
-          <noscript>
-            <video class="video-player" controls preload="none" playsinline width="1920" height="1080"
-              poster="/assets/media/mixrack-intro-poster.webp">
-              <source src="/assets/media/mixrack-intro.mp4" type="video/mp4">
-            </video>
-          </noscript>
-          <figcaption class="video-caption">The film loads only when you press play. Interface shown from the development build. Music: “Enigma”.</figcaption>
-        </figure>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="mixrack-spec-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Planned formats</p>
-          <h2 id="mixrack-spec-title">Coming Soon</h2>
-          <p class="lede">StudioZIO MixRack is in development. Release details will be published when they are available.</p>
-        </div>
-        <dl class="spec-grid">
-          <div><dt>Manufacturer</dt><dd>${escapeHtml(product.manufacturer)}</dd></div>
-          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
-          <div><dt>Status</dt><dd>Coming Soon</dd></div>
-          <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
-        </dl>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="mixrack-notify-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Release notice</p>
-          <h2 id="mixrack-notify-title">Hear about it once</h2>
-          <p class="lede">StudioZIO MixRack has no release date yet. Leave an address and it gets used exactly once — on the day it ships.</p>
-        </div>
-        <form class="panel-float notify-form" novalidate="false">
-          <div class="form-hp" aria-hidden="true">
-            <label for="notify-company">Company</label>
-            <input id="notify-company" name="company" type="text" tabindex="-1" autocomplete="off">
-          </div>
-
-          <div class="form-row">
-            <label class="form-label" for="notify-email">Email <span class="req">required</span></label>
-            <input id="notify-email" name="email" class="field" type="email" required autocomplete="email">
-            <p class="form-hint">One message, when StudioZIO MixRack is released. Nothing else is sent to it, and it is not used for anything else.</p>
-          </div>
-
-          <p class="form-status" role="status" aria-live="polite"></p>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Notify me at release</button>
-          </div>
-        </form>
-
-        <noscript>
-          <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming an address was recorded.</p>
-        </noscript>
-      </div>
-    </section>
-    <section class="section" aria-labelledby="mixrack-tester-title">
-      <div class="shell">
-        <div class="section-head">
-          <p class="eyebrow">Testing interest</p>
-          <h2 id="mixrack-tester-title">Interested in testing MixRack?</h2>
-          <p class="lede">StudioZIO MixRack is still in active development and no test build is being distributed yet. A small tester pool is being assembled, and selected people may be contacted for a future beta or release-candidate build. Submitting interest does not guarantee selection, and the details below are used only to evaluate and contact potential testers.</p>
-        </div>
-        <form class="panel-float tester-form" novalidate="false">
-          <div class="form-hp" aria-hidden="true">
-            <label for="tester-company">Company</label>
-            <input id="tester-company" name="company" type="text" tabindex="-1" autocomplete="off">
-          </div>
-
-          <div class="form-grid form-grid--2">
-            <div class="form-row">
-              <label class="form-label" for="tester-email">Email <span class="req">required</span></label>
-              <input id="tester-email" name="email" class="field" type="email" required autocomplete="email">
-            </div>
-            <div class="form-row">
-              <label class="form-label" for="tester-daw">Primary DAW <span class="req">required</span></label>
-              <input id="tester-daw" name="daw" class="field field-mono" type="text" required placeholder="Logic Pro">
-            </div>
-          </div>
-
-          <div class="form-grid form-grid--2">
-            <div class="form-row">
-              <label class="form-label" for="tester-macos">macOS version <span class="req">required</span></label>
-              <input id="tester-macos" name="macos_version" class="field field-mono" type="text" required placeholder="macOS 14">
-            </div>
-            <div class="form-row">
-              <label class="form-label" for="tester-architecture">Mac architecture <span class="req">required</span></label>
-              <select id="tester-architecture" name="architecture" class="field" required>
-                <option value="">Select…</option>
-                <option value="Apple Silicon">Apple Silicon</option>
-                <option value="Intel">Intel</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-grid form-grid--3">
-            <div class="form-row">
-              <label class="form-label" for="tester-experience">Experience</label>
-              <select id="tester-experience" name="experience" class="field">
-                <option value="">Prefer not to say</option>
-                <option value="Producer">Producer</option>
-                <option value="Mixing engineer">Mixing engineer</option>
-                <option value="Mastering engineer">Mastering engineer</option>
-                <option value="Developer / technical user">Developer / technical user</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label class="form-label" for="tester-phase">Interested in</label>
-              <select id="tester-phase" name="phase_interest" class="field">
-                <option value="either">Either</option>
-                <option value="beta">Beta</option>
-                <option value="release-candidate">Release Candidate</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label class="form-label" for="tester-focus">Testing focus</label>
-              <select id="tester-focus" name="testing_focus" class="field">
-                <option value="">No preference</option>
-                <option value="Workflow / usability">Workflow / usability</option>
-                <option value="Stability / crashes">Stability / crashes</option>
-                <option value="DAW compatibility">DAW compatibility</option>
-                <option value="CPU / performance">CPU / performance</option>
-                <option value="Automation / recall">Automation / recall</option>
-                <option value="General use">General use</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <label class="form-label" for="tester-note">What would you most want to test?</label>
-            <textarea id="tester-note" name="optional_note" class="field field-area" rows="3"></textarea>
-            <p class="form-hint">Optional — a sentence is plenty.</p>
-          </div>
-
-          <p class="form-status" role="status" aria-live="polite"></p>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Register testing interest</button>
-          </div>
-        </form>
-
-        <noscript>
-          <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming your interest was recorded.</p>
-        </noscript>
-      </div>
-    </section>`
-  });
-}
-
 /* The one page on the hub that takes input rather than giving it. The form
    posts through src/contact.js; the CSP allows that single endpoint and
    nothing else, and blocks a native POST entirely, so there is no quiet path
@@ -1277,7 +1088,7 @@ export function renderPress() {
         <h3 class="mt-lg">${escapeHtml(mixRack.name)}</h3>
         <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
           mixRack.availability
-        )} &mdash; no date and nothing to download. Listed for completeness rather than as an announcement; there is a <a href="/products/mixrack/">holding page</a> and nothing more.</p>
+        )} &mdash; no date and nothing to download. Listed for completeness rather than as an announcement; there is a <a href="${MIXRACK_WEBSITE}">product page</a>, with a two-minute look at the interface as it stands in development, and nothing more.</p>
       </div>
     </section>
 

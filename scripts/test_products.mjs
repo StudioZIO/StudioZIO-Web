@@ -4,7 +4,7 @@ import { products } from '../src/catalog.mjs';
 import { notes } from '../src/notes.mjs';
 
 const origin = 'https://studiozio.vercel.app';
-const paths = ['index.html', 'products/index.html', 'products/mixrack/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml'];
+const paths = ['index.html', 'products/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml'];
 const baseline = {
   files: Object.fromEntries(paths.map(path => [path, readFileSync(new URL(`../dist/${path}`, import.meta.url), 'utf8')])),
   hosting: JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
@@ -24,7 +24,6 @@ function verify({ files, hosting }) {
   const expectedUrls = [
     '/',
     '/products/',
-    '/products/mixrack/',
     '/contact/',
     '/notes/',
     ...notes.map(note => `/notes/${note.slug}/`),
@@ -67,7 +66,7 @@ function verify({ files, hosting }) {
     for (const section of [html.split('</header>')[0], html.split('<footer')[1]]) {
       assert.match(section, /href="\/products\/"[^>]*>Products<\/a>/, `${path}: catalogue navigation missing`);
     }
-    if (['index.html', 'products/mixrack/index.html', 'contact/index.html'].includes(path)) {
+    if (['index.html', 'contact/index.html'].includes(path)) {
       assert.ok(html.split('<main id="main-content">')[1].split('</main>')[0].includes('href="/products/"'), `${path}: contextual link missing`);
     }
   }

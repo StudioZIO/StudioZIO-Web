@@ -7,6 +7,12 @@ export const MASTERING_SUITE_WEBSITE =
 export const TEMPO_DELAY_WEBSITE =
   'https://www.tempodelay.tech/';
 
+/* MixRack has its own site now, the same way Mastering Suite and Tempo Delay
+   do. The hub keeps the card and the header entry; the page itself lives
+   there, and /products/mixrack redirects to it (see vercel.json). */
+export const MIXRACK_WEBSITE =
+  'https://studioziomixrack.vercel.app/';
+
 /* The artist surface. Not a product, which is why it appears in the footer
    list and never in the header — but it is one of the four surfaces, and the
    Organization graph here names ZIO as founder by @id. A reference that
@@ -77,7 +83,8 @@ export const products = Object.freeze([
     availability: 'Coming soon',
     description:
       'A modular mixing environment that brings essential processing into one focused rack.',
-    detailsUrl: '/products/mixrack/'
+    detailsUrl: MIXRACK_WEBSITE,
+    externalDetails: true
   })
 ]);
 
