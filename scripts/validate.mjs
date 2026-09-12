@@ -186,8 +186,14 @@ export function validateSource() {
         throw new Error(`Page ${index} still links the retired local page ${retired}`);
       }
     }
-    if (!page.includes(`href="${MIXRACK_WEBSITE}"`)) {
-      throw new Error(`Page ${index} has no link to the MixRack site`);
+  }
+
+  /* The product sites are no longer in the header, so they are not on every
+     page any more: the catalogue surfaces are where they have to be reachable
+     from, and that is what is checked. */
+  for (const catalogPage of [home, catalog]) {
+    if (!catalogPage.includes(`href="${MIXRACK_WEBSITE}"`)) {
+      throw new Error('A catalogue surface has no link to the MixRack site');
     }
   }
 
@@ -206,16 +212,11 @@ export function validateSource() {
     }
   }
 
-  // The shared navigation puts the Tempo Delay site in the header
-  // and footer of every page, so the old exact-count rule no longer applies.
-  // What must hold: it is reachable everywhere, and both catalog surfaces
-  // still carry it on the product card itself.
-  if (!pages.every((page) => page.includes(TEMPO_DELAY_WEBSITE))) {
-    throw new Error('Tempo Delay site must be linked from every page');
-  }
+  // The Tempo Delay site left the header with the other two products, so it
+  // is reached from the catalogue rather than from every page. What must hold
+  // is that both catalogue surfaces carry it on the product card itself.
   for (const catalogPage of [home, catalog]) {
-    const navAndFooterLinks = 2;
-    if (catalogPage.split(TEMPO_DELAY_WEBSITE).length - 1 <= navAndFooterLinks) {
+    if (!catalogPage.includes(TEMPO_DELAY_WEBSITE)) {
       throw new Error('Catalog surfaces must link Tempo Delay from its product card');
     }
   }
@@ -232,7 +233,10 @@ export function validateSource() {
     if (footerMarkup.split('class="logo"').length - 1 !== 1) {
       throw new Error('Expected exactly one logo lockup in the footer');
     }
-    for (const label of ['>Hub<', '>Products<', '>Mastering Suite<', '>Tempo Delay<', '>Contact<']) {
+    /* The five entries every StudioZIO header carries. The product names left
+       this list with the product links; they are checked on the catalogue
+       surfaces instead. */
+    for (const label of ['>Hub<', '>Products<', '>Notes<', '>Community<', '>Contact<']) {
       if (!page.includes(label)) throw new Error(`Navigation label missing: ${label}`);
     }
     if (!page.includes(`href="${INSTAGRAM_URL}"`)) throw new Error('Instagram footer link missing');

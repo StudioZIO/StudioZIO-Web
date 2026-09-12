@@ -148,12 +148,15 @@ const NAVIGATION = [
   ['Contact', '/contact/', 'contact']
 ];
 
+/* The three product sites left this row. Eight destinations and the search
+   box did not fit on one line -- the labels folded onto a second row and the
+   header grew by a third -- and the owner's call was that the products belong
+   behind Products, where the catalogue describes them, rather than repeated
+   in every header. Anyone who knows the product name types it in the box.
+   The same five entries ship on all four StudioZIO sites. */
 const HEADER_NAVIGATION = [
   ['Hub', '/', 'hub'],
   ['Products', '/products/', 'products'],
-  ['Mastering Suite', MASTERING_SUITE_WEBSITE, 'mastering'],
-  ['Tempo Delay', TEMPO_DELAY_WEBSITE, 'tempo'],
-  ['MixRack', MIXRACK_WEBSITE, 'mixrack'],
   ['Notes', '/notes/', 'notes'],
   ['Community', '/community/', 'community'],
   ['Contact', '/contact/', 'contact']
