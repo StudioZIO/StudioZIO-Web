@@ -491,7 +491,7 @@ function mixRackMock() {
           <span class="rack-node" aria-hidden="true">OUT</span>
         </div>
         <p class="rack-hint">Drag a module to move it, or focus one and use the arrow keys.</p>
-        <p class="rack-status" role="status" aria-live="polite"></p>
+        <p class="rack-status sr-only" role="status" aria-live="polite"></p>
         <div class="meters" aria-hidden="true">
           <span class="meters-head"><span>Output meters</span><span>L / R</span></span>
           <span class="meters-row"><i></i><i></i></span>
@@ -1906,7 +1906,7 @@ export function renderCommunityCompatibility() {
               <h3>Tempo Delay</h3>
               <span class="chip">v${tempo.version}</span>
             </div>
-            <dl class="spec-grid spec-grid--tempo-delay">
+            <dl class="spec-grid">
               <div>
                 <dt>Minimum OS</dt>
                 <dd>macOS 12+</dd>
@@ -1918,10 +1918,6 @@ export function renderCommunityCompatibility() {
               <div>
                 <dt>Formats</dt>
                 <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
-              </div>
-              <div>
-                <dt>Reported processing latency</dt>
-                <dd>0 samples</dd>
               </div>
               <div class="spec-full">
                 <dt>AAX / Pro Tools</dt>
@@ -1945,7 +1941,7 @@ export function renderCommunityCompatibility() {
               </div>
               <div>
                 <dt>Planned formats</dt>
-                <dd>AU &middot; VST3 &middot; Standalone</dd>
+                <dd>AU &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
               <div class="spec-full">
                 <dt>Compatibility matrix</dt>
