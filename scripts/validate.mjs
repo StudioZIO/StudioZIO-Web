@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { dirname, extname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mediaSeconds } from '../src/media.mjs';
@@ -191,6 +191,20 @@ export function validateSource() {
   /* The product sites are no longer in the header, so they are not on every
      page any more: the catalogue surfaces are where they have to be reachable
      from, and that is what is checked. */
+  /* One card per note, named after the note. Sharing a single card across the
+     library is what this replaced: twelve notes arrived in a timeline looking
+     like the same link. */
+  const noteCards = new Set();
+  for (const [index, note] of notes.entries()) {
+    const page = notePages[index];
+    const wanted = `${HUB_ORIGIN}/assets/og/og-note-${note.slug}.png`;
+    if (!page.includes(`<meta property="og:image" content="${wanted}">`)) {
+      throw new Error(`Note ${note.slug} does not declare its own share card`);
+    }
+    if (noteCards.has(wanted)) throw new Error(`Two notes share the card ${wanted}`);
+    noteCards.add(wanted);
+  }
+
   for (const catalogPage of [home, catalog]) {
     if (!catalogPage.includes(`href="${MIXRACK_WEBSITE}"`)) {
       throw new Error('A catalogue surface has no link to the MixRack site');
@@ -602,6 +616,12 @@ export function validateSource() {
       throw new Error(`Social image must be self-hosted from /assets/og/: ${ogImage}`);
     }
     if (/<meta name="keywords"/.test(page)) throw new Error(`Page ${index} carries a meta keywords tag`);
+    /* Every card the pages declare is a real file of a plausible size. A card
+       that 404s does not fail a build; it just makes every share of that page
+       arrive blank. */
+    const cardFile = ogImage.slice(`${HUB_ORIGIN}/assets/og/`.length);
+    const card = statSync(resolve(dirname(fileURLToPath(import.meta.url)), '../src/og', cardFile));
+    if (card.size < 10_000) throw new Error(`${cardFile} is ${card.size} bytes, too small to be a 1200x630 card`);
     if (/<meta name="robots"[^>]*noindex/.test(page)) throw new Error(`Page ${index} carries noindex`);
   }
 

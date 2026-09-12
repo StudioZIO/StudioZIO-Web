@@ -986,6 +986,14 @@ export function renderNote(slug) {
     description: note.description,
     canonical: `${HUB_ORIGIN}/notes/${note.slug}/`,
     current: '',
+    /* Each note carries its own share card rather than the site's. Twelve
+       notes sharing one image meant a link to the true-peak note and a link
+       to the AAX note arrived looking like the same thing; the card now says
+       which note it is before anyone clicks. Generated from the heading, so
+       there is no second copy of the title to keep in step -- see
+       src/og/README.md. */
+    socialImage: `/assets/og/og-note-${note.slug}.png`,
+    socialImageAlt: `${note.heading} — a StudioZIO technical note`,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
