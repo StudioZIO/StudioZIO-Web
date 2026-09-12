@@ -36,7 +36,9 @@ request, so a stale checksum cannot reach `main`.
 
 ## Deploying
 
-This repository is the canonical source for `https://studiozio.vercel.app/`.
+This repository is the canonical source for `https://www.studiozio.tech/`.
+`studiozio.vercel.app` still resolves and 308s every path to the same path
+on that domain, so links published before the move keep working.
 The Vercel project `studiozio` builds it with `npm run build` and serves
 `dist/`, as declared in `vercel.json`.
 
