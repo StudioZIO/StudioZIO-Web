@@ -6,6 +6,17 @@
   "trailingSlash": true,
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "studiozio.vercel.app"
+        }
+      ],
+      "destination": "https://www.studiozio.tech/$1",
+      "permanent": true
+    },
+    {
       "source": "/products/mixrack",
       "destination": "https://studioziomixrack.vercel.app/",
       "permanent": true

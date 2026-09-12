@@ -28,7 +28,7 @@ export const STYLESHEET_FILE = `styles-${createHash('sha256')
   .digest('hex')
   .slice(0, 10)}.css`;
 const stylesheet = `/assets/${STYLESHEET_FILE}`;
-export const HUB_ORIGIN = 'https://studiozio.vercel.app';
+export const HUB_ORIGIN = 'https://www.studiozio.tech';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
 const YOUTUBE_URL = 'https://www.youtube.com/@StudioZIO-plugins';
 const KVR_MASTERING_URL =
