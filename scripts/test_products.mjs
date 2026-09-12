@@ -33,7 +33,8 @@ function verify({ files, hosting }) {
     '/community/ideas/',
     '/community/compatibility/',
     '/community/known-issues/',
-    '/community/roadmap/'
+    '/community/roadmap/',
+    '/search/'
   ];
   assert.deepEqual(urls, expectedUrls.map(path => origin + path));
   const blocks = [...page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];

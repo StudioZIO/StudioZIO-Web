@@ -25,6 +25,7 @@ import {
   renderNotes,
   renderPress,
   renderProducts,
+  renderSearch,
   HUB_ORIGIN,
 } from '../src/site.mjs';
 
@@ -151,6 +152,7 @@ export function validateSource() {
   const communityCompatibility = renderCommunityCompatibility();
   const communityKnownIssues = renderCommunityKnownIssues();
   const communityRoadmap = renderCommunityRoadmap();
+  const search = renderSearch();
   const communityPages = [
     communityQuestions,
     communityIdeas,
@@ -158,8 +160,8 @@ export function validateSource() {
     communityKnownIssues,
     communityRoadmap
   ];
-  const pages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, notFound];
-  const indexablePages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages];
+  const pages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
+  const indexablePages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');

@@ -63,7 +63,8 @@ const MEASUREMENT_ID = 'G-VL8Z542XMP';
 const analytics = `<script src="/assets/gtag.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
   <script src="/assets/consent.js" defer></script>
-  <script src="/assets/events.js" defer></script>`;
+  <script src="/assets/events.js" defer></script>
+  <script src="/assets/header-search.js" defer></script>`;
 
 function escapeHtml(value) {
   return String(value)
@@ -157,6 +158,18 @@ const HEADER_NAVIGATION = [
   ['Community', '/community/', 'community'],
   ['Contact', '/contact/', 'contact']
 ];
+
+/* The header carries the search box itself rather than a link to it: the
+   index covers all four properties, so the useful thing to put in front of a
+   visitor is the box, not another word to click. Two copies ship -- one in
+   the row, one inside the compact menu -- because the row is hidden on a
+   phone and the box should not be. Enter is handled by header-search.js;
+   there is no <form> because form-action is 'none'. */
+function headerSearch(variant) {
+  return `<div class="header-search${variant ? ` header-search--${variant}` : ''}">
+          <input class="field header-search-field" type="search" name="q" aria-label="Search StudioZIO" placeholder="Search" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>`;
+}
 
 /* The three product sites live in the header, one row up, and the footer
    carries none of them: with MixRack added the footer would have listed the
@@ -310,9 +323,11 @@ function shell({ title, description, canonical, current, content, scripts = '', 
       <nav class="nav-links" aria-label="Primary">
         <ul>${navList(current, HEADER_NAVIGATION)}</ul>
       </nav>
+      ${headerSearch('bar')}
       <details class="nav-compact">
         <summary aria-label="Menu" aria-controls="compact-menu"><span class="open" aria-hidden="true">≡</span><span class="shut" aria-hidden="true">×</span></summary>
         <nav class="panel" id="compact-menu" aria-label="Primary">
+          ${headerSearch('panel')}
           <ul>${navList(current, HEADER_NAVIGATION)}</ul>
         </nav>
       </details>
@@ -825,6 +840,55 @@ export function renderContact() {
 
         <noscript>
           <p class="form-note">This form needs JavaScript to send. With it switched off nothing is submitted, so please enable it for this page rather than assuming a message went through.</p>
+        </noscript>
+      </div>
+    </section>`
+  });
+}
+
+/* ---------- search ------------------------------------------------------
+   One box for four properties. The estate is small enough that a visitor can
+   reach any page from the header, and too spread out to answer a question
+   like "where does it say what EXPECTED TP means" without opening three
+   sites. So the index covers all four and the page lives here, on the hub,
+   which is the only property that already speaks for the others.
+
+   It runs entirely in the browser: search.js downloads one JSON file from
+   this origin and matches against it locally. Nothing typed here is sent
+   anywhere, there is no search backend, and the CSP's connect-src stays
+   'self'. There is deliberately no <form>: the CSP sets form-action 'none',
+   and a form that cannot submit is a promise the page could not keep. */
+
+export function renderSearch() {
+  return shell({
+    title: 'Search every StudioZIO page — StudioZIO',
+    description:
+      'Search every StudioZIO page at once: the hub, the Mastering Suite site, Tempo Delay and MixRack. It runs in your browser, with no query sent anywhere.',
+    canonical: `${HUB_ORIGIN}/search/`,
+    current: 'search',
+    scripts: '<script src="/assets/search.js" defer></script>',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Search</p>
+          <h1>One box, every StudioZIO page</h1>
+          <p class="lede">The hub, the Mastering Suite site, Tempo Delay and MixRack are indexed together. The search runs in your browser: what you type stays on your machine.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="shell">
+        <div class="panel-float">
+          <div class="form-row">
+            <label class="form-label" for="search-query">Search StudioZIO</label>
+            <input id="search-query" class="field" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="oversampling, AAX, latency, install&hellip;">
+            <p class="form-hint">Results appear as you type. Two letters are enough to start.</p>
+          </div>
+          <p class="result-status" id="search-status" role="status" aria-live="polite"></p>
+        </div>
+        <div class="card-grid card-grid--2 mt-lg" id="search-results"></div>
+        <noscript>
+          <p class="mt-lg">Search needs JavaScript, because the index is matched in your browser rather than on a server. Without it, the <a href="/notes/">technical notes</a>, the <a href="/products/">product catalogue</a> and the <a href="/community/">community pages</a> are the places to look, and <a href="/contact/">support</a> will answer a question directly.</p>
         </noscript>
       </div>
     </section>`
