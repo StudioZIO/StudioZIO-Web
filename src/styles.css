@@ -295,6 +295,18 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .header-search--panel { width: auto; padding: 0.85rem; border-bottom: 1px solid var(--hairline); }
 .header-search--bar { display: none; }
 
+/* A search result is one link, not a card with a link in it: the whole block
+   is the target, it says so with the cursor, and the keyboard's current
+   result wears the same border the pointer's hover does. */
+.search-hit { display: flex; text-decoration: none; color: inherit; cursor: pointer; }
+.search-hit h3 { color: var(--foreground); }
+.search-hit strong { color: var(--primary-text); font-weight: 500; }
+.search-hit:hover, .search-hit:focus-visible, .search-hit[aria-selected="true"] {
+  border-color: var(--primary);
+  background: var(--surface-overlay);
+}
+.search-hit:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
 .nav-compact { position: relative; }
 .nav-compact > summary {
   display: grid;
