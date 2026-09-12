@@ -1020,13 +1020,132 @@ function oversamplingFigure() {
       </figure>`;
 }
 
-const NOTE_FIGURES = Object.freeze({ 'per-stage-oversampling': oversamplingFigure });
+/* ---------- what EXPECTED TP is derived from ----------------------------
+   The note's subject is a distinction, not a number: EXPECTED TP is
+   calculated from the ceiling with a fixed 0.01 dB allowance, and it does not
+   inspect the audio. A paragraph can say that. Two dials show it: move the
+   ceiling and the readout moves with it; change the programme and nothing
+   moves at all, because the programme was never in the sum.
+
+   The allowance and the arithmetic are the plug-in's own. The programme
+   choices carry no numbers, because none could be known from here -- which is
+   the point the figure is making. */
+
+const TP_CEILINGS = Object.freeze(['-3.0', '-2.0', '-1.0', '-0.5', '-0.1']);
+
+const TP_PROGRAMME = Object.freeze([
+  Object.freeze({ key: 'quiet', label: 'A quiet mix' }),
+  Object.freeze({ key: 'loud', label: 'A loud master' }),
+  Object.freeze({ key: 'limited', label: 'Heavily limited' })
+]);
+
+function expectedTpFigure() {
+  const ceilings = TP_CEILINGS.map(
+    (value) => `<button class="figdial-pick" type="button" data-ceiling="${value}" aria-pressed="${
+      value === '-1.0' ? 'true' : 'false'
+    }">${value}</button>`
+  ).join('');
+
+  const programme = TP_PROGRAMME.map(
+    (item) => `<button class="figdial-pick" type="button" data-programme="${item.key}" aria-pressed="${
+      item.key === 'quiet' ? 'true' : 'false'
+    }">${escapeHtml(item.label)}</button>`
+  ).join('');
+
+  return `<figure class="tpfig" aria-labelledby="tpfig-title">
+        <figcaption id="tpfig-title" class="osfig-head">
+          EXPECTED TP is calculated from the ceiling with a fixed 0.01&nbsp;dB allowance. Move the ceiling
+          and watch the readout follow it. Then change the programme, and watch it not.
+        </figcaption>
+        <div class="tpfig-dials">
+          <div class="tpfig-dial">
+            <span class="tpfig-legend">Ceiling &mdash; the setting you turn</span>
+            <div class="figdial" role="group" aria-label="Ceiling">${ceilings}</div>
+          </div>
+          <div class="tpfig-dial">
+            <span class="tpfig-legend">Programme &mdash; the audio passing through</span>
+            <div class="figdial" role="group" aria-label="Programme">${programme}</div>
+          </div>
+        </div>
+        <dl class="tpfig-sum">
+          <div class="tpfig-row"><dt>Ceiling</dt><dd class="tpfig-ceiling">-1.0 dB</dd></div>
+          <div class="tpfig-row"><dt>Fixed allowance</dt><dd>0.01 dB</dd></div>
+          <div class="tpfig-row tpfig-row--out"><dt>EXPECTED TP</dt><dd class="tpfig-expected">-1.01 dB</dd></div>
+          <div class="tpfig-row tpfig-row--unknown"><dt>True peak of your rendered file</dt><dd>not known from here</dd></div>
+        </dl>
+        <p class="osfig-summary" role="status">The readout is the ceiling, less the allowance. Nothing else is in the sum.</p>
+      </figure>`;
+}
+
+/* ---------- what a reported latency makes the host do -------------------
+   The note's claim is narrow: the number is about what the host has to move,
+   not about what you hear. So the figure is the host. Suppose a plug-in on a
+   parallel send reports n samples; every other track shifts by n to stay
+   aligned. At zero, nothing shifts -- which is why the plug-in can sit on a
+   send without the question arising.
+
+   The sample counts on the dial are hypotheticals, offered as "suppose", and
+   the figure says so. The only product number here is Tempo Delay's own, and
+   it is the one the note states: zero. */
+
+const LATENCY_CHOICES = Object.freeze([0, 64, 512, 2048]);
+
+function latencyFigure() {
+  const dial = LATENCY_CHOICES.map(
+    (samples) => `<button class="figdial-pick" type="button" data-latency="${samples}" aria-pressed="${
+      samples === 0 ? 'true' : 'false'
+    }">${samples} samples</button>`
+  ).join('');
+
+  return `<figure class="latfig" aria-labelledby="latfig-title">
+        <figcaption id="latfig-title" class="osfig-head">
+          Suppose the plug-in on the send reports this many samples. The host delays every other track by
+          the same amount so nothing drifts. Tempo Delay reports the first of them.
+        </figcaption>
+        <div class="figdial" role="group" aria-label="Reported latency">${dial}</div>
+        <div class="latfig-tracks">
+          <div class="latfig-track">
+            <span class="latfig-name">Dry track</span>
+            <span class="latfig-lane"><span class="latfig-block latfig-block--shifted"></span></span>
+            <span class="latfig-shift">not moved</span>
+          </div>
+          <div class="latfig-track">
+            <span class="latfig-name">Send &mdash; plug-in here</span>
+            <span class="latfig-lane"><span class="latfig-block latfig-block--fixed"></span></span>
+            <span class="latfig-shift">reports 0 samples</span>
+          </div>
+        </div>
+        <p class="osfig-summary" role="status">At zero the host has nothing to compensate for, so nothing moves.</p>
+      </figure>`;
+}
+
+/* Each figure names the one script that moves it, so a note ships the moving
+   part it needs and nothing else. */
+const NOTE_FIGURES = Object.freeze({
+  'per-stage-oversampling': { render: oversamplingFigure, script: 'os-figure.js' },
+  'expected-tp-derivation': { render: expectedTpFigure, script: 'tp-figure.js' },
+  'reported-latency': { render: latencyFigure, script: 'latency-figure.js' }
+});
 
 function noteFigure(name) {
   if (!name) return '';
-  const render = NOTE_FIGURES[name];
-  if (!render) throw new Error(`Note figure "${name}" has no renderer`);
-  return render();
+  const figure = NOTE_FIGURES[name];
+  if (!figure) throw new Error(`Note figure "${name}" has no renderer`);
+  return figure.render();
+}
+
+function noteFigureScripts(note) {
+  const wanted = new Set(
+    note.body
+      .map((part) => part.figure)
+      .filter(Boolean)
+      .map((name) => {
+        const figure = NOTE_FIGURES[name];
+        if (!figure) throw new Error(`Note figure "${name}" has no renderer`);
+        return figure.script;
+      })
+  );
+  return [...wanted].map((file) => `<script src="/assets/${file}" defer></script>`).join('');
 }
 
 export function renderNote(slug) {
@@ -1058,9 +1177,7 @@ export function renderNote(slug) {
        src/og/README.md. */
     /* Only the notes that carry a figure load its script, and only the one
        they carry: a note with no figure ships no extra byte. */
-    scripts: note.body.some((part) => part.figure)
-      ? '<script src="/assets/os-figure.js" defer></script>'
-      : '',
+    scripts: noteFigureScripts(note),
     socialImage: `/assets/og/og-note-${note.slug}.png`,
     socialImageAlt: `${note.heading} — a StudioZIO technical note`,
     content: `<section class="hero tech-grid">

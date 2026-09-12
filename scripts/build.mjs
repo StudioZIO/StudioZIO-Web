@@ -107,6 +107,8 @@ await cp(resolve(projectRoot, 'src/header-search.js'), resolve(outputRoot, 'asse
 // The per-stage oversampling figure's one moving part. Same-origin for the
 // same CSP reason; the figure is correct without it.
 await cp(resolve(projectRoot, 'src/os-figure.js'), resolve(outputRoot, 'assets/os-figure.js'));
+await cp(resolve(projectRoot, 'src/tp-figure.js'), resolve(outputRoot, 'assets/tp-figure.js'));
+await cp(resolve(projectRoot, 'src/latency-figure.js'), resolve(outputRoot, 'assets/latency-figure.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 /* The search index, assembled here rather than fetched at runtime.
 

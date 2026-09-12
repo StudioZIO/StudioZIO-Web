@@ -823,8 +823,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   line-height: 1.6;
   color: var(--muted-foreground);
 }
-.osfig-dial { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.osfig-pick {
+.osfig-dial, .figdial { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.osfig-pick, .figdial-pick {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
@@ -838,9 +838,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
     background var(--dur-fast) var(--ease-out);
 }
-.osfig-pick:hover { border-color: var(--primary); color: var(--foreground); }
-.osfig-pick:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-.osfig-pick[aria-pressed="true"] {
+.osfig-pick:hover, .figdial-pick:hover { border-color: var(--primary); color: var(--foreground); }
+.osfig-pick:focus-visible, .figdial-pick:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.osfig-pick[aria-pressed="true"], .figdial-pick[aria-pressed="true"] {
   border-color: var(--primary);
   background: var(--surface-overlay);
   color: var(--foreground);
@@ -932,6 +932,108 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .osfig-pick--shipped { margin-left: 0; }
 }
 
+/* ---------- what EXPECTED TP is derived from ---------------------------- */
+.tpfig, .latfig {
+  margin: 2rem 0 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.1rem;
+}
+.tpfig-dials { display: grid; gap: 1rem; }
+@media (min-width: 720px) { .tpfig-dials { grid-template-columns: 1fr 1fr; } }
+.tpfig-dial { display: grid; gap: 0.5rem; align-content: start; }
+.tpfig-legend {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.tpfig-sum { margin: 0; display: grid; gap: 0.4rem; }
+.tpfig-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--surface-control);
+  padding: 0.65rem 0.85rem;
+}
+.tpfig-row dt { font-size: 0.9375rem; color: var(--muted-foreground); }
+.tpfig-row dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--foreground);
+  text-align: right;
+}
+/* The derived readout is the one the note is about, so it is the one the eye
+   lands on; the row underneath is the thing this figure cannot tell you, and
+   it stays deliberately blank-faced. */
+.tpfig-row--out { border-left-color: var(--primary); }
+.tpfig-row--out dd { color: var(--primary-text); }
+.tpfig-row--unknown dd { color: var(--muted-foreground); font-family: var(--font-body); }
+
+/* ---------- what a reported latency makes the host do ------------------- */
+.latfig-tracks { display: grid; gap: 0.5rem; }
+.latfig-track {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) minmax(8rem, auto);
+  align-items: center;
+  gap: 0.9rem;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: var(--surface-control);
+  padding: 0.7rem 0.85rem;
+}
+.latfig-name { font-size: 0.9375rem; color: var(--foreground); }
+.latfig-shift {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  text-align: right;
+}
+.latfig-lane {
+  position: relative;
+  display: block;
+  height: 26px;
+  border-radius: 4px;
+  background: var(--surface-overlay);
+  overflow: hidden;
+}
+.latfig-block {
+  position: absolute;
+  inset: 4px auto 4px 0;
+  width: 34%;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--primary) 55%, transparent);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.latfig-block--fixed { background: color-mix(in oklab, var(--primary) 35%, transparent); }
+/* The shift is drawn to the same scale as the number: 2048 samples is the
+   full lane, so 512 moves a quarter of it. */
+.latfig[data-latency="0"] .latfig-block--shifted { transform: none; }
+.latfig[data-latency="64"] .latfig-block--shifted { transform: translateX(2%); }
+.latfig[data-latency="512"] .latfig-block--shifted { transform: translateX(15.5%); }
+.latfig[data-latency="2048"] .latfig-block--shifted { transform: translateX(62%); }
+
+@media (max-width: 640px) {
+  .latfig-track {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+  .latfig-shift { text-align: left; }
+  .tpfig-row { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .tpfig-row dd { text-align: left; }
+}
+
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: none; }
@@ -970,7 +1072,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .rail .st { border-top-color: color-mix(in oklab, var(--primary) 45%, transparent); }
   /* The oversampling figure is driven by the reader, not by a timer, so it
      keeps working here; only the easing between states goes. */
-  .osfig-lane, .osfig-stage, .osfig-pick { transition-duration: 0.001ms !important; }
+  .osfig-lane, .osfig-stage, .osfig-pick,
+  .figdial-pick, .latfig-block { transition-duration: 0.001ms !important; }
   .bands-row i { transform: scaleX(1); opacity: 1; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

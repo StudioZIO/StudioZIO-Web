@@ -195,21 +195,46 @@ export function validateSource() {
      that moves it ships with exactly the notes that carry one. A figure whose
      renderer went missing would otherwise fail at request time, on a page
      nobody was looking at. */
+  /* Each figure names the script that moves it and the markup that proves it
+     rendered. A note carries exactly the scripts its figures need: no figure,
+     no script; one figure, one script. */
+  const FIGURE_CONTRACT = {
+    'per-stage-oversampling': {
+      script: 'os-figure.js',
+      /* The four rates are the plug-in's, and the note's own prose states
+         them a paragraph above; if the two ever drift, the one a reader plays
+         with is the one they will believe. */
+      markup: ['class="osfig"', 'data-os="stage"', 'data-rate="4"', 'data-rate="8"', 'data-rate="16"']
+    },
+    'expected-tp-derivation': {
+      script: 'tp-figure.js',
+      markup: ['class="tpfig"', 'data-ceiling="-1.0"', 'tpfig-expected', 'Fixed allowance', 'not known from here']
+    },
+    'reported-latency': {
+      script: 'latency-figure.js',
+      /* Zero is the figure's default and the note's claim; a dial that opened
+         anywhere else would be stating something the note does not. */
+      markup: ['class="latfig"', 'data-latency="0"', 'latfig-block--shifted']
+    }
+  };
+  const FIGURE_SCRIPTS = Object.values(FIGURE_CONTRACT).map((figure) => figure.script);
+
   for (const [index, note] of notes.entries()) {
-    const carries = note.body.some((part) => part.figure);
     const page = notePages[index];
-    if (carries !== page.includes('/assets/os-figure.js')) {
-      throw new Error(`Note ${note.slug} ${carries ? 'declares a figure but does not load' : 'loads'} os-figure.js`);
+    const declared = note.body.map((part) => part.figure).filter(Boolean);
+    for (const name of declared) {
+      const contract = FIGURE_CONTRACT[name];
+      if (!contract) throw new Error(`Note ${note.slug} declares an unknown figure: ${name}`);
+      for (const required of contract.markup) {
+        if (!page.includes(required)) throw new Error(`Note ${note.slug}: the ${name} figure is missing ${required}`);
+      }
     }
-    if (!carries) continue;
-    for (const required of ['class="osfig"', 'data-os="stage"', 'osfig-summary']) {
-      if (!page.includes(required)) throw new Error(`Note ${note.slug}: the figure is missing ${required}`);
-    }
-    /* The figure states four rates. They are the plug-in's, and the note's
-       own prose states them a paragraph above; if the two ever drift, the one
-       a reader plays with is the one they will believe. */
-    for (const rate of ['data-rate="4"', 'data-rate="16"', 'data-rate="8"']) {
-      if (!page.includes(rate)) throw new Error(`Note ${note.slug}: the figure is missing ${rate}`);
+    const wanted = new Set(declared.map((name) => FIGURE_CONTRACT[name].script));
+    for (const script of FIGURE_SCRIPTS) {
+      const loaded = page.includes(`/assets/${script}`);
+      if (loaded !== wanted.has(script)) {
+        throw new Error(`Note ${note.slug} ${loaded ? 'loads' : 'does not load'} ${script}, which is ${wanted.has(script) ? 'required' : 'not used'} here`);
+      }
     }
   }
 

@@ -227,6 +227,9 @@ export const notes = Object.freeze([
       }),
       Object.freeze({
         h: 'A reference, not a reading',
+        /* The distinction this whole note exists to make, as two dials: the
+           ceiling moves the readout, the programme does not. */
+        figure: 'expected-tp-derivation',
         p: Object.freeze([
           'EXPECTED TP is calculated from the ceiling setting with a fixed 0.01 dB allowance. It helps make that configured relationship visible in the interface.',
           'It does not inspect the music passing through the plug-in. It cannot replace a meter on the actual output, and it does not predict or guarantee the measured true peak of a rendered, encoded, or exported file.'
@@ -491,6 +494,9 @@ export const notes = Object.freeze([
       }),
       Object.freeze({
         h: 'Why it changes where you can put it',
+        /* The claim is about what the host has to move, so the figure is the
+           host: pick a reported latency and watch the other track shift. */
+        figure: 'reported-latency',
         p: Object.freeze([
           'A plug-in that reports latency makes the host shift things. In a well-behaved session that is invisible and correct. It stops being invisible on parallel paths — a send running alongside the dry signal, a duplicated track, a bus feeding another bus — where the compensation has to be right on both branches for the two to stay in phase.',
           'Anything reporting zero sidesteps that question entirely. It can go on a send, in parallel with the dry, or in the middle of a chain, and nothing moves because of it.'
