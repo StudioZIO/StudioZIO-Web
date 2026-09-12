@@ -1895,7 +1895,7 @@ export function renderCommunityCompatibility() {
                 <dt>Formats</dt>
                 <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
-              <div class="spec-full">
+              <div class="spec-span">
                 <dt>AAX / Pro Tools</dt>
                 <dd>AAX validated in Pro Tools</dd>
               </div>
@@ -1919,7 +1919,7 @@ export function renderCommunityCompatibility() {
                 <dt>Formats</dt>
                 <dd>AUv2 &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
-              <div class="spec-full">
+              <div class="spec-span">
                 <dt>AAX / Pro Tools</dt>
                 <dd>AAX validated in Pro Tools</dd>
               </div>
@@ -1943,7 +1943,7 @@ export function renderCommunityCompatibility() {
                 <dt>Planned formats</dt>
                 <dd>AU &middot; VST3 &middot; AAX &middot; Standalone</dd>
               </div>
-              <div class="spec-full">
+              <div class="spec-span">
                 <dt>Compatibility matrix</dt>
                 <dd>Not yet published</dd>
               </div>
