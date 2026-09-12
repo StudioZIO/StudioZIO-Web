@@ -121,12 +121,17 @@
     return String(title).replace(/\s*\u2014\s*StudioZIO[^\u2014]*$/, '').trim() || title;
   }
 
-  function card(page, wanted) {
-    return '<article class="panel module-card">'
-      + '<h3><a href="' + escapeHtml(page.url) + '">' + escapeHtml(displayTitle(page.title)) + '</a></h3>'
+  /* The whole result is the link, not the three words of its title. This box
+     exists to put a visitor somewhere else quickly, so the target it offers
+     is the card they are already looking at -- 532 by 209 pixels of it, not
+     374 by 23. */
+  function card(page, wanted, index) {
+    return '<a class="panel module-card search-hit" href="' + escapeHtml(page.url) + '"'
+      + ' id="search-hit-' + index + '" data-hit="' + index + '">'
+      + '<h3>' + escapeHtml(displayTitle(page.title)) + '</h3>'
       + '<p>' + snippet(page, wanted) + '</p>'
       + '<div class="chip-row"><span class="chip">' + escapeHtml(page.siteLabel) + '</span></div>'
-      + '</article>';
+      + '</a>';
   }
 
   /* GA4's own event name for site search, with its own parameter name, so the
@@ -140,11 +145,47 @@
     window.gtag('event', 'search', { search_term: query });
   }
 
+  /* Arrow keys move through the results and Enter opens the one in hand, so a
+     visitor who knows where they are going never has to reach for the mouse:
+     type two letters, press down twice, press Enter. The highlight is the
+     same border the cards take on hover, so the keyboard and the pointer show
+     the same state. */
+  var current = -1;
+
+  function hits() {
+    return results.querySelectorAll('.search-hit');
+  }
+
+  function select(index) {
+    var all = hits();
+    if (all.length === 0) { current = -1; input.removeAttribute('aria-activedescendant'); return; }
+    current = Math.max(0, Math.min(index, all.length - 1));
+    for (var i = 0; i < all.length; i += 1) {
+      all[i].setAttribute('aria-selected', i === current ? 'true' : 'false');
+    }
+    input.setAttribute('aria-activedescendant', all[current].id);
+    all[current].scrollIntoView({ block: 'nearest' });
+  }
+
+  function move(step) {
+    var all = hits();
+    if (all.length === 0) return;
+    select(current < 0 ? (step > 0 ? 0 : all.length - 1) : (current + step + all.length) % all.length);
+  }
+
+  function open() {
+    var all = hits();
+    if (all.length === 0 || current < 0) return false;
+    window.location.href = all[current].getAttribute('href');
+    return true;
+  }
+
   function render(query) {
     var wanted = terms(query);
     if (wanted.length === 0 || query.trim().length < MINIMUM) {
       results.innerHTML = '';
       status.textContent = '';
+      select(0);
       return;
     }
 
@@ -166,9 +207,10 @@
       }
 
       var shown = matches.slice(0, LIMIT);
-      results.innerHTML = shown.map(function (match) {
-        return card(match.page, wanted);
+      results.innerHTML = shown.map(function (match, index) {
+        return card(match.page, wanted, index);
       }).join('');
+      select(0);
       status.textContent = matches.length === 1
         ? '1 page matches.'
         : matches.length + ' pages match' + (matches.length > LIMIT ? ', showing the closest ' + LIMIT + '.' : '.');
@@ -197,6 +239,20 @@
 
   input.addEventListener('input', schedule);
 
+  function keys(event) {
+    if (event.key === 'ArrowDown') { event.preventDefault(); move(1); return; }
+    if (event.key === 'ArrowUp') { event.preventDefault(); move(-1); return; }
+    if (event.key === 'Enter') { if (open()) event.preventDefault(); return; }
+    if (event.key === 'Escape' && event.target.value) {
+      event.preventDefault();
+      event.target.value = '';
+      if (event.target !== input) input.value = '';
+      schedule();
+    }
+  }
+
+  input.addEventListener('keydown', keys);
+
   /* The header carries the same box on every page, including this one. Here
      it drives the list rather than navigating: the two stay in step, so a
      visitor who kept typing where they started is not answered by a page
@@ -207,9 +263,7 @@
       input.value = field.value;
       schedule();
     });
-    field.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') event.preventDefault();
-    });
+    field.addEventListener('keydown', keys);
   });
 
   var initial = new URLSearchParams(window.location.search).get('q');
