@@ -17,7 +17,7 @@ and `og:image:height`, and a mismatch makes some crawlers skip the card.
 
 One per entry in `src/notes.mjs`, named `og-note-<slug>.png`. They carry the
 note's own `heading` and nothing invented: the eyebrow reads `Technical note`,
-the footer line reads `studiozio.vercel.app/notes`, and the lockup and grid are
+the footer line reads `www.studiozio.tech/notes`, and the lockup and grid are
 the ones above.
 
 The heading size is measured rather than chosen. Start at 84px and step down in
