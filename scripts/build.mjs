@@ -12,7 +12,6 @@ import {
   renderCommunityRoadmap,
   renderContact,
   renderHome,
-  renderMixRack,
   renderNotFound,
   renderNote,
   renderNotes,
@@ -37,7 +36,6 @@ await rm(outputRoot, { recursive: true, force: true });
 const routes = [
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
-  { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRack, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: 'notes/index.html', url: '/notes/', render: renderNotes, indexable: true },
   /* Derived from notes.mjs rather than written out here. Adding a note used
@@ -84,15 +82,10 @@ await cp(resolve(projectRoot, 'src/consent.js'), resolve(outputRoot, 'assets/con
 // The support form's own script. It is served from the site origin because
 // the CSP has no 'unsafe-inline'; see the comment in src/contact.js.
 await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/contact.js'));
-// The MixRack release-notice form. Same origin, same reason, and the same
-// fetch-not-POST shape that `form-action 'none'` forces.
-await cp(resolve(projectRoot, 'src/notify.js'), resolve(outputRoot, 'assets/notify.js'));
-// The MixRack tester-interest form. Same origin and shape as notify.js, kept
-// separate because it posts a distinct intent and fields.
-await cp(resolve(projectRoot, 'src/tester.js'), resolve(outputRoot, 'assets/tester.js'));
-// The MixRack preview: builds the <video> only when the visitor presses play,
-// so the page itself carries nothing but the poster image.
-await cp(resolve(projectRoot, 'src/video.js'), resolve(outputRoot, 'assets/video.js'));
+/* The MixRack release-notice form, its tester-interest form and the
+   click-to-play preview moved with the page to studioziomixrack.vercel.app.
+   Their scripts and the film left this repository with them; /products/mixrack
+   redirects there (see vercel.json). */
 // The A/B listener and the renders it plays. Same-origin for the same reason,
 // and because `media-src` inherits the `default-src 'self'` in vercel.json.
 await cp(resolve(projectRoot, 'src/ab.js'), resolve(outputRoot, 'assets/ab.js'));

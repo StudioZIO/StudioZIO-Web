@@ -6,6 +6,7 @@ import {
   getProduct,
   products,
   MASTERING_SUITE_WEBSITE,
+  MIXRACK_WEBSITE,
   RELEASE_REPOSITORY_URL,
   TEMPO_DELAY_WEBSITE
 } from '../src/catalog.mjs';
@@ -19,7 +20,6 @@ import {
   renderCommunityRoadmap,
   renderContact,
   renderHome,
-  renderMixRack,
   renderNotFound,
   renderNote,
   renderNotes,
@@ -138,7 +138,6 @@ export function validateSource() {
 
   const home = renderHome();
   const catalog = renderProducts();
-  const mixRackPage = renderMixRack();
   const contact = renderContact();
   const notFound = renderNotFound();
   const notesIndex = renderNotes();
@@ -159,8 +158,8 @@ export function validateSource() {
     communityKnownIssues,
     communityRoadmap
   ];
-  const pages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community, ...communityPages, notFound];
-  const indexablePages = [home, catalog, mixRackPage, contact, notesIndex, ...notePages, press, community, ...communityPages];
+  const pages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, notFound];
+  const indexablePages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -173,13 +172,20 @@ export function validateSource() {
     }
   }
 
-  // The hub used to render its own mastering-suite page whose canonical already
-  // pointed at the product site — two addresses for one product, and the hub
-  // conceding which one was real. The product site owns those release facts
-  // now; what has to hold here is that nothing links to the retired path.
+  /* The hub used to render its own mastering-suite page whose canonical
+     already pointed at the product site — two addresses for one product, and
+     the hub conceding which one was real. MixRack has now moved the same way,
+     onto studioziomixrack.vercel.app. The product sites own those pages; what
+     has to hold here is that nothing links to either retired path, and that
+     the card and the header entry point at the real site instead. */
   for (const [index, page] of pages.entries()) {
-    if (page.includes('/products/mastering-suite')) {
-      throw new Error(`Page ${index} still links the retired local mastering-suite page`);
+    for (const retired of ['/products/mastering-suite', '/products/mixrack']) {
+      if (page.includes(retired)) {
+        throw new Error(`Page ${index} still links the retired local page ${retired}`);
+      }
+    }
+    if (!page.includes(`href="${MIXRACK_WEBSITE}"`)) {
+      throw new Error(`Page ${index} has no link to the MixRack site`);
     }
   }
 
@@ -231,48 +237,6 @@ export function validateSource() {
     for (const url of KVR_URLS) {
       if (!page.includes(`href="${url}"`)) throw new Error(`KVR link missing: ${url}`);
     }
-  }
-
-  const mixRackMain = mainContent(mixRackPage);
-  for (const required of [
-    'StudioZIO MixRack',
-    'Coming Soon',
-    'macOS',
-    'Audio Unit (AU)',
-    'VST3',
-    'AAX',
-    'Standalone'
-  ]) {
-    if (!mixRackMain.includes(required)) {
-      throw new Error(`MixRack fact missing: ${required}`);
-    }
-  }
-
-  /* The MixRack preview video: the file and its poster must exist and be what
-     their names claim, and the element must reserve its frame. A missing path
-     is invisible until a visitor presses play and nothing happens. */
-  {
-    const mediaDir = resolve(dirname(fileURLToPath(import.meta.url)), '../src/media');
-    for (const required of ['data-video-src="/assets/media/mixrack-intro.mp4"', 'src="/assets/media/mixrack-intro-poster.webp"', 'width="1920" height="1080"', 'preload="none"']) {
-      if (!mixRackMain.includes(required)) throw new Error(`MixRack video is missing: ${required}`);
-    }
-    if (!mixRackPage.includes('<script src="/assets/video.js" defer></script>')) throw new Error('MixRack page does not load the click-to-play script');
-    const mp4 = readFileSync(resolve(mediaDir, 'mixrack-intro.mp4'));
-    if (mp4.toString('latin1', 4, 8) !== 'ftyp' || mp4.length < 1_000_000) throw new Error('MixRack video is not a real MP4');
-    if (mp4.length > 12_000_000) throw new Error('MixRack video is heavier than a web preview should be');
-    const poster = readFileSync(resolve(mediaDir, 'mixrack-intro-poster.webp'));
-    if (poster.toString('latin1', 0, 4) !== 'RIFF' || poster.toString('latin1', 8, 12) !== 'WEBP') throw new Error('MixRack poster is not a WebP');
-    // Nothing may fetch the film before the click: the only <video> on the page lives inside <noscript>.
-    const outsideNoscript = mixRackMain.replace(/<noscript>[\s\S]*?<\/noscript>/g, '');
-    if (/<video\b/.test(outsideNoscript)) throw new Error('MixRack video element would load before the visitor presses play');
-  }
-  if (
-    mixRackMain.includes('button-download') ||
-    mixRackMain.includes(RELEASE_REPOSITORY_URL) ||
-    /\bVersion\b/.test(mixRackMain) ||
-    /\bDownload\b/i.test(mixRackMain)
-  ) {
-    throw new Error('MixRack page exposes release or download behavior');
   }
 
   for (const forbiddenClaim of ['testimonial', 'award-winning', 'benchmark']) {
@@ -389,42 +353,13 @@ export function validateSource() {
     }
   }
 
-  // Same three parts for the MixRack release-notice form, same reason.
-  for (const required of [
-    'class="panel-float notify-form"',
-    '<script src="/assets/notify.js" defer></script>',
-    'name="email"',
-    'class="form-status"'
-  ]) {
-    if (!mixRackPage.includes(required)) {
-      throw new Error(`MixRack page is missing a submission-critical part: ${required}`);
-    }
-  }
+  /* The release-notice and tester-interest forms moved to the MixRack site
+     with the page they belong to. Nothing here may still load their scripts:
+     a script with no form is dead weight, and a form with no script is worse.
+     Same rule as the contact form above, in the other direction. */
   for (const [index, page] of pages.entries()) {
-    if (page !== mixRackPage && page.includes('/assets/notify.js')) {
-      throw new Error(`Page ${index} loads the notify script but has no form`);
-    }
-  }
-
-  // Same three parts for the MixRack tester-interest form, same reason. It is
-  // a distinct form from the release notice above -- both live on the same
-  // page, so the form-count/status-count check below covers it too.
-  for (const required of [
-    'class="panel-float tester-form"',
-    '<script src="/assets/tester.js" defer></script>',
-    'name="email"',
-    'name="daw"',
-    'name="macos_version"',
-    'name="architecture"',
-    'class="form-status"'
-  ]) {
-    if (!mixRackPage.includes(required)) {
-      throw new Error(`MixRack page is missing a submission-critical part: ${required}`);
-    }
-  }
-  for (const [index, page] of pages.entries()) {
-    if (page !== mixRackPage && page.includes('/assets/tester.js')) {
-      throw new Error(`Page ${index} loads the tester script but has no form`);
+    for (const gone of ['/assets/notify.js', '/assets/tester.js', '/assets/video.js']) {
+      if (page.includes(gone)) throw new Error(`Page ${index} still loads ${gone}, which moved to the MixRack site`);
     }
   }
 
@@ -453,20 +388,17 @@ export function validateSource() {
     }
   }
 
-  /* Both form scripts post to Formspree, and connect-src is the only reason
+  /* The contact form posts to Formspree, and connect-src is the only reason
      that is allowed to leave the page. If the endpoint host ever changes
      without the policy changing with it, the form breaks in production and
-     nowhere else. */
+     nowhere else. (The MixRack forms moved to studioziomixrack.vercel.app and
+     that site's own validator holds the same rule for them.) */
   const endpoints = new Set(
-    [
-      readFileSync(resolve(sourceRoot, 'contact.js'), 'utf8'),
-      readFileSync(resolve(sourceRoot, 'notify.js'), 'utf8'),
-      readFileSync(resolve(sourceRoot, 'tester.js'), 'utf8')
-    ]
+    [readFileSync(resolve(sourceRoot, 'contact.js'), 'utf8')]
       .flatMap((code) => [...code.matchAll(/ENDPOINT = '([^']+)'/g)].map((m) => m[1]))
   );
   if (endpoints.size !== 1) {
-    throw new Error(`Expected all forms to post to one endpoint; found ${[...endpoints].join(', ')}`);
+    throw new Error(`Expected the contact form to post to one endpoint; found ${[...endpoints].join(', ')}`);
   }
   const policy = readFileSync(resolve(sourceRoot, '..', 'vercel.json'), 'utf8');
   for (const endpoint of endpoints) {
@@ -728,7 +660,7 @@ export function validateSource() {
   if (!catalog.includes(`<link rel="canonical" href="${HUB_ORIGIN}/products/">`)) {
     throw new Error('Product catalogue must declare its own canonical');
   }
-  for (const page of [home, mixRackPage, contact]) {
+  for (const page of [home, contact]) {
     if (!mainContent(page).includes('href="/products/"')) {
       throw new Error('Product catalogue contextual link missing');
     }
