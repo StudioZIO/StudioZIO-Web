@@ -238,6 +238,10 @@ export function validateSource() {
          figure that lost one would answer the reader's question wrongly. */
       markup: ['class="archfig"', 'data-slices="arm64 x86_64"', 'data-slices="arm64"', 'data-machine="intel"']
     },
+    'feedback-loop': {
+      script: 'loop-figure.js',
+      markup: ['class="loopfig"', 'data-place="after"', 'data-repeats="8"', 'loopfig-repeats']
+    },
     'reported-latency': {
       script: 'latency-figure.js',
       /* Zero is the figure's default and the note's claim; a dial that opened

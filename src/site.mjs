@@ -1225,6 +1225,48 @@ function architectureFigure() {
       </figure>`;
 }
 
+/* ---------- what lives inside the feedback loop -------------------------
+   The note's claim is about repetition, not about a curve: a filter after the
+   delay touches every repeat once, a filter inside the loop touches repeat n
+   n times. So the figure counts, and counts only. There is no dB figure here
+   and there could not honestly be one -- how dark the eighth repeat gets
+   depends on the setting, and the point is the compounding, not a number. */
+
+const LOOP_REPEATS = Object.freeze([4, 6, 8]);
+
+function feedbackLoopFigure() {
+  const places = [
+    ['after', 'After the delay'],
+    ['inside', 'Inside the loop']
+  ]
+    .map(
+      ([key, label]) => `<button class="figdial-pick" type="button" data-place="${key}" aria-pressed="${
+        key === 'inside' ? 'true' : 'false'
+      }">${escapeHtml(label)}</button>`
+    )
+    .join('');
+
+  const counts = LOOP_REPEATS.map(
+    (count) => `<button class="figdial-pick" type="button" data-repeats="${count}" aria-pressed="${
+      count === 6 ? 'true' : 'false'
+    }">${count} repeats</button>`
+  ).join('');
+
+  return `<figure class="loopfig" aria-labelledby="loopfig-title" data-place="inside">
+        <figcaption id="loopfig-title" class="osfig-head">
+          The same filter, in two places. After the delay it touches every repeat once. Inside the loop,
+          repeat six has been through it six times.
+        </figcaption>
+        <div class="loopfig-dials">
+          <div class="figdial" role="group" aria-label="Where the filter sits">${places}</div>
+          <div class="figdial" role="group" aria-label="How many repeats">${counts}</div>
+        </div>
+        <ol class="loopfig-repeats"></ol>
+        <p class="dlfig-readout">Inside the loop &mdash; every pass goes through the filter again.</p>
+        <p class="osfig-summary" role="status">By the sixth repeat the filter has been applied six times.</p>
+      </figure>`;
+}
+
 /* Each figure names the one script that moves it, so a note ships the moving
    part it needs and nothing else. */
 const NOTE_FIGURES = Object.freeze({
@@ -1232,7 +1274,8 @@ const NOTE_FIGURES = Object.freeze({
   'expected-tp-derivation': { render: expectedTpFigure, script: 'tp-figure.js' },
   'reported-latency': { render: latencyFigure, script: 'latency-figure.js' },
   'two-delay-lines': { render: delayLinesFigure, script: 'delay-lines-figure.js' },
-  'binary-architecture': { render: architectureFigure, script: 'architecture-figure.js' }
+  'binary-architecture': { render: architectureFigure, script: 'architecture-figure.js' },
+  'feedback-loop': { render: feedbackLoopFigure, script: 'loop-figure.js' }
 });
 
 function noteFigure(name) {

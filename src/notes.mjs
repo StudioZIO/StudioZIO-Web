@@ -467,6 +467,10 @@ export const notes = Object.freeze([
     body: Object.freeze([
       Object.freeze({
         h: 'Inside and after are different places',
+        /* The difference this paragraph describes is a count, so the figure
+           counts: after the delay is one pass per repeat, inside the loop is
+           n passes on repeat n. */
+        figure: 'feedback-loop',
         p: Object.freeze([
           'A filter placed after a delay touches every repeat exactly once. The tail gets darker than the source, and it stays that darkness all the way down.',
           'A filter placed inside the feedback path is a different arrangement. Every pass through the loop goes through it again. Six repeats through a low-pass is that low-pass applied six times, and the last repeat is not a little darker than the first — it is somewhere else entirely.'

@@ -123,6 +123,7 @@ await cp(resolve(projectRoot, 'src/tp-figure.js'), resolve(outputRoot, 'assets/t
 await cp(resolve(projectRoot, 'src/latency-figure.js'), resolve(outputRoot, 'assets/latency-figure.js'));
 await cp(resolve(projectRoot, 'src/delay-lines-figure.js'), resolve(outputRoot, 'assets/delay-lines-figure.js'));
 await cp(resolve(projectRoot, 'src/architecture-figure.js'), resolve(outputRoot, 'assets/architecture-figure.js'));
+await cp(resolve(projectRoot, 'src/loop-figure.js'), resolve(outputRoot, 'assets/loop-figure.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 /* The search index, assembled here rather than fetched at runtime.
 
