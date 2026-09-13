@@ -815,7 +815,7 @@ export function renderProducts() {
         <div class="section-head">
           <p class="eyebrow">Products</p>
           <h2 id="catalog-title">Choose your instrument</h2>
-          <p class="lede">Open a product site for its installer, documentation and release details. MixRack is in development and has no release date yet.</p>
+          <p class="lede">Open a product site for its installer, documentation and release details. StudioZIO MixRack releases on 29 September 2026.</p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
         <p class="mt-lg">Hear Mastering Suite and Tempo Delay on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
@@ -1618,7 +1618,7 @@ export function renderPress() {
         <h3 class="mt-lg">${escapeHtml(mixRack.name)}</h3>
         <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
           mixRack.availability
-        )} &mdash; no date and nothing to download. Listed for completeness rather than as an announcement; there is a <a href="${MIXRACK_WEBSITE}">product page</a>, with a two-minute look at the interface as it stands in development, and nothing more.</p>
+        )} &mdash; releasing on 29 September 2026, with nothing to download before then. There is a <a href="${MIXRACK_WEBSITE}">product page</a> carrying a countdown and a two-minute look at the interface; the press kit is at the foot of this page.</p>
       </div>
     </section>
 
@@ -2228,7 +2228,7 @@ export function renderCommunityRoadmap() {
               <h3>StudioZIO MixRack</h3>
               ${chip('In Development')}
             </div>
-            <p>A new StudioZIO mixing environment currently in development for macOS. AU, VST3, AAX and Standalone formats are planned. No release date has been announced.</p>
+            <p>A new StudioZIO mixing environment for macOS in Audio Unit, VST3, AAX and Standalone formats, Universal for Apple Silicon and Intel. Releasing on 29 September 2026.</p>
           </article>
         </div>
       </div>

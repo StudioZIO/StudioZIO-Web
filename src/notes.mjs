@@ -405,7 +405,7 @@ export const notes = Object.freeze([
         p: Object.freeze([
           'StudioZIO Mastering Suite 2.1.1 is the nine-stage mastering console described above. Universal — Apple Silicon and Intel, macOS 11 or newer.',
           'StudioZIO Tempo Delay 4.0.1 is a tempo-synced stereo delay whose left and right delay lines are genuinely independent, each with its own buffer and its own note division, so the two sides can sit on different rhythmic values against one tempo. Ping-pong routing, filters and soft-clip saturation inside the feedback loop, three character voicings, LFO modulation, ducking, mid/side width. 32 automatable parameters with stable identifiers, and 0 samples of reported latency. Apple Silicon only, macOS 12 or newer.',
-          'StudioZIO MixRack is a modular mixing environment bringing essential processing into one focused rack. In development, with no release date and nothing to download. It is named here because it exists, not because it is close.',
+          'StudioZIO MixRack is a modular mixing environment bringing essential processing into one focused rack. It releases on 29 September 2026 in Audio Unit, VST3, AAX and Standalone formats, Universal for macOS 11 or newer.',
           'Three focused instruments, not a bundle. Each one does a job you can name.'
         ])
       })
