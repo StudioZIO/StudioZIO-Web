@@ -518,10 +518,43 @@ function mixRackMock() {
     </div>`;
 }
 
+/* Inflator's own organising idea is the same rail the other two use, just
+   four stages instead of eight or nine: Amount, then the gain trims on either
+   side of it, then the switch that takes the whole stage out of circuit. The
+   values are the shipped defaults, the same ones the screenshot further down
+   the product page shows. Two meter rows rather than one, because Inflator's
+   window reports level on both sides of the stage, not only on the way out. */
+function inflatorMock() {
+  const stages = [
+    ['Amount', '0 %'],
+    ['In', '0.0 dB'],
+    ['Out', '0.0 dB'],
+    ['Engaged', 'On']
+  ];
+  return `<div class="mock" aria-hidden="true">
+      <div class="mock-head">
+        <span class="mock-title"><span class="dot"></span>Inflator</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
+      </div>
+      <div class="mock-body">
+        ${signalRail(stages)}
+        <div class="meters">
+          <span class="meters-head"><span>Input</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters">
+          <span class="meters-head"><span>Output</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+      </div>
+    </div>`;
+}
+
 const MOCKS = {
   'mastering-suite': masteringSuiteMock,
   'tempo-delay': tempoDelayMock,
-  mixrack: mixRackMock
+  mixrack: mixRackMock,
+  inflator: inflatorMock
 };
 
 /* ---------- A/B listening -----------------------------------------------
