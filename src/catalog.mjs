@@ -93,8 +93,8 @@ export const products = Object.freeze([
     availability: 'Launches 29 September 2026',
     description:
       'A modular mixing environment that brings essential processing into one focused rack.',
-    detailsUrl: '/products/mixrack/',
-    externalDetails: false
+    detailsUrl: MIXRACK_WEBSITE,
+    externalDetails: true
   })
 ]);
 

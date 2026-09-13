@@ -4,7 +4,7 @@ import { products } from '../src/catalog.mjs';
 import { notes } from '../src/notes.mjs';
 
 const origin = 'https://www.studiozio.tech';
-const paths = ['index.html', 'products/index.html', 'products/mixrack/index.html', 'products/mixrack/known-issues/index.html', 'downloads/index.html', 'engineering/index.html', 'support/index.html', 'legal/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml', 'feed.xml'];
+const paths = ['index.html', 'products/index.html', 'products/mixrack/known-issues/index.html', 'downloads/index.html', 'engineering/index.html', 'support/index.html', 'legal/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml', 'feed.xml'];
 const baseline = {
   files: Object.fromEntries(paths.map(path => [path, readFileSync(new URL(`../dist/${path}`, import.meta.url), 'utf8')])),
   hosting: JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
@@ -24,7 +24,6 @@ function verify({ files, hosting }) {
   const expectedUrls = [
     '/',
     '/products/',
-    '/products/mixrack/',
     '/products/mixrack/known-issues/',
     '/downloads/',
     '/engineering/',

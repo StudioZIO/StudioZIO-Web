@@ -24,7 +24,6 @@ import {
   renderHome,
   renderLegal,
   renderMixRackKnownIssues,
-  renderMixRackProduct,
   renderNotFound,
   renderNote,
   renderNotes,
@@ -138,7 +137,8 @@ export function validateSource() {
     mixRack.architecture !== 'Universal — Apple Silicon and Intel' ||
     mixRack.releaseDate !== '2026-09-29' ||
     mixRack.filename !== 'StudioZIO-Mixrack-1.0.0.pkg' ||
-    mixRack.detailsUrl !== '/products/mixrack/' ||
+    mixRack.detailsUrl !== MIXRACK_WEBSITE ||
+    mixRack.externalDetails !== true ||
     mixRack.launchSiteUrl !== MIXRACK_WEBSITE ||
     mixRack.releaseUrl !== `${RELEASE_REPOSITORY_URL}/releases/tag/mixrack-v1.0.0` ||
     !/^[a-f0-9]{64}$/i.test(mixRack.sha256)
@@ -156,7 +156,6 @@ export function validateSource() {
   const engineering = renderEngineering();
   const support = renderSupport();
   const legal = renderLegal();
-  const mixRackProduct = renderMixRackProduct();
   const mixRackKnownIssues = renderMixRackKnownIssues();
   const notFound = renderNotFound();
   const notesIndex = renderNotes();
@@ -178,7 +177,7 @@ export function validateSource() {
     communityKnownIssues,
     communityRoadmap
   ];
-  const permanentPages = [downloads, engineering, support, legal, mixRackProduct, mixRackKnownIssues];
+  const permanentPages = [downloads, engineering, support, legal, mixRackKnownIssues];
   const pages = [home, catalog, ...permanentPages, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
   const indexablePages = [home, catalog, ...permanentPages, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
@@ -193,12 +192,11 @@ export function validateSource() {
     }
   }
 
-  /* Mastering's retired hub path must stay out of generated pages. MixRack is
-     deliberately different now: the hub path is the permanent authority,
-     while the existing microsite remains the launch experience. */
+  /* Product pages are owned by their canonical product sites. The retired
+     Hub paths remain redirects and must not be linked from generated pages. */
   for (const [index, page] of pages.entries()) {
-    for (const retired of ['/products/mastering-suite']) {
-      if (page.includes(retired)) {
+    for (const retired of ['/products/mastering-suite', '/products/mixrack/']) {
+      if (page.includes(`href="${retired}"`)) {
         throw new Error(`Page ${index} still links the retired local page ${retired}`);
       }
     }
@@ -301,8 +299,8 @@ export function validateSource() {
   }
 
   for (const catalogPage of [home, catalog]) {
-    if (!catalogPage.includes('href="/products/mixrack/"')) {
-      throw new Error('A catalogue surface has no link to the permanent MixRack page');
+    if (!catalogPage.includes(`href="${MIXRACK_WEBSITE}"`)) {
+      throw new Error('A catalogue surface has no link to the canonical MixRack site');
     }
   }
 

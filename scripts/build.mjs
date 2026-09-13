@@ -16,7 +16,6 @@ import {
   renderHome,
   renderLegal,
   renderMixRackKnownIssues,
-  renderMixRackProduct,
   renderNotFound,
   renderNote,
   renderNotes,
@@ -56,7 +55,6 @@ await rm(outputRoot, { recursive: true, force: true });
 const routes = [
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
-  { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRackProduct, indexable: true },
   { file: 'products/mixrack/known-issues/index.html', url: '/products/mixrack/known-issues/', render: renderMixRackKnownIssues, indexable: true },
   { file: 'downloads/index.html', url: '/downloads/', render: renderDownloads, indexable: true },
   { file: 'engineering/index.html', url: '/engineering/', render: renderEngineering, indexable: true },

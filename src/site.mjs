@@ -1613,7 +1613,7 @@ export function renderPress() {
         <h3 class="mt-lg">${escapeHtml(mixRack.name)} ${escapeHtml(mixRack.version)}</h3>
         <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
           mixRack.availability
-        )}. The public download remains locked until launch. The <a href="/products/mixrack/">permanent product page</a> carries the release truth; the <a href="${MIXRACK_WEBSITE}">launch experience</a> carries the countdown and two-minute interface film.</p>
+        )}. The public download remains locked until launch. The <a href="${MIXRACK_WEBSITE}">canonical MixRack site</a> carries the countdown and two-minute interface film.</p>
         <dl class="spec-grid mt-sm">
           <div><dt>Formats</dt><dd>${escapeHtml(formatList(mixRack.formats))}</dd></div>
           <div><dt>Architecture</dt><dd>${escapeHtml(mixRack.architecture)}</dd></div>
@@ -1655,50 +1655,6 @@ export function renderPress() {
         )}">Instagram</a> carries the shorter material.</p>
       </div>
     </section>`
-  });
-}
-
-export function renderMixRackProduct() {
-  const product = getProduct('mixrack');
-  return shell({
-    title: 'StudioZIO MixRack 1.0.0 — Modular mixing rack for macOS',
-    description: 'StudioZIO MixRack 1.0.0 brings eight essential processors into one reorderable macOS rack in AU, VST3, AAX and Standalone formats.',
-    canonical: `${HUB_ORIGIN}/products/mixrack/`,
-    current: 'products',
-    content: `<section class="hero tech-grid">
-      <div class="shell"><div class="rise">
-        <p class="eyebrow">Prepared release · 29 September 2026</p>
-        <h1>StudioZIO MixRack 1.0.0</h1>
-        <p class="lede">Eight essential processors in one reorderable signal path, with the controls and output measurement kept visible as you work.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="${escapeHtml(product.launchSiteUrl)}">Open the launch experience</a>
-          <a class="btn" href="/downloads/">Release status</a>
-        </div>
-      </div></div>
-    </section>
-    <section class="section" aria-labelledby="mixrack-facts"><div class="shell">
-      <div class="section-head"><p class="eyebrow">Release truth</p><h2 id="mixrack-facts">What is prepared</h2></div>
-      <dl class="spec-grid">
-        <div><dt>Version</dt><dd>${escapeHtml(product.version)}</dd></div>
-        <div><dt>Launch</dt><dd>29 September 2026 · 00:00 Europe/Istanbul</dd></div>
-        <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
-        <div><dt>Architecture</dt><dd>${escapeHtml(product.architecture)}</dd></div>
-        <div><dt>System</dt><dd>${escapeHtml(product.minimumSystem)}</dd></div>
-        <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
-        <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
-        <div><dt>Security</dt><dd>Developer ID signed; Apple notarized and stapled; Gatekeeper accepted</dd></div>
-      </dl>
-      <p class="mt-md">The public download remains locked until launch. GitHub is the immutable binary backend; this page is the permanent product authority.</p>
-    </div></section>
-    <section class="section" aria-labelledby="mixrack-modules"><div class="shell">
-      <div class="section-head"><p class="eyebrow">Signal path</p><h2 id="mixrack-modules">Eight modules, eight slots</h2></div>
-      <div class="card-grid card-grid--2">
-        <article class="panel module-card"><h3>Utility and routing</h3><p>Gain · Channel Mixer · Three-Band EQ</p></article>
-        <article class="panel module-card"><h3>Dynamics and level</h3><p>Compressor · Gate · Transient Shaper · Clipper · Limiter</p></article>
-      </div>
-      <p class="mt-md">AAX was exercised in Pro Tools 1.0.0 for scan, insert, audio pass, control response, bypass and saved-session recall. AU passed auval and strictness-10 pluginval; VST3 passed strictness-10 pluginval; Standalone launched from the installed notarized package.</p>
-      <div class="hero-actions mt-md"><a class="btn" href="/products/mixrack/known-issues/">Known issues and validation scope</a><a class="btn" href="/engineering/">How releases are checked</a></div>
-    </div></section>`
   });
 }
 
