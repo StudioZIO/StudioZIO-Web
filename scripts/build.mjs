@@ -11,13 +11,19 @@ import {
   renderCommunityKnownIssues,
   renderCommunityRoadmap,
   renderContact,
+  renderDownloads,
+  renderEngineering,
   renderHome,
+  renderLegal,
+  renderMixRackKnownIssues,
+  renderMixRackProduct,
   renderNotFound,
   renderNote,
   renderNotes,
   renderPress,
   renderProducts,
   renderSearch,
+  renderSupport,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
 import { extract } from './search_text.mjs';
@@ -50,6 +56,12 @@ await rm(outputRoot, { recursive: true, force: true });
 const routes = [
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
+  { file: 'products/mixrack/index.html', url: '/products/mixrack/', render: renderMixRackProduct, indexable: true },
+  { file: 'products/mixrack/known-issues/index.html', url: '/products/mixrack/known-issues/', render: renderMixRackKnownIssues, indexable: true },
+  { file: 'downloads/index.html', url: '/downloads/', render: renderDownloads, indexable: true },
+  { file: 'engineering/index.html', url: '/engineering/', render: renderEngineering, indexable: true },
+  { file: 'support/index.html', url: '/support/', render: renderSupport, indexable: true },
+  { file: 'legal/index.html', url: '/legal/', render: renderLegal, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: 'notes/index.html', url: '/notes/', render: renderNotes, indexable: true },
   /* Derived from notes.mjs rather than written out here. Adding a note used

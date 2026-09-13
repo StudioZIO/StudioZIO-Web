@@ -77,14 +77,24 @@ export const products = Object.freeze([
     name: 'StudioZIO MixRack',
     shortName: 'StudioZIO MixRack',
     manufacturer: 'StudioZIO',
+    version: '1.0.0',
     platform: 'macOS',
+    minimumSystem: 'macOS 11 or newer',
+    architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
-    availability: 'Coming soon',
+    filename: 'StudioZIO-Mixrack-1.0.0.pkg',
+    sha256: '9452403bf1150bd4188cbfe550f1ad0840087c68fe0b56f5036f08e17b4a4fda',
+    releaseDate: '2026-09-29',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/mixrack-v1.0.0',
+    launchSiteUrl: MIXRACK_WEBSITE,
+    supportUrl: '/support/',
+    availability: 'Launches 29 September 2026',
     description:
       'A modular mixing environment that brings essential processing into one focused rack.',
-    detailsUrl: MIXRACK_WEBSITE,
-    externalDetails: true
+    detailsUrl: '/products/mixrack/',
+    externalDetails: false
   })
 ]);
 

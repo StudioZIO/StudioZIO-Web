@@ -186,6 +186,10 @@ function headerSearch(variant) {
    crawler needs. */
 const FOOTER_LINKS = [
   ...NAVIGATION,
+  ['Downloads', '/downloads/', 'downloads'],
+  ['Engineering', '/engineering/', 'engineering'],
+  ['Support', '/support/', 'support'],
+  ['Privacy', '/legal/', 'legal'],
   ['Press kit', '/press/', 'press'],
   ['ZIO', ZIO_WEBSITE, 'zio']
 ];
@@ -276,6 +280,7 @@ const productsJsonLd = () => jsonLdBlock([
           operatingSystem: product.platform,
           applicationCategory: 'MultimediaApplication',
           ...(product.version ? { softwareVersion: product.version } : {}),
+          ...(product.releaseDate ? { datePublished: product.releaseDate } : {}),
           publisher: { '@id': ORGANIZATION_ID }
         }
       }))
@@ -481,7 +486,7 @@ function mixRackMock() {
   return `<div class="mock mock--live">
       <div class="mock-head" aria-hidden="true">
         <span class="mock-title"><span class="dot"></span>MixRack</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Coming soon', 'flag')}</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX · Standalone')}${chip('29 Sep 2026', 'flag')}</span>
       </div>
       <div class="mock-body">
         <div class="rail-head" aria-hidden="true"><span>The rack</span><span>eight modules in four groups</span></div>
@@ -747,7 +752,7 @@ export function renderHome() {
   return shell({
     title: 'StudioZIO — Audio Plugins Built on Visible Signal Flow',
     description:
-      'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU, VST3, AAX and Standalone, plus the upcoming StudioZIO MixRack.',
+      'StudioZIO audio plug-ins for macOS: Mastering Suite, Tempo Delay and the StudioZIO MixRack 1.0.0 launch on 29 September 2026.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
@@ -758,7 +763,7 @@ export function renderHome() {
           <div class="rise">
             <p class="eyebrow">Plug-ins for macOS</p>
             <h1>Tools that behave like <span class="accent">hardware you trust.</span></h1>
-            <p class="lede">Two available instruments and one in development, in one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
+            <p class="lede">Two available instruments and one prepared release, in one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
               <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Tempo Delay</a>
@@ -774,7 +779,7 @@ export function renderHome() {
         <div class="section-head">
           <p class="eyebrow">Catalog</p>
           <h2 id="catalog-title">The instruments</h2>
-          <p class="lede">Mastering Suite and Tempo Delay are available now as signed macOS installers. StudioZIO MixRack is coming soon.</p>
+          <p class="lede">Mastering Suite and Tempo Delay are available now as signed macOS installers. StudioZIO MixRack 1.0.0 launches on 29 September 2026.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
@@ -796,7 +801,7 @@ export function renderHome() {
 export function renderProducts() {
   return shell({
     title: 'Audio plugins for macOS — StudioZIO Products',
-    description: 'Explore StudioZIO Mastering Suite and Tempo Delay for macOS, compare formats and availability, and learn about the upcoming StudioZIO MixRack.',
+    description: 'Explore StudioZIO Mastering Suite, Tempo Delay and the prepared StudioZIO MixRack 1.0.0 release for macOS.',
     canonical: `${HUB_ORIGIN}/products/`,
     current: 'products',
     jsonLd: productsJsonLd(),
@@ -806,7 +811,7 @@ export function renderProducts() {
         <div class="rise">
           <p class="eyebrow">StudioZIO software</p>
           <h1>Audio plugins for macOS</h1>
-          <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming StudioZIO MixRack.</p>
+          <p class="lede">Mastering Suite and Tempo Delay are available now. StudioZIO MixRack 1.0.0 launches on 29 September 2026.</p>
         </div>
       </div>
     </section>
@@ -815,7 +820,7 @@ export function renderProducts() {
         <div class="section-head">
           <p class="eyebrow">Products</p>
           <h2 id="catalog-title">Choose your instrument</h2>
-          <p class="lede">Open a product site for its installer, documentation and release details. MixRack is in development and has no release date yet.</p>
+          <p class="lede">Open a product page for its installer, documentation and release details. MixRack's public download remains locked until launch.</p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
         <p class="mt-lg">Hear Mastering Suite and Tempo Delay on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
@@ -1609,10 +1614,16 @@ export function renderPress() {
         </dl>
         <p class="mt-sm">Worth mentioning: each side has its own buffer and its own note division, so the two channels can sit on different rhythmic values against one tempo.</p>
 
-        <h3 class="mt-lg">${escapeHtml(mixRack.name)}</h3>
+        <h3 class="mt-lg">${escapeHtml(mixRack.name)} ${escapeHtml(mixRack.version)}</h3>
         <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
           mixRack.availability
-        )} &mdash; no date and nothing to download. Listed for completeness rather than as an announcement; there is a <a href="${MIXRACK_WEBSITE}">product page</a>, with a two-minute look at the interface as it stands in development, and nothing more.</p>
+        )}. The public download remains locked until launch. The <a href="/products/mixrack/">permanent product page</a> carries the release truth; the <a href="${MIXRACK_WEBSITE}">launch experience</a> carries the countdown and two-minute interface film.</p>
+        <dl class="spec-grid mt-sm">
+          <div><dt>Formats</dt><dd>${escapeHtml(formatList(mixRack.formats))}</dd></div>
+          <div><dt>Architecture</dt><dd>${escapeHtml(mixRack.architecture)}</dd></div>
+          <div><dt>Installer</dt><dd><code>${escapeHtml(mixRack.filename)}</code></dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(mixRack.sha256)}</dd></div>
+        </dl>
       </div>
     </section>
 
@@ -1624,12 +1635,12 @@ export function renderPress() {
         </div>
         <dl class="spec-grid">
           <div><dt>Developer</dt><dd>One person, not a company. Credit: Mert Erkan.</dd></div>
-          <div><dt>Price</dt><dd>Free permanently. Not a trial, not time-limited, not feature-locked, not a reduced version of a paid tier.</dd></div>
+          <div><dt>Price</dt><dd>Mastering Suite and Tempo Delay are free. No MixRack price is stated in this press kit.</dd></div>
           <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
           <div><dt>Architecture</dt><dd>Mastering Suite is Universal (Apple Silicon and Intel). Tempo Delay is Apple Silicon only.</dd></div>
-          <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
+          <div><dt>Pro Tools</dt><dd>All three products include AAX. MixRack 1.0.0 was checked in Pro Tools for scan, insert, audio pass, controls, bypass and saved-session recall; the exact scope is on its <a href="/products/mixrack/known-issues/">known-issues page</a>.</dd></div>
         </dl>
       </div>
     </section>
@@ -1648,6 +1659,163 @@ export function renderPress() {
         )}">Instagram</a> carries the shorter material.</p>
       </div>
     </section>`
+  });
+}
+
+export function renderMixRackProduct() {
+  const product = getProduct('mixrack');
+  return shell({
+    title: 'StudioZIO MixRack 1.0.0 — Modular mixing rack for macOS',
+    description: 'StudioZIO MixRack 1.0.0 brings eight essential processors into one reorderable macOS rack in AU, VST3, AAX and Standalone formats.',
+    canonical: `${HUB_ORIGIN}/products/mixrack/`,
+    current: 'products',
+    content: `<section class="hero tech-grid">
+      <div class="shell"><div class="rise">
+        <p class="eyebrow">Prepared release · 29 September 2026</p>
+        <h1>StudioZIO MixRack 1.0.0</h1>
+        <p class="lede">Eight essential processors in one reorderable signal path, with the controls and output measurement kept visible as you work.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="${escapeHtml(product.launchSiteUrl)}">Open the launch experience</a>
+          <a class="btn" href="/downloads/">Release status</a>
+        </div>
+      </div></div>
+    </section>
+    <section class="section" aria-labelledby="mixrack-facts"><div class="shell">
+      <div class="section-head"><p class="eyebrow">Release truth</p><h2 id="mixrack-facts">What is prepared</h2></div>
+      <dl class="spec-grid">
+        <div><dt>Version</dt><dd>${escapeHtml(product.version)}</dd></div>
+        <div><dt>Launch</dt><dd>29 September 2026 · 00:00 Europe/Istanbul</dd></div>
+        <div><dt>Formats</dt><dd>${formatList(product.formats)}</dd></div>
+        <div><dt>Architecture</dt><dd>${escapeHtml(product.architecture)}</dd></div>
+        <div><dt>System</dt><dd>${escapeHtml(product.minimumSystem)}</dd></div>
+        <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
+        <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
+        <div><dt>Security</dt><dd>Developer ID signed; Apple notarized and stapled; Gatekeeper accepted</dd></div>
+      </dl>
+      <p class="mt-md">The public download remains locked until launch. GitHub is the immutable binary backend; this page is the permanent product authority.</p>
+    </div></section>
+    <section class="section" aria-labelledby="mixrack-modules"><div class="shell">
+      <div class="section-head"><p class="eyebrow">Signal path</p><h2 id="mixrack-modules">Eight modules, eight slots</h2></div>
+      <div class="card-grid card-grid--2">
+        <article class="panel module-card"><h3>Utility and routing</h3><p>Gain · Channel Mixer · Three-Band EQ</p></article>
+        <article class="panel module-card"><h3>Dynamics and level</h3><p>Compressor · Gate · Transient Shaper · Clipper · Limiter</p></article>
+      </div>
+      <p class="mt-md">AAX was exercised in Pro Tools 1.0.0 for scan, insert, audio pass, control response, bypass and saved-session recall. AU passed auval and strictness-10 pluginval; VST3 passed strictness-10 pluginval; Standalone launched from the installed notarized package.</p>
+      <div class="hero-actions mt-md"><a class="btn" href="/products/mixrack/known-issues/">Known issues and validation scope</a><a class="btn" href="/engineering/">How releases are checked</a></div>
+    </div></section>`
+  });
+}
+
+function releaseCard(product) {
+  const isMixRack = product.slug === 'mixrack';
+  return `<article class="panel module-card">
+    <p class="eyebrow eyebrow--muted">${isMixRack ? 'Prepared release' : 'Current release'}</p>
+    <h3>${escapeHtml(product.name)} ${escapeHtml(product.version)}</h3>
+    <p>${escapeHtml(product.architecture)} · ${escapeHtml(product.compactFormats)}</p>
+    ${isMixRack
+      ? `<p>The installer remains unavailable until 29 September 2026. The launch site unlocks only when the release gate confirms both time and URL.</p><a class="btn" href="${escapeHtml(product.launchSiteUrl)}">View countdown</a>`
+      : `<p><code>${escapeHtml(product.filename)}</code></p><p class="sha">SHA-256 ${escapeHtml(product.sha256)}</p><a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}" data-event="download_click" data-ev-product="${escapeHtml(product.slug)}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a> <a class="btn" href="${escapeHtml(product.releaseUrl)}">Release record</a>`}
+  </article>`;
+}
+
+export function renderDownloads() {
+  return shell({
+    title: 'Current downloads — StudioZIO',
+    description: 'Current recommended StudioZIO installers and the pre-launch state of StudioZIO MixRack.',
+    canonical: `${HUB_ORIGIN}/downloads/`,
+    current: 'downloads',
+    content: `<section class="hero tech-grid"><div class="shell"><div class="rise">
+      <p class="eyebrow">One current installer per product</p><h1>Downloads</h1>
+      <p class="lede">Use the installer marked current. Historical packages stay on GitHub for provenance, but are not recommended for new installations.</p>
+    </div></div></section>
+    <section class="section"><div class="shell"><div class="card-grid card-grid--2">${products.map(releaseCard).join('')}</div>
+      <p class="mt-lg">A download is not proof of installation or active use. For install and scan help, visit <a href="/support/">Support</a>.</p>
+    </div></section>`
+  });
+}
+
+export function renderEngineering() {
+  return shell({
+    title: 'Release quality and validation — StudioZIO Engineering',
+    description: 'How StudioZIO checks signed macOS installers, plug-in formats, architectures, hashes and host behavior without overstating the evidence.',
+    canonical: `${HUB_ORIGIN}/engineering/`,
+    current: 'engineering',
+    content: `<section class="hero tech-grid"><div class="shell"><div class="rise">
+      <p class="eyebrow">Customer-readable evidence</p><h1>Release quality</h1>
+      <p class="lede">Every claim is scoped to the final artifact and the test that actually ran. A validator result is not described as certification, and an unmeasured behavior is not called a pass.</p>
+    </div></div></section>
+    <section class="section"><div class="shell"><div class="claims">
+      <div class="claim"><h3>Installer integrity</h3><p>Customer packages are Developer ID signed, submitted to Apple notarization, stapled and assessed by Gatekeeper. SHA-256 identifies the exact downloadable bytes.</p><dl class="claim-readout"><dt>Evidence</dt><dd>SIGN · NOTARIZE · STAPLE · ASSESS · HASH</dd></dl></div>
+      <div class="claim"><h3>Format and architecture truth</h3><p>AU, VST3, AAX and Standalone contents are read from the packaged artifact. Universal means both arm64 and x86_64 slices were found in every claimed format.</p><dl class="claim-readout"><dt>Scope</dt><dd>FINAL PACKAGE, NOT BUILD FOLDER</dd></dl></div>
+      <div class="claim"><h3>Host validation</h3><p>AU and VST3 automated validators, AAX tooling and Pro Tools checks, and Standalone launch checks are reported separately. Passing one does not imply another passed.</p><dl class="claim-readout"><dt>Language</dt><dd>PASS · KNOWN LIMITATION · NOT MEASURED</dd></dl></div>
+      <div class="claim"><h3>Listening comparisons</h3><p>Where a sonic comparison is offered, the renders are level matched and the source, settings and measurement scope are stated. No synthetic comparison is presented as a real product render.</p><dl class="claim-readout"><dt>Principle</dt><dd>LOUDER MUST NOT WIN BY DEFAULT</dd></dl></div>
+    </div></div></section>
+    <section class="section"><div class="shell"><p>For the exact MixRack 1.0.0 scope and exceptions, read its <a href="/products/mixrack/known-issues/">known-issues page</a>. For private support, use <a href="/contact/">the contact form</a>.</p></div></section>`
+  });
+}
+
+export function renderSupport() {
+  return shell({
+    title: 'Install and troubleshooting — StudioZIO Support',
+    description: 'StudioZIO installation, DAW scan, AAX and Pro Tools, uninstall and private support guidance.',
+    canonical: `${HUB_ORIGIN}/support/`,
+    current: 'support',
+    content: `<section class="hero tech-grid"><div class="shell"><div class="rise">
+      <p class="eyebrow">Private help first</p><h1>Support</h1>
+      <p class="lede">Start with the checks below. Send project names, crash reports or other sensitive material only through the private contact path—not a public issue.</p>
+      <div class="hero-actions"><a class="btn btn-primary" href="/contact/">Contact privately</a><a class="btn" href="https://github.com/StudioZIO/Support/issues/new?template=bug_report.md">Public reproducible defect</a></div>
+    </div></div></section>
+    <section class="section"><div class="shell"><div class="card-grid card-grid--2">
+      <article class="panel module-card"><h3>System requirements</h3><p>MixRack: macOS 11+, Universal. Mastering Suite: macOS 11+, Universal. Tempo Delay: macOS 12+, Apple Silicon only.</p></article>
+      <article class="panel module-card"><h3>Installation</h3><p>Quit audio applications, run the signed StudioZIO package, then reopen the host. Installations use standard system plug-in folders and may require an administrator password.</p></article>
+      <article class="panel module-card"><h3>DAW scan</h3><p>Confirm that the correct format is enabled, restart the host, then use its plug-in rescan or reset function. Report product version, macOS, Mac architecture, host version and format.</p></article>
+      <article class="panel module-card"><h3>AAX / Pro Tools</h3><p>AAX installs in Avid's system plug-in folder. Restart Pro Tools after installation. If scanning fails, include the exact Pro Tools version and scan message; do not remove unrelated AAX plug-ins.</p></article>
+      <article class="panel module-card"><h3>Known issues</h3><p>Read the product-specific list before troubleshooting. MixRack 1.0.0 has a published validation scope and deferred hosted-CI item.</p><a href="/products/mixrack/known-issues/">MixRack known issues</a></article>
+      <article class="panel module-card"><h3>Uninstall</h3><p>Remove only the named StudioZIO application and plug-in bundles for the product. Do not delete whole system plug-in directories. Contact support if you need the exact path list.</p></article>
+    </div></div></section>`
+  });
+}
+
+export function renderLegal() {
+  return shell({
+    title: 'Privacy and data use — StudioZIO',
+    description: 'How StudioZIO handles analytics, one-time MixRack release notices, tester interest and support messages.',
+    canonical: `${HUB_ORIGIN}/legal/`,
+    current: 'legal',
+    content: `<section class="hero tech-grid"><div class="shell"><div class="rise">
+      <p class="eyebrow">Last updated 13 September 2026</p><h1>Privacy and data use</h1>
+      <p class="lede">StudioZIO collects only the information needed for the purpose you choose. A MixRack release notice, tester interest and support are separate purposes.</p>
+    </div></div></section>
+    <section class="section"><div class="shell">
+      <dl class="spec-grid">
+        <div><dt>Controller</dt><dd>StudioZIO, operated by Mert Erkan. Contact: <a href="/contact/">private form</a> or <a href="mailto:studiozioplugins@gmail.com">studiozioplugins@gmail.com</a>.</dd></div>
+        <div><dt>Processors</dt><dd>Formspree processes submitted forms; Google Analytics processes consented aggregate site-use events; Vercel serves the websites and access logs.</dd></div>
+        <div><dt>One-time release notice</dt><dd>Email address and submission metadata are used once to announce MixRack availability, then removed from the working send list within 30 days. They are not newsletter consent.</dd></div>
+        <div><dt>Tester interest</dt><dd>Email, DAW, macOS, architecture, experience and optional note are used only to evaluate and contact prospective testers; review after 12 months and delete when no longer needed.</dd></div>
+        <div><dt>Support</dt><dd>Name, email, technical context and message are used to answer and diagnose the request; retain only as long as needed for follow-up and recurring-defect history, normally no longer than 24 months.</dd></div>
+        <div><dt>Analytics and cookies</dt><dd>Google Analytics remains denied until consent. Consent can be withdrawn from the site footer. Aggregate events must not include project names, file paths, audio or plug-in settings.</dd></div>
+      </dl>
+      <p class="mt-lg">You may ask for access, correction or deletion through the private contact route. Some processors may handle data outside your country under their own safeguards. StudioZIO does not sell submitted personal data and does not repurpose a one-time address for a newsletter.</p>
+    </div></section>`
+  });
+}
+
+export function renderMixRackKnownIssues() {
+  return shell({
+    title: 'StudioZIO MixRack 1.0.0 known issues and validation scope',
+    description: 'Confirmed limitations, deferred CI work and reporting guidance for the prepared StudioZIO MixRack 1.0.0 release.',
+    canonical: `${HUB_ORIGIN}/products/mixrack/known-issues/`,
+    current: 'products',
+    content: `<section class="hero tech-grid"><div class="shell"><div class="rise">
+      <p class="eyebrow">Version 1.0.0 · preparation status</p><h1>Known issues and validation scope</h1>
+      <p class="lede">No confirmed release-blocking issues at launch preparation time.</p>
+    </div></div></section>
+    <section class="section"><div class="shell"><div class="card-grid card-grid--2">
+      <article class="panel issue-card"><div class="issue-card-head"><h3>Hosted CI deferred</h3>${chip('Deferred external billing')}</div><p>The GitHub-hosted job did not start because of account billing state. Local macOS qualification substituted only for the release PR; this is not recorded as a CI pass. Post-release CI remains required when billing is available.</p></article>
+      <article class="panel issue-card"><div class="issue-card-head"><h3>AAX validator scope</h3>${chip('Known tool outcome')}</div><p>DigiShell ran on the pre-PACE arm64 build: most executable tests passed, page-table load reported 3/6, and four information tests aborted in Avid's own system-information path. The shipped AAX was separately signed and accepted in Pro Tools 1.0.0 for scan, insert, audio, controls, bypass and session recall.</p></article>
+      <article class="panel issue-card"><div class="issue-card-head"><h3>Validation is format-specific</h3>${chip('Scope')}</div><p>AU passed auval and strictness-10 pluginval; VST3 passed strictness-10 pluginval; Standalone was launched and remained running for the recorded check. These results do not claim every DAW, device or workflow.</p></article>
+      <article class="panel issue-card"><div class="issue-card-head"><h3>How to report a problem</h3>${chip('Support')}</div><p>Include MixRack version, macOS, Mac architecture, host and version, plug-in format, exact steps, expected result and observed result. Use the private form for crash logs or project-specific details.</p><a class="btn" href="/contact/">Report privately</a></article>
+    </div></div></section>`
   });
 }
 
@@ -2201,9 +2369,9 @@ export function renderCommunityRoadmap() {
           <article class="panel roadmap-card">
             <div class="roadmap-card-head">
               <h3>StudioZIO MixRack</h3>
-              ${chip('In Development')}
+              ${chip('Prepared Release')}
             </div>
-            <p>A new StudioZIO mixing environment currently in development for macOS. AU, VST3, AAX and Standalone formats are planned. No release date has been announced.</p>
+            <p>StudioZIO MixRack 1.0.0 is prepared for launch on 29 September 2026 for macOS 11+, in Universal AU, VST3, AAX and Standalone formats.</p>
           </article>
         </div>
       </div>
