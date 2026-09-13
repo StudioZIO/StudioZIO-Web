@@ -186,10 +186,6 @@ function headerSearch(variant) {
    crawler needs. */
 const FOOTER_LINKS = [
   ...NAVIGATION,
-  ['Downloads', '/downloads/', 'downloads'],
-  ['Engineering', '/engineering/', 'engineering'],
-  ['Support', '/support/', 'support'],
-  ['Privacy', '/legal/', 'legal'],
   ['Press kit', '/press/', 'press'],
   ['ZIO', ZIO_WEBSITE, 'zio']
 ];
