@@ -900,6 +900,7 @@ export function renderProductInflator() {
           <div class="hero-actions">
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+            ${chip(product.price)}
             <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
           </div>
         </div>

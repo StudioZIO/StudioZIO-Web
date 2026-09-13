@@ -139,12 +139,13 @@ export function validateSource() {
   }
 
   /* Inflator is the first product whose detailsUrl is a hub route rather than
-     another origin, and the first for which commercial policy is not yet
-     decided -- so price is asserted absent rather than left to default to
-     whatever a future edit happens to add. */
+     another origin. Commercial policy (Free) was an explicit owner decision,
+     asserted here the same way Tempo Delay's is, rather than left to default
+     to whatever a future edit happens to add. */
   const inflator = getProduct('inflator');
   if (
     inflator.name !== 'StudioZIO Inflator' ||
+    inflator.price !== 'Free' ||
     inflator.availability !== 'Available now' ||
     !isSemanticPatch(inflator.version) ||
     inflator.platform !== 'macOS' ||
@@ -171,12 +172,6 @@ export function validateSource() {
   if (!/^[a-f0-9]{64}$/i.test(inflator.sha256)) {
     throw new Error('Invalid checksum format for Inflator');
   }
-  for (const unsupportedField of ['price']) {
-    if (inflator[unsupportedField] !== undefined) {
-      throw new Error(`Unsupported Inflator field: ${unsupportedField}`);
-    }
-  }
-
   const home = renderHome();
   const catalog = renderProducts();
   const inflatorPage = renderProductInflator();

@@ -110,6 +110,7 @@ export const products = Object.freeze([
       'c138a979cb80bd04b755ab4c308a1b0dc8ccad518d6483076e2b8a3ba05fabde',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
+    price: 'Free',
     availability: 'Available now',
     description:
       'One focused harmonic-enhancement stage: dial in Amount, trim gain going in and coming out, and compare instantly with Engaged.',
