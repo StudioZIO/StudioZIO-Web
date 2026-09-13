@@ -19,19 +19,13 @@ import {
   renderCommunityKnownIssues,
   renderCommunityRoadmap,
   renderContact,
-  renderDownloads,
-  renderEngineering,
   renderHome,
-  renderLegal,
-  renderMixRackKnownIssues,
-  renderMixRackProduct,
   renderNotFound,
   renderNote,
   renderNotes,
   renderPress,
   renderProducts,
   renderSearch,
-  renderSupport,
   HUB_ORIGIN,
 } from '../src/site.mjs';
 
@@ -131,33 +125,21 @@ export function validateSource() {
   if (
     mixRack.name !== 'StudioZIO MixRack' ||
     mixRack.manufacturer !== 'StudioZIO' ||
-    mixRack.version !== '1.0.0' ||
-    mixRack.availability !== 'Launches 29 September 2026' ||
+    mixRack.availability !== 'Coming soon' ||
     mixRack.platform !== 'macOS' ||
-    mixRack.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
-    mixRack.architecture !== 'Universal — Apple Silicon and Intel' ||
-    mixRack.releaseDate !== '2026-09-29' ||
-    mixRack.filename !== 'StudioZIO-Mixrack-1.0.0.pkg' ||
-    mixRack.detailsUrl !== '/products/mixrack/' ||
-    mixRack.launchSiteUrl !== MIXRACK_WEBSITE ||
-    mixRack.releaseUrl !== `${RELEASE_REPOSITORY_URL}/releases/tag/mixrack-v1.0.0` ||
-    !/^[a-f0-9]{64}$/i.test(mixRack.sha256)
+    mixRack.compactFormats !== 'AU / VST3 / AAX / Standalone'
   ) {
     throw new Error('MixRack public metadata drift');
   }
-  if (mixRack.downloadUrl !== undefined) {
-    throw new Error('MixRack public download must remain absent before launch');
+  for (const unsupportedField of ['version', 'downloadUrl', 'releaseUrl', 'releaseDate']) {
+    if (mixRack[unsupportedField] !== undefined) {
+      throw new Error(`Unsupported MixRack field: ${unsupportedField}`);
+    }
   }
 
   const home = renderHome();
   const catalog = renderProducts();
   const contact = renderContact();
-  const downloads = renderDownloads();
-  const engineering = renderEngineering();
-  const support = renderSupport();
-  const legal = renderLegal();
-  const mixRackProduct = renderMixRackProduct();
-  const mixRackKnownIssues = renderMixRackKnownIssues();
   const notFound = renderNotFound();
   const notesIndex = renderNotes();
   // Every note in notes.mjs, not a list repeated here: the build derives its
@@ -178,9 +160,8 @@ export function validateSource() {
     communityKnownIssues,
     communityRoadmap
   ];
-  const permanentPages = [downloads, engineering, support, legal, mixRackProduct, mixRackKnownIssues];
-  const pages = [home, catalog, ...permanentPages, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
-  const indexablePages = [home, catalog, ...permanentPages, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
+  const pages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
+  const indexablePages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -193,11 +174,14 @@ export function validateSource() {
     }
   }
 
-  /* Mastering's retired hub path must stay out of generated pages. MixRack is
-     deliberately different now: the hub path is the permanent authority,
-     while the existing microsite remains the launch experience. */
+  /* The hub used to render its own mastering-suite page whose canonical
+     already pointed at the product site — two addresses for one product, and
+     the hub conceding which one was real. MixRack has now moved the same way,
+     onto studioziomixrack.vercel.app. The product sites own those pages; what
+     has to hold here is that nothing links to either retired path, and that
+     the card and the header entry point at the real site instead. */
   for (const [index, page] of pages.entries()) {
-    for (const retired of ['/products/mastering-suite']) {
+    for (const retired of ['/products/mastering-suite', '/products/mixrack']) {
       if (page.includes(retired)) {
         throw new Error(`Page ${index} still links the retired local page ${retired}`);
       }
@@ -301,8 +285,8 @@ export function validateSource() {
   }
 
   for (const catalogPage of [home, catalog]) {
-    if (!catalogPage.includes('href="/products/mixrack/"')) {
-      throw new Error('A catalogue surface has no link to the permanent MixRack page');
+    if (!catalogPage.includes(`href="${MIXRACK_WEBSITE}"`)) {
+      throw new Error('A catalogue surface has no link to the MixRack site');
     }
   }
 
@@ -312,7 +296,7 @@ export function validateSource() {
       'StudioZIO Tempo Delay',
       'StudioZIO MixRack',
       'Available now',
-      'Launches 29 September 2026',
+      'Coming soon',
       TEMPO_DELAY_WEBSITE
     ]) {
       if (!catalogPage.includes(required)) {
