@@ -1,3 +1,4 @@
+import { existsSync, statSync } from 'node:fs';
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +19,7 @@ import {
   renderPress,
   renderProducts,
   renderSearch,
+  PRESS_KIT_FILE,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
 import { extract } from './search_text.mjs';
@@ -128,6 +130,7 @@ await cp(resolve(projectRoot, 'src/delay-lines-figure.js'), resolve(outputRoot, 
 await cp(resolve(projectRoot, 'src/architecture-figure.js'), resolve(outputRoot, 'assets/architecture-figure.js'));
 await cp(resolve(projectRoot, 'src/loop-figure.js'), resolve(outputRoot, 'assets/loop-figure.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
+await cp(resolve(projectRoot, 'src/press'), resolve(outputRoot, 'assets/press'), { recursive: true });
 /* The search index, assembled here rather than fetched at runtime.
 
    The hub's own share of it is read out of the HTML this build just rendered,
@@ -226,5 +229,16 @@ await writeFile(
   `User-agent: *\nAllow: /\n\nSitemap: ${HUB_ORIGIN}/sitemap.xml\n`,
   'utf8'
 );
+
+/* The link checker in validate.mjs deliberately skips /assets/ hrefs, so a
+   press kit that failed to copy would ship as a download button leading to a
+   404. Check the file the page offers is actually there. */
+const pressKit = resolve(outputRoot, 'assets/press', PRESS_KIT_FILE);
+if (!existsSync(pressKit)) {
+  throw new Error(`The press page offers ${PRESS_KIT_FILE} but the build did not write it to dist/assets/press/`);
+}
+if (statSync(pressKit).size === 0) {
+  throw new Error(`${PRESS_KIT_FILE} copied into dist/assets/press/ as an empty file`);
+}
 
 console.log(`Built ${outputs.size} HTML pages and a ${indexableUrls.length}-URL sitemap into dist/`);

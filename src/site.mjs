@@ -1480,6 +1480,12 @@ const pressJsonLd = () =>
     }
   ]);
 
+/* The press kit is a file the build copies, not a page it renders, so its name
+   lives here and the page, the build and the check all read it from one place.
+   A rename cannot leave the download button pointing at nothing. */
+export const PRESS_KIT_FILE = 'StudioZIO-MixRack-1.0.0-Press-Kit.zip';
+export const PRESS_KIT_HREF = `/assets/press/${PRESS_KIT_FILE}`;
+
 const PRESS_ASSETS = Object.freeze([
   Object.freeze({
     href: '/assets/favicon.svg',
@@ -1646,6 +1652,25 @@ export function renderPress() {
         <p>Elsewhere: the <a href="https://www.kvraudio.com/developer/studiozio">KVR developer page</a> carries release notes and development posts, and <a href="${escapeHtml(
           INSTAGRAM_URL
         )}">Instagram</a> carries the shorter material.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="press-mixrack-kit">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Press kit</p>
+          <h2 id="press-mixrack-kit">All You Need to Know About ${escapeHtml(mixRack.name)}</h2>
+        </div>
+        <p class="lede">Download the ${escapeHtml(
+          mixRack.name
+        )} 1.0.0 press kit: verified technical specifications, approved product screenshots, cleared brand assets, and ready-to-use 50, 100 and 150-word descriptions.</p>
+        <dl class="spec-grid mt-sm">
+          <div><dt>Version</dt><dd>MixRack 1.0.0</dd></div>
+          <div><dt>Release date</dt><dd>29 September 2026</dd></div>
+          <div><dt>Platform</dt><dd>macOS 11+</dd></div>
+          <div class="spec-span"><dt>Formats</dt><dd>AU &middot; VST3 &middot; AAX &middot; Standalone &mdash; Universal, arm64 + x86_64</dd></div>
+        </dl>
+        <p class="mt-md"><a class="btn btn-primary" href="${PRESS_KIT_HREF}" download>Download MixRack Press Kit (.zip)</a></p>
       </div>
     </section>`
   });
