@@ -25,6 +25,7 @@ import {
   renderNotes,
   renderPress,
   renderProducts,
+  renderProductInflator,
   renderSearch,
   HUB_ORIGIN,
 } from '../src/site.mjs';
@@ -54,8 +55,8 @@ function isSemanticPatch(version) {
 }
 
 export function validateSource() {
-  if (products.length !== 3) throw new Error('Unexpected public product count');
-  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack'];
+  if (products.length !== 4) throw new Error('Unexpected public product count');
+  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack', 'inflator'];
   if (products.some((product, index) => product.slug !== expectedOrder[index])) {
     throw new Error('Public product order drift');
   }
@@ -137,8 +138,48 @@ export function validateSource() {
     }
   }
 
+  /* Inflator is the first product whose detailsUrl is a hub route rather than
+     another origin, and the first for which commercial policy is not yet
+     decided -- so price is asserted absent rather than left to default to
+     whatever a future edit happens to add. */
+  const inflator = getProduct('inflator');
+  if (
+    inflator.name !== 'StudioZIO Inflator' ||
+    inflator.availability !== 'Available now' ||
+    !isSemanticPatch(inflator.version) ||
+    inflator.platform !== 'macOS' ||
+    inflator.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
+    inflator.detailsUrl !== '/products/inflator/' ||
+    inflator.externalDetails
+  ) {
+    throw new Error('Inflator public metadata drift');
+  }
+  if (inflator.filename !== `StudioZIO-Inflator-${inflator.version}.pkg`) {
+    throw new Error('Inflator filename drift');
+  }
+  if (!inflator.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('Inflator download URL repository drift');
+  }
+  if (!inflator.downloadUrl.endsWith(`/${inflator.filename}`)) {
+    throw new Error('Inflator download URL filename drift');
+  }
+  const inflatorDownloadTag = inflator.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const inflatorReleaseTag = inflator.releaseUrl.split('/releases/tag/')[1];
+  if (!inflatorDownloadTag || inflatorDownloadTag !== inflatorReleaseTag) {
+    throw new Error('Inflator release tag mismatch between download and release URLs');
+  }
+  if (!/^[a-f0-9]{64}$/i.test(inflator.sha256)) {
+    throw new Error('Invalid checksum format for Inflator');
+  }
+  for (const unsupportedField of ['price']) {
+    if (inflator[unsupportedField] !== undefined) {
+      throw new Error(`Unsupported Inflator field: ${unsupportedField}`);
+    }
+  }
+
   const home = renderHome();
   const catalog = renderProducts();
+  const inflatorPage = renderProductInflator();
   const contact = renderContact();
   const notFound = renderNotFound();
   const notesIndex = renderNotes();
@@ -160,8 +201,8 @@ export function validateSource() {
     communityKnownIssues,
     communityRoadmap
   ];
-  const pages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
-  const indexablePages = [home, catalog, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
+  const pages = [home, catalog, inflatorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
+  const indexablePages = [home, catalog, inflatorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');

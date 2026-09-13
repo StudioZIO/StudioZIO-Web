@@ -1522,6 +1522,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .ab-title { font-size: 0.6875rem; color: var(--foreground); }
 .ab-flag { font-size: 0.625rem; color: var(--muted-foreground); }
 .ab-shot { display: block; width: 100%; height: auto; background: var(--background); }
+
+/* A single-module product window, shown at its own size rather than
+   stretched to the column: Inflator's UI is a fixed 480x384, and stretching
+   it to fill a wide layout would upscale text nothing has to render blurry. */
+.product-shot { display: block; margin: 0 auto; max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border); }
 .ab-transport {
   display: flex;
   flex-wrap: wrap;

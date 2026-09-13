@@ -24,6 +24,7 @@ function verify({ files, hosting }) {
   const expectedUrls = [
     '/',
     '/products/',
+    '/products/inflator/',
     '/contact/',
     '/notes/',
     ...notes.map(note => `/notes/${note.slug}/`),

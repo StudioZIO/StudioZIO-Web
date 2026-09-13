@@ -85,6 +85,35 @@ export const products = Object.freeze([
       'A modular mixing environment that brings essential processing into one focused rack.',
     detailsUrl: MIXRACK_WEBSITE,
     externalDetails: true
+  }),
+  /* Inflator is the first standalone single-module product, and it does not
+     get its own site the way Mastering Suite, Tempo Delay and MixRack do --
+     the estate decision is that Inflator, Clipper and Limiter stay native to
+     the hub. detailsUrl is therefore a hub route, not an external origin, and
+     externalDetails is left unset so the card and the JSON-LD both read it as
+     a page this site itself serves. */
+  Object.freeze({
+    slug: 'inflator',
+    name: 'StudioZIO Inflator',
+    shortName: 'Inflator',
+    version: '1.0.0',
+    platform: 'macOS',
+    architecture: 'Universal — Apple Silicon and Intel',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
+    filename: 'StudioZIO-Inflator-1.0.0.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/inflator-v1.0.0/StudioZIO-Inflator-1.0.0.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/inflator-v1.0.0',
+    sha256:
+      'c138a979cb80bd04b755ab4c308a1b0dc8ccad518d6483076e2b8a3ba05fabde',
+    signing: 'Developer ID signed',
+    notarization: 'Apple notarized',
+    availability: 'Available now',
+    description:
+      'One focused harmonic-enhancement stage: dial in Amount, trim gain going in and coming out, and compare instantly with Engaged.',
+    detailsUrl: '/products/inflator/'
   })
 ]);
 

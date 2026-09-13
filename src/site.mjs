@@ -283,6 +283,24 @@ const productsJsonLd = () => jsonLdBlock([
   }
 ]);
 
+const inflatorJsonLd = () => {
+  const product = getProduct('inflator');
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${HUB_ORIGIN}/products/inflator/#software`,
+      name: product.name,
+      url: `${HUB_ORIGIN}${product.detailsUrl}`,
+      description: product.description,
+      operatingSystem: product.platform,
+      applicationCategory: 'MultimediaApplication',
+      softwareVersion: product.version,
+      publisher: { '@id': ORGANIZATION_ID }
+    }
+  ]);
+};
+
 function shell({ title, description, canonical, current, content, scripts = '', socialImage = DEFAULT_SOCIAL_IMAGE, socialImageAlt = 'StudioZIO — audio plug-ins for macOS', jsonLd = '' }) {
   const image = `${HUB_ORIGIN}${socialImage}`;
   return `<!doctype html>
@@ -819,6 +837,95 @@ export function renderProducts() {
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
         <p class="mt-lg">Hear Mastering Suite and Tempo Delay on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
+      </div>
+    </section>`
+  });
+}
+
+/* The first hub-native product page. Mastering Suite, Tempo Delay and MixRack
+   each own a full site of their own and hand off to it from the catalogue;
+   Inflator (and, later, Clipper and Limiter) is a single-module product that
+   does not warrant one, so its detail page is rendered here instead. The
+   surface it describes is deliberately small -- Amount, Input Gain, Output
+   Gain and Engaged -- and that is stated as the product's shape, not as a
+   list of things it is still missing. */
+export function renderProductInflator() {
+  const product = getProduct('inflator');
+  return shell({
+    title: 'StudioZIO Inflator — harmonic enhancement for macOS',
+    description:
+      'StudioZIO Inflator is a focused harmonic enhancement processor for macOS, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
+    canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
+    current: 'products',
+    jsonLd: inflatorJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">StudioZIO software</p>
+          <h1>StudioZIO Inflator</h1>
+          <p class="lede">${escapeHtml(product.description)}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="shot-title">
+      <div class="shell">
+        <h2 id="shot-title" class="sr-only">The Inflator window</h2>
+        <img class="product-shot" src="/assets/media/inflator-ui.webp" width="480" height="384"
+          decoding="async" loading="lazy"
+          alt="The StudioZIO Inflator window: an Amount slider, Input and Output gain fields, the Engaged switch, and input/output level meters.">
+      </div>
+    </section>
+    <section class="section" aria-labelledby="controls-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Surface</p>
+          <h2 id="controls-title">Deliberately simple</h2>
+          <p class="lede">Inflator does one job, so its window asks one thing of you at a time.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Amount</dt><dd>The harmonic enhancement control.</dd></div>
+          <div><dt>Input Gain</dt><dd>Trims level going into the stage.</dd></div>
+          <div><dt>Output Gain</dt><dd>Trims level coming back out.</dd></div>
+          <div><dt>Engaged</dt><dd>Crossfaded bypass, switched without a click.</dd></div>
+          <div><dt>Metering</dt><dd>Input and output levels, live.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="download-title">
+      <div class="shell">
+        <div class="panel-float download-row">
+          <div>
+            <p class="eyebrow">Official macOS installer</p>
+            <h2 id="download-title">Inflator ${escapeHtml(product.version)}</h2>
+            <p class="lede">Version ${escapeHtml(product.version)} · ${formatList(product.formats)}</p>
+            <div class="chip-row mt-sm">
+              ${chip(product.signing)}${chip(product.notarization, 'flag')}${chip(product.architecture.split(' —')[0])}
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+          </div>
+        </div>
+        <dl class="spec-grid mt-md">
+          <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
+          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="support-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Help</p>
+          <h2 id="support-title">Support</h2>
+          <p class="lede">Bug reports and technical questions reach the person who writes the code, through the <a href="/contact/">contact form</a>.</p>
+        </div>
       </div>
     </section>`
   });
