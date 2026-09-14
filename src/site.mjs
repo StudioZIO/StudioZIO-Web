@@ -450,7 +450,7 @@ function tempoDelayMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Tempo Delay</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Host sync', 'flag')}</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
