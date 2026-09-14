@@ -655,6 +655,27 @@ const AB_DEMOS = Object.freeze({
       'The StudioZIO Tempo Delay window: a signal-path rail across the top running tempo, left, right, tone, feedback, character, width and mix, with the primary delay engine open at 100 ms on each side, 45 per cent feedback, 100 per cent width and 50 per cent mix, a stereo echo field on the right, and the tone and filters tab showing an 80 Hz high-pass and an 8 kHz low-pass.',
     note:
       'Rendered through Tempo Delay 4.0.1 at 44.1 kHz. Judge placement, tail and stereo spread.'
+  }),
+  /* The one pair that cannot be matched at -12 LUFS, and the reason is the
+     product. An unlimited drum take with 14 dB of crest reaches -1 dBTP long
+     before it reaches -12 LUFS; pushing it there would clip it, which is the
+     job this plug-in exists to do properly. So the pair is matched at -16.0
+     instead, and the flag says so rather than repeating the -12 the other two
+     carry. Both takes are the same passage from the same render session, the
+     processed one through Maximizer at 6.1 dB of gain reduction, aligned to
+     the sample and then level-matched to each other. */
+  maximizer: Object.freeze({
+    title: 'Maximizer · raw vs limited',
+    group: 'Compare the raw and limited renders',
+    processedLabel: 'Limited',
+    flag: 'Real render · matched −16 LUFS',
+    dry: '/assets/media/maximizer-dry',
+    wet: '/assets/media/maximizer-wet',
+    /* No shot: this card sits on the product page, directly under the window
+       it would otherwise repeat. The other two live on the home page, where
+       the capture is the only sight of the plug-in. */
+    note:
+      'One drum passage, rendered twice through Maximizer 1.0.2 at 44.1 kHz: untouched, and at 6.1 dB of gain reduction. Judge weight, transient and what the ceiling costs.'
   })
 });
 
@@ -694,13 +715,15 @@ function abCard(key) {
       </audio>
       <div class="ab-head">
         <span class="ab-title">${escapeHtml(demo.title)}</span>
-        <span class="ab-flag">Real render · matched −12 LUFS</span>
+        <span class="ab-flag">${escapeHtml(demo.flag || 'Real render · matched −12 LUFS')}</span>
       </div>
-      <img class="ab-shot" src="/assets/media/${demo.shot}.webp"
+      ${demo.shot
+        ? `<img class="ab-shot" src="/assets/media/${demo.shot}.webp"
         srcset="${shotSrcset(demo)}"
         sizes="(min-width: 900px) 545px, calc(100vw - 3rem)"
         width="${demo.shotWidth}" height="${demo.shotHeight}" decoding="async" loading="lazy"
-        alt="${escapeHtml(demo.shotAlt)}">
+        alt="${escapeHtml(demo.shotAlt)}">`
+        : ''}
       <div class="ab-transport">
         <button type="button" class="btn btn-primary ab-play" data-ab="play" aria-pressed="false"><span data-ab="play-label">Hear it</span></button>
         <div class="ab-takes" role="group" aria-label="${escapeHtml(demo.group)}">
@@ -1043,6 +1066,7 @@ export function renderProductMaximizer() {
       'StudioZIO Maximizer is an adaptive mastering limiter for macOS with a strict true-peak ceiling, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
+    scripts: AB_SCRIPT,
     jsonLd: maximizerJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -1066,6 +1090,16 @@ export function renderProductMaximizer() {
         <img class="product-shot" src="/assets/media/maximizer-ui.webp" width="480" height="533"
           decoding="async" loading="lazy"
           alt="The StudioZIO Maximizer window: Input Gain and Ceiling controls, the Engaged switch, and input sample peak, output true peak and gain-reduction meters.">
+      </div>
+    </section>
+    <section class="section" id="listen" aria-labelledby="listen-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Hear it</p>
+          <h2 id="listen-title">The same drums, twice</h2>
+          <p class="lede">One passage rendered twice and switched instantly, so the playhead never moves. Both takes are matched to &minus;16.0 LUFS integrated with peaks at or below &minus;1 dBTP: at different levels the louder one always wins and the comparison tells you nothing.</p>
+        </div>
+        ${abCard('maximizer')}
       </div>
     </section>
     <section class="section" aria-labelledby="controls-title">

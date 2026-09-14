@@ -603,10 +603,21 @@ export function validateSource() {
     }
   }
 
-  // Only the home page carries the listener.
+  /* The listener and the cards travel together, in both directions. The script
+     does nothing on its own, so a page that loads it without a card pays for it
+     on every visit and gets nothing; a card without the script is a player that
+     never starts. This used to be written as "only the home page carries the
+     listener", which was true while the home page was the only surface with
+     cards, and stopped being true when the Maximizer product page got its
+     own -- so it now checks the thing it was always trying to check. */
   for (const [index, page] of pages.entries()) {
-    if (page !== home && page.includes('/assets/ab.js')) {
+    const hasListener = page.includes('/assets/ab.js');
+    const hasCards = page.includes('data-ab="card"');
+    if (hasListener && !hasCards) {
       throw new Error(`Page ${index} loads the A/B listener but has no cards`);
+    }
+    if (hasCards && !hasListener) {
+      throw new Error(`Page ${index} has A/B cards but never loads the listener`);
     }
   }
 
@@ -688,7 +699,7 @@ export function validateSource() {
   // The two takes in a pair have to be the same passage at the same length.
   // If one is a different render the switch stops being a comparison, and
   // nothing about the page would look wrong while it happened.
-  for (const [dry, wet] of [['master-dry', 'master-wet'], ['delay-dry', 'delay-wet']]) {
+  for (const [dry, wet] of [['master-dry', 'master-wet'], ['delay-dry', 'delay-wet'], ['maximizer-dry', 'maximizer-wet']]) {
     const drift = Math.abs(mediaSeconds(dry) - mediaSeconds(wet));
     if (drift > 0.05) {
       throw new Error(
