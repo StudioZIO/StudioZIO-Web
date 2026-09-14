@@ -571,15 +571,26 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- plugin mocks (flat, alive, no glow) ------------------------- */
 .mock { border-bottom: 1px solid var(--hairline); background: var(--surface-raised); }
+/* Title on one line, chips on the next, on every card.
+
+   These sat side by side while the format chip read "AU · VST3 · AAX". Naming
+   the Standalone every product actually ships pushed the longest card
+   (Mastering Suite) to exactly the available width, and flex-wrap resolved
+   that by breaking the title across two lines and dropping one chip below the
+   other -- a different shape on one card than on its neighbour, which in a
+   two-column grid misaligns the windows underneath.
+
+   Two rows everywhere is the honest answer: the content stopped fitting on one
+   line, so it gets two, and it gets them identically whatever the product is
+   called. Clipper and Limiter will not reopen this. */
 .mock-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  gap: 0.5rem;
   padding: 0.85rem 1.1rem;
   border-bottom: 1px solid var(--hairline);
   background: var(--surface-overlay);
 }
+.mock-head .mock-title { white-space: nowrap; }
 .mock-title {
   display: inline-flex;
   align-items: center;
