@@ -550,11 +550,64 @@ function inflatorMock() {
     </div>`;
 }
 
+const maximizerJsonLd = () => {
+  const product = getProduct('maximizer');
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${HUB_ORIGIN}/products/maximizer/#software`,
+      name: product.name,
+      url: `${HUB_ORIGIN}${product.detailsUrl}`,
+      description: product.description,
+      operatingSystem: product.platform,
+      applicationCategory: 'MultimediaApplication',
+      softwareVersion: product.version,
+      publisher: { '@id': ORGANIZATION_ID }
+    }
+  ]);
+};
+
+/* The same rail the other products use, three stages instead of Inflator's
+   four, because that is the whole public surface. The values are the shipped
+   defaults. Three meter rows rather than two: this product reports the level
+   going in, the true peak coming out, and the reduction between them, and the
+   third reading is the one the other products do not have. */
+function maximizerMock() {
+  const stages = [
+    ['Input Gain', '0.0 dB'],
+    ['Ceiling', '&minus;0.3 dBTP'],
+    ['Engaged', 'On']
+  ];
+  return `<div class="mock" aria-hidden="true">
+      <div class="mock-head">
+        <span class="mock-title"><span class="dot"></span>Maximizer</span>
+        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
+      </div>
+      <div class="mock-body">
+        ${signalRail(stages)}
+        <div class="meters">
+          <span class="meters-head"><span>Input</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters">
+          <span class="meters-head"><span>Output</span><span>dBTP</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters">
+          <span class="meters-head"><span>Gain reduction</span><span>dB</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+      </div>
+    </div>`;
+}
+
 const MOCKS = {
   'mastering-suite': masteringSuiteMock,
   'tempo-delay': tempoDelayMock,
   mixrack: mixRackMock,
-  inflator: inflatorMock
+  inflator: inflatorMock,
+  maximizer: maximizerMock
 };
 
 /* ---------- A/B listening -----------------------------------------------
@@ -949,6 +1002,111 @@ export function renderProductInflator() {
         <dl class="spec-grid mt-md">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="support-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Help</p>
+          <h2 id="support-title">Support</h2>
+          <p class="lede">Bug reports and technical questions reach the person who writes the code, through the <a href="/contact/">contact form</a>.</p>
+        </div>
+      </div>
+    </section>`
+  });
+}
+
+/* The second hub-native product page, on the same sections Inflator uses. Two
+   differences, both because the product is different rather than because the
+   pattern changed: the surface section is split in two, since what this plug-in
+   controls and what it reports are separate ideas, and the installer
+   specification carries a latency figure, which is a number a mastering
+   engineer checks before installing anything.
+
+   The ceiling is described as what the output is held to, and the meters as
+   readings rather than guarantees, because that is what each of them is. */
+export function renderProductMaximizer() {
+  const product = getProduct('maximizer');
+  return shell({
+    title: 'StudioZIO Maximizer — true-peak limiting for macOS',
+    description:
+      'StudioZIO Maximizer is an adaptive mastering limiter for macOS with a strict true-peak ceiling, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
+    canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
+    current: 'products',
+    jsonLd: maximizerJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">StudioZIO software</p>
+          <h1>StudioZIO Maximizer</h1>
+          <p class="lede">${escapeHtml(product.description)}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+            ${chip(product.price)}
+            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="shot-title">
+      <div class="shell">
+        <h2 id="shot-title" class="sr-only">The Maximizer window</h2>
+        <img class="product-shot" src="/assets/media/maximizer-ui.webp" width="480" height="533"
+          decoding="async" loading="lazy"
+          alt="The StudioZIO Maximizer window: Input Gain and Ceiling controls, the Engaged switch, and input sample peak, output true peak and gain-reduction meters.">
+      </div>
+    </section>
+    <section class="section" aria-labelledby="controls-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Surface</p>
+          <h2 id="controls-title">Three controls</h2>
+          <p class="lede">Loudness is set by how hard you drive it and where you put the ceiling. There is no threshold, no release-mode list and no output trim to reconcile with either of them.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Input Gain</dt><dd>How hard the limiter is driven.</dd></div>
+          <div><dt>Ceiling</dt><dd>The true-peak level the output is held to. Default &minus;0.3 dBTP.</dd></div>
+          <div><dt>Engaged</dt><dd>Takes the stage out of circuit for comparison.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="metering-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Metering</p>
+          <h2 id="metering-title">Three readings</h2>
+          <p class="lede">The level going in, the true peak coming out, and the reduction between them. The ceiling is the setting; the output meter is what actually left.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Input</dt><dd>Sample peak, dBFS.</dd></div>
+          <div><dt>Output</dt><dd>True peak, dBTP.</dd></div>
+          <div><dt>Gain reduction</dt><dd>dB.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="download-title">
+      <div class="shell">
+        <div class="panel-float download-row">
+          <div>
+            <p class="eyebrow">Official macOS installer</p>
+            <h2 id="download-title">Maximizer ${escapeHtml(product.version)}</h2>
+            <p class="lede">Version ${escapeHtml(product.version)} · ${formatList(product.formats)}</p>
+            <div class="chip-row mt-sm">
+              ${chip(product.signing)}${chip(product.notarization, 'flag')}${chip(product.architecture.split(' —')[0])}
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+          </div>
+        </div>
+        <dl class="spec-grid mt-md">
+          <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
+          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)} 11.0 (Big Sur) or newer</dd></div>
+          <div><dt>Latency</dt><dd>323 samples at 44.1 kHz, 328 at 48 kHz.</dd></div>
           <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
         </dl>
       </div>

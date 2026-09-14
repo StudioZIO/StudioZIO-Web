@@ -88,7 +88,7 @@ export const products = Object.freeze([
   }),
   /* Inflator is the first standalone single-module product, and it does not
      get its own site the way Mastering Suite, Tempo Delay and MixRack do --
-     the estate decision is that Inflator, Clipper and Limiter stay native to
+     the estate decision is that the single-module products stay native to
      the hub. detailsUrl is therefore a hub route, not an external origin, and
      externalDetails is left unset so the card and the JSON-LD both read it as
      a page this site itself serves. */
@@ -115,6 +115,35 @@ export const products = Object.freeze([
     description:
       'One focused harmonic-enhancement stage: dial in Amount, trim gain going in and coming out, and compare instantly with Engaged.',
     detailsUrl: '/products/inflator/'
+  }),
+  /* The second hub-native single-module product, and it takes Inflator's shape
+     exactly: a hub route for detailsUrl, no external origin, and the full set of
+     release-artifact fields that scripts/verify_downloads.mjs reads. The surface
+     it exposes is three controls and three meters; that is the product's shape,
+     not an unfinished one. */
+  Object.freeze({
+    slug: 'maximizer',
+    name: 'StudioZIO Maximizer',
+    shortName: 'Maximizer',
+    version: '1.0.2',
+    platform: 'macOS',
+    architecture: 'Universal — Apple Silicon and Intel',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
+    filename: 'StudioZIO-Maximizer-1.0.2.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/maximizer-v1.0.2/StudioZIO-Maximizer-1.0.2.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/maximizer-v1.0.2',
+    sha256:
+      '673da7c759b0cac3741ee816920a5ff2c199d01b975a1c6ffe7a48f65bcb3db6',
+    signing: 'Developer ID signed',
+    notarization: 'Apple notarized',
+    price: 'Free',
+    availability: 'Available now',
+    description:
+      'Adaptive limiting held to a strict final true-peak ceiling: set Input Gain and Ceiling, and read the cost on the meters.',
+    detailsUrl: '/products/maximizer/'
   })
 ]);
 

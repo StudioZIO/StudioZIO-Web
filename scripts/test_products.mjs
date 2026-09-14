@@ -25,6 +25,7 @@ function verify({ files, hosting }) {
     '/',
     '/products/',
     '/products/inflator/',
+    '/products/maximizer/',
     '/contact/',
     '/notes/',
     ...notes.map(note => `/notes/${note.slug}/`),

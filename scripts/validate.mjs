@@ -26,6 +26,7 @@ import {
   renderPress,
   renderProducts,
   renderProductInflator,
+  renderProductMaximizer,
   renderSearch,
   HUB_ORIGIN,
 } from '../src/site.mjs';
@@ -55,8 +56,8 @@ function isSemanticPatch(version) {
 }
 
 export function validateSource() {
-  if (products.length !== 4) throw new Error('Unexpected public product count');
-  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack', 'inflator'];
+  if (products.length !== 5) throw new Error('Unexpected public product count');
+  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack', 'inflator', 'maximizer'];
   if (products.some((product, index) => product.slug !== expectedOrder[index])) {
     throw new Error('Public product order drift');
   }
@@ -172,6 +173,41 @@ export function validateSource() {
   if (!/^[a-f0-9]{64}$/i.test(inflator.sha256)) {
     throw new Error('Invalid checksum format for Inflator');
   }
+
+  /* The second hub-native product, asserted separately rather than folded into
+     a loop with Inflator. The point of these checks is that each product's
+     commercial policy and release artifact were decided for that product, not
+     inherited from whichever entry happens to sit above it in the array. */
+  const maximizer = getProduct('maximizer');
+  if (
+    maximizer.name !== 'StudioZIO Maximizer' ||
+    maximizer.price !== 'Free' ||
+    maximizer.availability !== 'Available now' ||
+    !isSemanticPatch(maximizer.version) ||
+    maximizer.platform !== 'macOS' ||
+    maximizer.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
+    maximizer.detailsUrl !== '/products/maximizer/' ||
+    maximizer.externalDetails
+  ) {
+    throw new Error('Maximizer public metadata drift');
+  }
+  if (maximizer.filename !== `StudioZIO-Maximizer-${maximizer.version}.pkg`) {
+    throw new Error('Maximizer filename drift');
+  }
+  if (!maximizer.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('Maximizer download URL repository drift');
+  }
+  if (!maximizer.downloadUrl.endsWith(`/${maximizer.filename}`)) {
+    throw new Error('Maximizer download URL filename drift');
+  }
+  const maximizerDownloadTag = maximizer.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const maximizerReleaseTag = maximizer.releaseUrl.split('/releases/tag/')[1];
+  if (!maximizerDownloadTag || maximizerDownloadTag !== maximizerReleaseTag) {
+    throw new Error('Maximizer release tag mismatch between download and release URLs');
+  }
+  if (!/^[a-f0-9]{64}$/i.test(maximizer.sha256)) {
+    throw new Error('Invalid checksum format for Maximizer');
+  }
   const home = renderHome();
   const catalog = renderProducts();
   const inflatorPage = renderProductInflator();
@@ -196,8 +232,9 @@ export function validateSource() {
     communityKnownIssues,
     communityRoadmap
   ];
-  const pages = [home, catalog, inflatorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
-  const indexablePages = [home, catalog, inflatorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
+  const maximizerPage = renderProductMaximizer();
+  const pages = [home, catalog, inflatorPage, maximizerPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
+  const indexablePages = [home, catalog, inflatorPage, maximizerPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
