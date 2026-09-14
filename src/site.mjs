@@ -386,6 +386,14 @@ function shell({ title, description, canonical, current, content, scripts = '', 
 
 /** One rail. `stages` is [label, value] in signal order; the arming sweep is
     driven by nth-child delays in the stylesheet, keyed off the stage count. */
+/* What formats a mock advertises comes from the catalogue, not from a string
+   typed into each of these functions. Every product ships a Standalone and not
+   one of these chips said so: the string was written once, when three formats
+   was the whole story, and then copied four times. Reading the product means a
+   format can only be wrong here if it is wrong in the catalogue, where the
+   validator is already looking. */
+const formatChip = (slug) => chip(getProduct(slug).compactFormats.replaceAll(' / ', ' · '));
+
 function signalRail(stages) {
   const cells = stages
     .map(
@@ -417,7 +425,7 @@ function masteringSuiteMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Mastering Suite</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
+        <span class="chip-row">${formatChip('mastering-suite')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
@@ -450,7 +458,7 @@ function tempoDelayMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Tempo Delay</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
+        <span class="chip-row">${formatChip('tempo-delay')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
@@ -499,7 +507,7 @@ function mixRackMock() {
   return `<div class="mock mock--live">
       <div class="mock-head" aria-hidden="true">
         <span class="mock-title"><span class="dot"></span>MixRack</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Coming soon', 'flag')}</span>
+        <span class="chip-row">${formatChip('mixrack')}${chip('Coming soon', 'flag')}</span>
       </div>
       <div class="mock-body">
         <div class="rail-head" aria-hidden="true"><span>The rack</span><span>eight modules in four groups</span></div>
@@ -534,7 +542,7 @@ function inflatorMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Inflator</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
+        <span class="chip-row">${formatChip('inflator')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
@@ -582,7 +590,7 @@ function maximizerMock() {
   return `<div class="mock" aria-hidden="true">
       <div class="mock-head">
         <span class="mock-title"><span class="dot"></span>Maximizer</span>
-        <span class="chip-row">${chip('AU · VST3 · AAX')}${chip('Notarized', 'flag')}</span>
+        <span class="chip-row">${formatChip('maximizer')}${chip('Notarized', 'flag')}</span>
       </div>
       <div class="mock-body">
         ${signalRail(stages)}
