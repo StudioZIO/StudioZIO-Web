@@ -876,32 +876,6 @@ function claim({ title, body, key, value }) {
       </div>`;
 }
 
-function downloadComponent(product) {
-  return `<section class="section" aria-labelledby="download-title">
-      <div class="shell">
-        <div class="panel-float download-row">
-          <div>
-            <p class="eyebrow">Official macOS installer</p>
-            <h2 id="download-title">${escapeHtml(product.shortName)} ${escapeHtml(product.version)}</h2>
-            <p class="lede">Version ${escapeHtml(product.version)} · ${formatList(product.formats)}</p>
-            <div class="chip-row mt-sm">
-              ${chip(product.signing)}${chip(product.notarization, 'flag')}
-            </div>
-          </div>
-          <div class="actions">
-            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}">Download for macOS</a>
-            <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Try Tempo Delay</a>
-          </div>
-        </div>
-        <dl class="spec-grid mt-md">
-          <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
-          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
-          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
-        </dl>
-      </div>
-    </section>`;
-}
-
 /* ---------- pages ------------------------------------------------------- */
 
 export function renderHome() {
