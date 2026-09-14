@@ -696,6 +696,32 @@ const AB_DEMOS = Object.freeze({
    The master keeps its plain filename so its <src> stays a working fallback for
    anything that ignores srcset, and so the social-card and JSON-LD references
    to it do not have to move. */
+/* The press facts table has to be right for a journalist checking it, and this
+   row was written when two products shipped: "Mastering Suite is Universal.
+   Tempo Delay is Apple Silicon only." Three products later it was not wrong so
+   much as incomplete, which on a facts page is the same thing.
+
+   Grouping the catalogue by architecture keeps the sentence short when most
+   products agree and lengthens it honestly when they do not. Products that
+   declare no architecture -- MixRack, until it ships -- are left out rather
+   than guessed at. */
+function architectureSentence() {
+  const groups = new Map();
+  for (const product of products) {
+    if (!product.architecture) continue;
+    const arch = product.architecture.split(' —')[0];
+    if (!groups.has(arch)) groups.set(arch, []);
+    groups.get(arch).push(product.shortName);
+  }
+  const phrase = (names) => names.length === 1
+    ? `${escapeHtml(names[0])} is`
+    : `${names.slice(0, -1).map(escapeHtml).join(', ')} and ${escapeHtml(names[names.length - 1])} are`;
+  const detail = { 'Universal': 'Universal (Apple Silicon and Intel)', 'Apple Silicon (arm64) only': 'Apple Silicon only' };
+  return [...groups.entries()]
+    .map(([arch, names]) => `${phrase(names)} ${detail[arch] ?? escapeHtml(arch)}`)
+    .join('. ') + '.';
+}
+
 function shotSrcset(demo) {
   return demo.shotWidths
     .map((width) => {
@@ -1984,7 +2010,7 @@ export function renderPress() {
           <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
-          <div><dt>Architecture</dt><dd>Mastering Suite is Universal (Apple Silicon and Intel). Tempo Delay is Apple Silicon only.</dd></div>
+          <div><dt>Architecture</dt><dd>${architectureSentence()}</dd></div>
           <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
         </dl>
       </div>
