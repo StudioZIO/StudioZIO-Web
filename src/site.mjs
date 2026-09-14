@@ -1026,7 +1026,15 @@ export function renderProductInflator() {
    engineer checks before installing anything.
 
    The ceiling is described as what the output is held to, and the meters as
-   readings rather than guarantees, because that is what each of them is. */
+   readings rather than guarantees, because that is what each of them is.
+
+   The hero carries a line of its own above the catalogue description. The
+   description is written for the card and for the structured data, where it has
+   to say what the product is to someone who has not asked; on the page itself
+   the reader has already arrived, and what they want first is the division of
+   labour -- you drive it, it holds. The technical sentence stays directly
+   underneath rather than moving, so the first screen still says what the
+   plug-in actually does. */
 export function renderProductMaximizer() {
   const product = getProduct('maximizer');
   return shell({
@@ -1041,7 +1049,8 @@ export function renderProductMaximizer() {
         <div class="rise">
           <p class="eyebrow">StudioZIO software</p>
           <h1>StudioZIO Maximizer</h1>
-          <p class="lede">${escapeHtml(product.description)}</p>
+          <p class="lede">Drive it. The ceiling does the rest.</p>
+          <p>${escapeHtml(product.description)}</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
