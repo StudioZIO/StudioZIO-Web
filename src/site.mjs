@@ -2011,7 +2011,7 @@ export function renderPress() {
           <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
           <div><dt>Architecture</dt><dd>${architectureSentence()}</dd></div>
-          <div><dt>Pro Tools</dt><dd>Both plug-ins include AAX builds that are validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
+          <div><dt>Pro Tools</dt><dd>Every product ships an AAX build, validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
         </dl>
       </div>
     </section>
