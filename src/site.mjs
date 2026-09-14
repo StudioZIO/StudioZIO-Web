@@ -759,7 +759,7 @@ function hearItFirst() {
       <div class="shell">
         <div class="section-head">
           <p class="eyebrow">Hear it first</p>
-          <h2 id="listen-title">Both plug-ins, dry and processed</h2>
+          <h2 id="listen-title">Dry and processed, side by side</h2>
           <p class="lede">Real renders from the plug-ins, switched instantly so the playhead never moves. Both takes in each pair are matched to −12.0 LUFS integrated with peaks at or below −1 dBTP, because at different levels the louder one always wins and the comparison tells you nothing.</p>
         </div>
         <div class="card-grid card-grid--2">${abCard('mastering-suite')}${abCard(
@@ -882,7 +882,7 @@ export function renderHome() {
   return shell({
     title: 'StudioZIO — Audio Plugins Built on Visible Signal Flow',
     description:
-      'StudioZIO Mastering Suite and StudioZIO Tempo Delay for macOS in AU, VST3, AAX and Standalone, plus the upcoming StudioZIO MixRack.',
+      'StudioZIO makes free macOS audio plug-ins in AU, VST3, AAX and Standalone, signed and notarized, with no account and no registration.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
@@ -893,7 +893,7 @@ export function renderHome() {
           <div class="rise">
             <p class="eyebrow">Plug-ins for macOS</p>
             <h1>Tools that behave like <span class="accent">hardware you trust.</span></h1>
-            <p class="lede">Two available instruments and one in development, in one interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
+            <p class="lede">Every plug-in speaks the same interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
               <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Tempo Delay</a>
@@ -909,7 +909,7 @@ export function renderHome() {
         <div class="section-head">
           <p class="eyebrow">Catalog</p>
           <h2 id="catalog-title">The instruments</h2>
-          <p class="lede">Mastering Suite and Tempo Delay are available now as signed macOS installers. StudioZIO MixRack is coming soon.</p>
+          <p class="lede">Each one ships as a signed, notarized macOS installer with no account and no registration. The cards say what is available now and what is still coming.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
@@ -931,7 +931,7 @@ export function renderHome() {
 export function renderProducts() {
   return shell({
     title: 'Audio plugins for macOS — StudioZIO Products',
-    description: 'Explore StudioZIO Mastering Suite and Tempo Delay for macOS, compare formats and availability, and learn about the upcoming StudioZIO MixRack.',
+    description: 'Every StudioZIO plug-in for macOS in one catalogue: formats, Mac compatibility, release state, and a signed, notarized installer for each one.',
     canonical: `${HUB_ORIGIN}/products/`,
     current: 'products',
     jsonLd: productsJsonLd(),
@@ -941,7 +941,7 @@ export function renderProducts() {
         <div class="rise">
           <p class="eyebrow">StudioZIO software</p>
           <h1>Audio plugins for macOS</h1>
-          <p class="lede">Mastering Suite and Tempo Delay are available now. Explore each product's formats and Mac compatibility, or follow the upcoming StudioZIO MixRack.</p>
+          <p class="lede">Each product's formats, Mac compatibility and release state. Available now or still coming, the card says which.</p>
         </div>
       </div>
     </section>
@@ -950,10 +950,10 @@ export function renderProducts() {
         <div class="section-head">
           <p class="eyebrow">Products</p>
           <h2 id="catalog-title">Choose your instrument</h2>
-          <p class="lede">Open a product site for its installer, documentation and release details. StudioZIO MixRack releases on 29 September 2026.</p>
+          <p class="lede">Open a product for its installer, documentation and release details.</p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
-        <p class="mt-lg">Hear Mastering Suite and Tempo Delay on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
+        <p class="mt-lg">Hear the plug-ins on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
       </div>
     </section>`
   });
@@ -1182,7 +1182,7 @@ export function renderContact() {
   return shell({
     title: 'Contact and support — StudioZIO',
     description:
-      'Reach the people who build StudioZIO Mastering Suite and Tempo Delay: bug reports, host compatibility and setup questions.',
+      'Reach the person who writes the code behind the StudioZIO plug-ins: bug reports, host compatibility and setup questions, answered directly.',
     canonical: `${HUB_ORIGIN}/contact/`,
     current: 'contact',
     scripts: '<script src="/assets/contact.js" defer></script>',
@@ -1878,7 +1878,7 @@ export function renderPress() {
   return shell({
     title: 'Press kit and brand assets — StudioZIO',
     description:
-      'Quotable descriptions, product facts, logo and interface images for StudioZIO Mastering Suite and Tempo Delay. Free to use in reviews and articles.',
+      'Quotable descriptions, product facts, logo and interface images for the StudioZIO plug-ins. Free to use in reviews, roundups and articles.',
     canonical: `${HUB_ORIGIN}/press/`,
     current: 'press',
     jsonLd: pressJsonLd(),
