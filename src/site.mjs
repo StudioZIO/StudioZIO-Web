@@ -920,11 +920,6 @@ export function renderHome() {
             <p class="eyebrow">Plug-ins for macOS</p>
             <h1>Tools that behave like <span class="accent">hardware you trust.</span></h1>
             <p class="lede">Every plug-in speaks the same interface language. Everything you touch moves, meters and reports the value it is actually applying.</p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="${escapeHtml(MASTERING_SUITE_WEBSITE)}">Mastering Suite</a>
-              <a class="btn" href="${escapeHtml(TEMPO_DELAY_WEBSITE)}">Tempo Delay</a>
-              <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized builds</span>
-            </div>
           </div>
         </div>
       </div>
