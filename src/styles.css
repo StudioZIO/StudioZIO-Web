@@ -769,6 +769,29 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   78%      { transform: scaleX(0.91); }
 }
 
+/* Gain reduction is one line rather than a stereo pair, and it grows from the
+   right. The plug-in's own GR meter hangs down from zero instead of rising
+   from silence, so a bar filling left to right would read as level -- the
+   opposite of what this one reports. Its excursion is smaller than a level
+   meter's for the same reason. */
+.meters--gr .meters-row i {
+  transform-origin: right center;
+  animation: gr-ride 3.2s ease-in-out infinite;
+}
+@keyframes gr-ride {
+  0%, 100% { transform: scaleX(0.10); }
+  26%      { transform: scaleX(0.52); }
+  48%      { transform: scaleX(0.28); }
+  72%      { transform: scaleX(0.64); }
+}
+
+/* Three stages is the smallest rail on the site, and without its own block it
+   inherited no --rail-cycle at all, so the light that walks the signal path
+   simply never moved on this card. */
+.rail--3 { --rail-cycle: 1.8s; }
+.rail--3 .st:nth-child(1) { animation-delay: 0s; }
+.rail--3 .st:nth-child(2) { animation-delay: 0.3s; }
+.rail--3 .st:nth-child(3) { animation-delay: 0.6s; }
 .rail--4 { --rail-cycle: 2.4s; }
 .rail--4 .st:nth-child(1) { animation-delay: 0s; }
 .rail--4 .st:nth-child(2) { animation-delay: 0.3s; }
@@ -1374,6 +1397,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
      band at its learned position, nothing moving. */
   .rail .st, .rack .slot { border-top-color: color-mix(in oklab, var(--primary) 45%, transparent); }
   .meters-row i { transform: scaleX(0.7); }
+  .meters--gr .meters-row i { transform: scaleX(0.35); }
   /* The oversampling figure is driven by the reader, not by a timer, so it
      keeps working here; only the easing between states goes. */
   .osfig-lane, .osfig-stage, .osfig-pick,

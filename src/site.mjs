@@ -576,7 +576,7 @@ const maximizerJsonLd = () => {
 function maximizerMock() {
   const stages = [
     ['Input Gain', '0.0 dB'],
-    ['Ceiling', '&minus;0.3 dBTP'],
+    ['Ceiling', '-0.3 dBTP'],
     ['Engaged', 'On']
   ];
   return `<div class="mock" aria-hidden="true">
@@ -594,9 +594,9 @@ function maximizerMock() {
           <span class="meters-head"><span>Output</span><span>dBTP</span></span>
           <span class="meters-row"><i></i><i></i></span>
         </div>
-        <div class="meters">
+        <div class="meters meters--gr">
           <span class="meters-head"><span>Gain reduction</span><span>dB</span></span>
-          <span class="meters-row"><i></i><i></i></span>
+          <span class="meters-row"><i></i></span>
         </div>
       </div>
     </div>`;
