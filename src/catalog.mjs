@@ -144,6 +144,30 @@ export const products = Object.freeze([
     description:
       'Adaptive limiting held to a strict final true-peak ceiling: set Input Gain and Ceiling, and read the cost on the meters.',
     detailsUrl: '/products/maximizer/'
+  }),
+  Object.freeze({
+    slug: 'compressor',
+    name: 'StudioZIO Compressor',
+    shortName: 'Compressor',
+    version: '1.0.0',
+    platform: 'macOS',
+    architecture: 'Universal — Apple Silicon and Intel',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
+    filename: 'StudioZIO-Compressor-1.0.0.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/compressor-v1.0.0/StudioZIO-Compressor-1.0.0.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/compressor-v1.0.0',
+    sha256:
+      '49db1dddf2a86f115bfe35d76e3a49435a8a31c607c93f536e8b10838dea7ab5',
+    signing: 'Developer ID signed',
+    notarization: 'Apple notarized',
+    price: 'Free',
+    availability: 'Available now',
+    description:
+      'Two compression modes behind one control: Adaptive for fast transparent work, Glue for slower cohesion, with the reduction on its own meter.',
+    detailsUrl: '/products/compressor/'
   })
 ]);
 

@@ -20,6 +20,7 @@ import {
   renderProducts,
   renderProductInflator,
   renderProductMaximizer,
+  renderProductCompressor,
   renderSearch,
   PRESS_KIT_FILE,
   STYLESHEET_FILE,
@@ -56,6 +57,7 @@ const routes = [
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
   { file: 'products/inflator/index.html', url: '/products/inflator/', render: renderProductInflator, indexable: true },
   { file: 'products/maximizer/index.html', url: '/products/maximizer/', render: renderProductMaximizer, indexable: true },
+  { file: 'products/compressor/index.html', url: '/products/compressor/', render: renderProductCompressor, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: 'notes/index.html', url: '/notes/', render: renderNotes, indexable: true },
   /* Derived from notes.mjs rather than written out here. Adding a note used

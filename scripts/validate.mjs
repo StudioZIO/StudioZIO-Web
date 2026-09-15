@@ -27,6 +27,7 @@ import {
   renderProducts,
   renderProductInflator,
   renderProductMaximizer,
+  renderProductCompressor,
   renderSearch,
   HUB_ORIGIN,
 } from '../src/site.mjs';
@@ -56,8 +57,8 @@ function isSemanticPatch(version) {
 }
 
 export function validateSource() {
-  if (products.length !== 5) throw new Error('Unexpected public product count');
-  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack', 'inflator', 'maximizer'];
+  if (products.length !== 6) throw new Error('Unexpected public product count');
+  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack', 'inflator', 'maximizer', 'compressor'];
   if (products.some((product, index) => product.slug !== expectedOrder[index])) {
     throw new Error('Public product order drift');
   }
@@ -208,6 +209,41 @@ export function validateSource() {
   if (!/^[a-f0-9]{64}$/i.test(maximizer.sha256)) {
     throw new Error('Invalid checksum format for Maximizer');
   }
+
+  /* Third hub-native product, asserted on its own for the same reason: the
+     price, the release tag and the artifact name are decisions about this
+     product, and a loop over the array would let a wrong one pass by looking
+     like its neighbour. */
+  const compressor = getProduct('compressor');
+  if (
+    compressor.name !== 'StudioZIO Compressor' ||
+    compressor.price !== 'Free' ||
+    compressor.availability !== 'Available now' ||
+    !isSemanticPatch(compressor.version) ||
+    compressor.platform !== 'macOS' ||
+    compressor.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
+    compressor.detailsUrl !== '/products/compressor/' ||
+    compressor.externalDetails
+  ) {
+    throw new Error('Compressor public metadata drift');
+  }
+  if (compressor.filename !== `StudioZIO-Compressor-${compressor.version}.pkg`) {
+    throw new Error('Compressor filename drift');
+  }
+  if (!compressor.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('Compressor download URL repository drift');
+  }
+  if (!compressor.downloadUrl.endsWith(`/${compressor.filename}`)) {
+    throw new Error('Compressor download URL filename drift');
+  }
+  const compressorDownloadTag = compressor.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const compressorReleaseTag = compressor.releaseUrl.split('/releases/tag/')[1];
+  if (!compressorDownloadTag || compressorDownloadTag !== compressorReleaseTag) {
+    throw new Error('Compressor release tag mismatch between download and release URLs');
+  }
+  if (!/^[a-f0-9]{64}$/i.test(compressor.sha256)) {
+    throw new Error('Invalid checksum format for Compressor');
+  }
   const home = renderHome();
   const catalog = renderProducts();
   const inflatorPage = renderProductInflator();
@@ -233,8 +269,9 @@ export function validateSource() {
     communityRoadmap
   ];
   const maximizerPage = renderProductMaximizer();
-  const pages = [home, catalog, inflatorPage, maximizerPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
-  const indexablePages = [home, catalog, inflatorPage, maximizerPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
+  const compressorPage = renderProductCompressor();
+  const pages = [home, catalog, inflatorPage, maximizerPage, compressorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
+  const indexablePages = [home, catalog, inflatorPage, maximizerPage, compressorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -699,7 +736,7 @@ export function validateSource() {
   // The two takes in a pair have to be the same passage at the same length.
   // If one is a different render the switch stops being a comparison, and
   // nothing about the page would look wrong while it happened.
-  for (const [dry, wet] of [['master-dry', 'master-wet'], ['delay-dry', 'delay-wet'], ['maximizer-dry', 'maximizer-wet']]) {
+  for (const [dry, wet] of [['master-dry', 'master-wet'], ['delay-dry', 'delay-wet'], ['maximizer-dry', 'maximizer-wet'], ['compressor-dry', 'compressor-wet']]) {
     const drift = Math.abs(mediaSeconds(dry) - mediaSeconds(wet));
     if (drift > 0.05) {
       throw new Error(

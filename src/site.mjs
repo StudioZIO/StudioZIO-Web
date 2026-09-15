@@ -610,12 +610,69 @@ function maximizerMock() {
     </div>`;
 }
 
+const compressorJsonLd = () => {
+  const product = getProduct('compressor');
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${HUB_ORIGIN}/products/compressor/#software`,
+      name: product.name,
+      url: `${HUB_ORIGIN}${product.detailsUrl}`,
+      description: product.description,
+      operatingSystem: product.platform,
+      applicationCategory: 'MultimediaApplication',
+      softwareVersion: product.version,
+      publisher: { '@id': ORGANIZATION_ID }
+    }
+  ]);
+};
+
+/* Three stages again, because three is the whole public surface: the mode, the
+   one control that mode interprets, and the bypass. The values are the state in
+   the capture on the product page and in the A/B below it -- Glue, rather than
+   a default this file cannot check -- so the card, the screenshot and the
+   processed take all describe the same thing.
+
+   Plain hyphens in the values on purpose: signalRail escapes what it is given,
+   so an &minus; entity here reaches the page as six literal characters. That
+   shipped once on the Maximizer card. */
+function compressorMock() {
+  const stages = [
+    ['Mode', 'Glue'],
+    ['Compression', '0.56'],
+    ['Engaged', 'On']
+  ];
+  return `<div class="mock" aria-hidden="true">
+      <div class="mock-head">
+        <span class="mock-title"><span class="dot"></span>Compressor</span>
+        <span class="chip-row">${formatChip('compressor')}${chip('Notarized', 'flag')}</span>
+      </div>
+      <div class="mock-body">
+        ${signalRail(stages)}
+        <div class="meters">
+          <span class="meters-head"><span>Input</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters">
+          <span class="meters-head"><span>Output</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters meters--gr">
+          <span class="meters-head"><span>Gain reduction</span><span>dB</span></span>
+          <span class="meters-row"><i></i></span>
+        </div>
+      </div>
+    </div>`;
+}
+
 const MOCKS = {
   'mastering-suite': masteringSuiteMock,
   'tempo-delay': tempoDelayMock,
   mixrack: mixRackMock,
   inflator: inflatorMock,
-  maximizer: maximizerMock
+  maximizer: maximizerMock,
+  compressor: compressorMock
 };
 
 /* ---------- A/B listening -----------------------------------------------
@@ -684,6 +741,33 @@ const AB_DEMOS = Object.freeze({
        the capture is the only sight of the plug-in. */
     note:
       'One drum passage, rendered twice through Maximizer 1.0.2 at 44.1 kHz: untouched, and at 6.1 dB of gain reduction. Judge weight, transient and what the ceiling costs.'
+  }),
+  /* Matched lower than any other pair on the site, and the reason is worth
+     stating rather than hiding behind a rounder number. Glue leaves the hit
+     alone and pulls the body down, so the processed take comes back 5.4 LU
+     quieter than the dry one while its peak has only dropped 2.1 dB -- the
+     crest goes UP, from 14.8 dB to 18.6 dB. Bringing that take to -16 LUFS
+     would need +7.4 dB and put it 1.9 dB over full scale. The ceiling on the
+     pair is therefore set by the processed take, not the raw one: -18.9 LUFS
+     is the most it can carry at -1 dBTP, so both are matched at -20.0 with the
+     margin spent on the encoders instead. Measured on the .opus and .m4a the
+     browser actually plays: -20.00/-20.01 LUFS, peaks -5.3 and -2.0 dBTP.
+
+     The source is two bars at 152 BPM, laid end to end four times. The join is
+     the loop point of the render, not a crossfade -- the step across it is
+     0.005, against a 99.9th-percentile sample step of 0.18 in the same file,
+     so there is nothing there to hear. */
+  compressor: Object.freeze({
+    title: 'Compressor · dry vs compressed',
+    group: 'Compare the dry and compressed renders',
+    processedLabel: 'Compressed',
+    flag: 'Real render · matched −20 LUFS',
+    dry: '/assets/media/compressor-dry',
+    wet: '/assets/media/compressor-wet',
+    /* No shot, for the same reason the Maximizer pair carries none: this card
+       sits directly under the window it would otherwise repeat. */
+    note:
+      'A two-bar drum loop at 152 BPM, laid end to end four times and rendered twice through Compressor 1.0.0 at 44.1 kHz: untouched, and through Glue. Judge how the body sits under the hit.'
   })
 });
 
@@ -1153,6 +1237,127 @@ export function renderProductMaximizer() {
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)} 11.0 (Big Sur) or newer</dd></div>
           <div><dt>Latency</dt><dd>323 samples at 44.1 kHz, 328 at 48 kHz.</dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="support-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Help</p>
+          <h2 id="support-title">Support</h2>
+          <p class="lede">Bug reports and technical questions reach the person who writes the code, through the <a href="/contact/">contact form</a>.</p>
+        </div>
+      </div>
+    </section>`
+  });
+}
+
+export function renderProductCompressor() {
+  const product = getProduct('compressor');
+  return shell({
+    title: 'StudioZIO Compressor — two-mode compression for macOS',
+    description:
+      'StudioZIO Compressor is a two-mode compressor plug-in for macOS, Adaptive and Glue, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
+    canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
+    current: 'products',
+    scripts: AB_SCRIPT,
+    jsonLd: compressorJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">StudioZIO software</p>
+          <h1>StudioZIO Compressor</h1>
+          <p class="lede">Pick the behaviour. Move one slider.</p>
+          <p>${escapeHtml(product.description)}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+            ${chip(product.price)}
+            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="shot-title">
+      <div class="shell">
+        <h2 id="shot-title" class="sr-only">The Compressor window</h2>
+        <img class="product-shot" src="/assets/media/compressor-ui.webp" width="558" height="419"
+          decoding="async" loading="lazy"
+          alt="The StudioZIO Compressor window: the Mode selector set to Glue, a single Compression control, the Engaged switch, and input, output and gain-reduction meters in dBFS and dB.">
+      </div>
+    </section>
+    <section class="section" id="listen" aria-labelledby="listen-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Hear it</p>
+          <h2 id="listen-title">The same loop, twice</h2>
+          <p class="lede">One loop rendered twice and switched instantly, so the playhead never moves. Both takes are matched to &minus;20.0 LUFS integrated with peaks at or below &minus;1 dBTP: at different levels the louder one always wins and the comparison tells you nothing.</p>
+        </div>
+        ${abCard('compressor')}
+      </div>
+    </section>
+    <section class="section" aria-labelledby="modes-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Modes</p>
+          <h2 id="modes-title">Two behaviours</h2>
+          <p class="lede">The mode decides how the stage moves. The Compression control decides how much of that movement you get. Nothing else changes between them.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Adaptive</dt><dd>Fast and transparent, for general-purpose work: it follows the material and stays out of the way.</dd></div>
+          <div><dt>Glue</dt><dd>Slower, with a natural release, for drums, buses and mixes, where cohesion matters more than speed.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="controls-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Surface</p>
+          <h2 id="controls-title">Three controls</h2>
+          <p class="lede">There is no threshold, no ratio, no attack or release to set, and no output trim to put back what the stage took. The mode carries those decisions.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Mode</dt><dd>Adaptive or Glue.</dd></div>
+          <div><dt>Compression</dt><dd>How much of that mode's behaviour is applied.</dd></div>
+          <div><dt>Engaged</dt><dd>Takes the stage out of circuit for comparison.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="metering-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Metering</p>
+          <h2 id="metering-title">Three readings</h2>
+          <p class="lede">The level going in, the level coming out, and the reduction between them, readable while the material plays.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Input</dt><dd>dBFS.</dd></div>
+          <div><dt>Output</dt><dd>dBFS.</dd></div>
+          <div><dt>Gain reduction</dt><dd>dB.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="download-title">
+      <div class="shell">
+        <div class="panel-float download-row">
+          <div>
+            <p class="eyebrow">Official macOS installer</p>
+            <h2 id="download-title">Compressor ${escapeHtml(product.version)}</h2>
+            <p class="lede">Version ${escapeHtml(product.version)} · ${formatList(product.formats)}</p>
+            <div class="chip-row mt-sm">
+              ${chip(product.signing)}${chip(product.notarization, 'flag')}${chip(product.architecture.split(' —')[0])}
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+          </div>
+        </div>
+        <dl class="spec-grid mt-md">
+          <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
+          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
+          <div><dt>Latency</dt><dd>64 samples, in either mode.</dd></div>
           <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
         </dl>
       </div>
