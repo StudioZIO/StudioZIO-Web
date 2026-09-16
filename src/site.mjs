@@ -1083,6 +1083,7 @@ export function renderProductInflator() {
           <p class="eyebrow">Surface</p>
           <h2 id="controls-title">Deliberately simple</h2>
           <p class="lede">Inflator does one job, so its window asks one thing of you at a time.</p>
+          <p class="lede">Inflator is StudioZIO&rsquo;s own design &mdash; not a port or an emulation of another plug-in. One fixed curve rounds peaks off smoothly rather than cutting them, so the sound thickens and gains apparent loudness without the edge a clipper leaves behind.</p>
         </div>
         <dl class="spec-grid">
           <div><dt>Amount</dt><dd>The harmonic enhancement control.</dd></div>
