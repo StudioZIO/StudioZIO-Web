@@ -1003,7 +1003,7 @@ function productCard(product) {
 const claims = [
   {
     title: 'You never have to trust your ears alone',
-    body: 'Momentary, short-term and integrated loudness, loudness range, crest factor, sample peak, true peak and stereo correlation update while you work. No second plugin, no bouncing to check.',
+    body: 'Momentary, short-term and integrated loudness, loudness range, crest factor, sample peak, true peak and stereo correlation update while you work. No second plug-in, no bouncing to check.',
     key: 'Live readouts',
     value: 'LUFS M · S · I · LRA · CREST · TP · CORR'
   },
