@@ -1544,9 +1544,6 @@ export function renderProductEverything() {
               ${chip(product.availability, 'flag')}${chip(product.price)}${chip(product.architecture.split(' —')[0])}
             </div>
           </div>
-          <div class="actions">
-            <a class="btn" href="${escapeHtml(RELEASE_REPOSITORY_URL)}">Releases on GitHub</a>
-          </div>
         </div>
         <dl class="spec-grid mt-lg">
           <div><dt>Requires</dt><dd>macOS 11 or later.</dd></div>
