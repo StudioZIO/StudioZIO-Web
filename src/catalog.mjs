@@ -21,6 +21,34 @@ export const MIXRACK_WEBSITE =
 export const ZIO_WEBSITE = 'https://zio-audio.vercel.app/';
 
 export const products = Object.freeze([
+  /* The bundle. It is a catalogue product like any other, and its page is the
+     one surface that lists the catalogue by name -- which is exactly what a
+     bundle page is for. It carries no downloadUrl yet: the installer is
+     published through the releases repository first, and the hub points at it
+     only once that release exists and its checksum has been read back from the
+     published file. */
+  Object.freeze({
+    slug: 'everything',
+    name: 'StudioZIO Everything',
+    shortName: 'Everything',
+    manufacturer: 'StudioZIO',
+    version: '1.0.0',
+    platform: 'macOS',
+    /* Read from the installer, not decided here: the package declares
+       hostArchitectures x86_64,arm64 and a macOS 11.0 minimum, so it installs
+       on an Intel Mac. Six of the seven plug-ins inside are Universal and run
+       there; Tempo Delay is arm64-only and will not load. The page says so,
+       and says how to skip it, because the installer leaves that choice on by
+       default. */
+    architecture: 'Universal \u2014 Apple Silicon and Intel',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
+    price: 'Free',
+    availability: 'Coming soon',
+    description:
+      'One installer that puts all seven StudioZIO plug-ins on the machine, so there is one download and one checksum instead of seven.',
+    detailsUrl: '/products/everything/'
+  }),
   Object.freeze({
     slug: 'mastering-suite',
     name: 'StudioZIO Mastering Suite',
@@ -59,13 +87,13 @@ export const products = Object.freeze([
     compactFormats: 'AU / VST3 / AAX / Standalone',
     price: 'Free',
     version: '4.0.1',
-    filename: 'StudioZIOTempoDelay-v4.0.1-macOS-arm64-AAX.pkg',
+    filename: 'StudioZIOTempoDelay-v4.1.0-macOS-arm64.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.0.1-aax-2026.09.10/StudioZIOTempoDelay-v4.0.1-macOS-arm64-AAX.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.1.0-clean-packaging-2026.09.16/StudioZIOTempoDelay-v4.1.0-macOS-arm64.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.0.1-aax-2026.09.10',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.1.0-clean-packaging-2026.09.16',
     sha256:
-      '4e919c509cca196e178a0a991d24c02eb7e1ba81c5890e0f4fce16aba94ec055',
+      'fa16f0c9f04f5f56e446ae06074a0f3b0a8e193fa21089e0bf92c486d197910d',
     availability: 'Available now',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
@@ -132,11 +160,11 @@ export const products = Object.freeze([
     compactFormats: 'AU / VST3 / AAX / Standalone',
     filename: 'StudioZIO-Maximizer-1.0.2.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/maximizer-v1.0.2/StudioZIO-Maximizer-1.0.2.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/maximizer-v1.0.2-clean-packaging-2026.09.16/StudioZIO-Maximizer-1.0.2.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/maximizer-v1.0.2',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/maximizer-v1.0.2-clean-packaging-2026.09.16',
     sha256:
-      '673da7c759b0cac3741ee816920a5ff2c199d01b975a1c6ffe7a48f65bcb3db6',
+      '69510b08a118aece2f8e33feb0d10d13b45458864d5696c49d897876860eedfe',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
@@ -156,11 +184,11 @@ export const products = Object.freeze([
     compactFormats: 'AU / VST3 / AAX / Standalone',
     filename: 'StudioZIO-Compressor-1.0.0.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/compressor-v1.0.0/StudioZIO-Compressor-1.0.0.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/compressor-v1.0.0-clean-packaging-2026.09.16/StudioZIO-Compressor-1.0.0.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/compressor-v1.0.0',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/compressor-v1.0.0-clean-packaging-2026.09.16',
     sha256:
-      '49db1dddf2a86f115bfe35d76e3a49435a8a31c607c93f536e8b10838dea7ab5',
+      '96c9d4cccefc918ffef47b094464da901be742778b4fc6e97145ddcfa11d37bc',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
@@ -168,6 +196,30 @@ export const products = Object.freeze([
     description:
       'Two compression modes behind one control: Adaptive for fast transparent work, Glue for slower cohesion, with the reduction on its own meter.',
     detailsUrl: '/products/compressor/'
+  }),
+  Object.freeze({
+    slug: 'de-esser',
+    name: 'StudioZIO De-Esser',
+    shortName: 'De-Esser',
+    version: '1.0.0',
+    platform: 'macOS',
+    architecture: 'Universal \u2014 Apple Silicon and Intel',
+    formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+    compactFormats: 'AU / VST3 / AAX / Standalone',
+    filename: 'StudioZIO-De-Esser-1.0.0.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/deesser-v1.0.0/StudioZIO-De-Esser-1.0.0.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/deesser-v1.0.0',
+    sha256:
+      '698a5c45dc530b97bd4fc3c9f6e401bf4cbb414a435ff1d4235f6afa66e661f2',
+    signing: 'Developer ID signed',
+    notarization: 'Apple notarized',
+    price: 'Free',
+    availability: 'Available now',
+    description:
+      'Two de-essing modes behind one control: Natural for a dynamic bell that targets the sibilance, Control for split-band reduction above 5 kHz, with the gain reduction on its own meter.',
+    detailsUrl: '/products/de-esser/'
   })
 ]);
 

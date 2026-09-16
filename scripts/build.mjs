@@ -21,6 +21,8 @@ import {
   renderProductInflator,
   renderProductMaximizer,
   renderProductCompressor,
+  renderProductDeEsser,
+  renderProductEverything,
   renderSearch,
   PRESS_KIT_FILE,
   STYLESHEET_FILE,
@@ -55,9 +57,11 @@ await rm(outputRoot, { recursive: true, force: true });
 const routes = [
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
+  { file: 'products/everything/index.html', url: '/products/everything/', render: renderProductEverything, indexable: true },
   { file: 'products/inflator/index.html', url: '/products/inflator/', render: renderProductInflator, indexable: true },
   { file: 'products/maximizer/index.html', url: '/products/maximizer/', render: renderProductMaximizer, indexable: true },
   { file: 'products/compressor/index.html', url: '/products/compressor/', render: renderProductCompressor, indexable: true },
+  { file: 'products/de-esser/index.html', url: '/products/de-esser/', render: renderProductDeEsser, indexable: true },
   { file: 'contact/index.html', url: '/contact/', render: renderContact, indexable: true },
   { file: 'notes/index.html', url: '/notes/', render: renderNotes, indexable: true },
   /* Derived from notes.mjs rather than written out here. Adding a note used
@@ -121,6 +125,10 @@ await cp(resolve(projectRoot, 'src/events.js'), resolve(outputRoot, 'assets/even
 // The reorderable rack on the product cards. Same-origin for the same CSP
 // reason; without it the rack is still the right eight modules in order.
 await cp(resolve(projectRoot, 'src/rack.js'), resolve(outputRoot, 'assets/rack.js'));
+// The Everything page's two count figures. Same-origin for the same CSP
+// reason as the rest; the figure already carries its final numbers, so the
+// page is correct with or without it.
+await cp(resolve(projectRoot, 'src/counter.js'), resolve(outputRoot, 'assets/counter.js'));
 // The search page's matcher. Same-origin for the same CSP reason; it is the
 // only script on the site that reads a file rather than sending one.
 await cp(resolve(projectRoot, 'src/search.js'), resolve(outputRoot, 'assets/search.js'));

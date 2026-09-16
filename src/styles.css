@@ -1840,3 +1840,35 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .video-play-icon { width: 1.5rem; height: 1.5rem; }
   .video-play-icon::after { left: 0.56rem; top: 0.42rem; border-width: 0.32rem 0 0.32rem 0.52rem; }
 }
+
+/* ---- Everything: the two count figures ---------------------------------
+   Two rows, each "was N, is now M". The markup carries the final numbers,
+   so the figure is already correct before counter.js runs and stays correct
+   for a reader who asked for reduced motion. */
+.count-figure { display: flex; flex-direction: column; gap: 1.5rem; padding: 1.75rem; }
+.count-row { display: grid; grid-template-columns: auto auto auto; justify-content: start; align-items: center; gap: 1.75rem; }
+.count-cell { display: flex; flex-direction: column; gap: 0.35rem; }
+.count-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.75rem, 9vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+.count-cell--to .count-num { color: var(--primary-text); }
+.count-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.count-arrow { color: var(--muted-foreground); font-size: 1.5rem; line-height: 1; }
+.count-note { margin: 0; color: var(--muted-foreground); font-size: 0.9375rem; }
+@media (max-width: 560px) {
+  .count-row { gap: 1rem; }
+  .count-num { font-size: 2.25rem; }
+}

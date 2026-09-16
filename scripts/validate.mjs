@@ -28,6 +28,8 @@ import {
   renderProductInflator,
   renderProductMaximizer,
   renderProductCompressor,
+  renderProductDeEsser,
+  renderProductEverything,
   renderSearch,
   HUB_ORIGIN,
 } from '../src/site.mjs';
@@ -57,8 +59,8 @@ function isSemanticPatch(version) {
 }
 
 export function validateSource() {
-  if (products.length !== 6) throw new Error('Unexpected public product count');
-  const expectedOrder = ['mastering-suite', 'tempo-delay', 'mixrack', 'inflator', 'maximizer', 'compressor'];
+  if (products.length !== 8) throw new Error('Unexpected public product count');
+  const expectedOrder = ['everything', 'mastering-suite', 'tempo-delay', 'mixrack', 'inflator', 'maximizer', 'compressor', 'de-esser'];
   if (products.some((product, index) => product.slug !== expectedOrder[index])) {
     throw new Error('Public product order drift');
   }
@@ -99,19 +101,39 @@ export function validateSource() {
   if (!/^[a-f0-9]{64}$/i.test(tempoDelay.sha256)) {
     throw new Error('Invalid checksum format for Tempo Delay');
   }
+  /* The filename, the download URL and the release URL used to be derived
+     here from tempoDelay.version, on the assumption that the version a
+     plug-in reports and the number in its release tag are always the same one.
+     The clean-packaging release of 2026-09-16 ended that assumption: the
+     plug-ins report 4.0.1, which is the version this catalogue publishes,
+     while the tag and the installer filename carry 4.1.0 -- the number the
+     four-component package topology uses. Deriving either from the other now
+     builds a URL that 404s, and a build gate that constructs the wrong answer
+     is worse than one that checks the given answer. So Tempo Delay is checked
+     the way the hub-native products are: the shape, and whether the catalogue
+     agrees with itself. */
   if (
     tempoDelay.name !== 'StudioZIO Tempo Delay' ||
+    tempoDelay.price !== 'Free' ||
     tempoDelay.availability !== 'Available now' ||
     !isSemanticPatch(tempoDelay.version) ||
     tempoDelay.platform !== 'macOS' ||
     tempoDelay.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
     tempoDelay.detailsUrl !== TEMPO_DELAY_WEBSITE ||
-    TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/' ||
-    tempoDelay.filename !== `StudioZIOTempoDelay-v${tempoDelay.version}-macOS-arm64-AAX.pkg` ||
-    tempoDelay.downloadUrl !== `${RELEASE_REPOSITORY_URL}/releases/download/tempo-delay-v${tempoDelay.version}-aax-2026.09.10/${tempoDelay.filename}` ||
-    tempoDelay.releaseUrl !== `${RELEASE_REPOSITORY_URL}/releases/tag/tempo-delay-v${tempoDelay.version}-aax-2026.09.10`
+    TEMPO_DELAY_WEBSITE !== 'https://www.tempodelay.tech/'
   ) {
     throw new Error('Tempo Delay public metadata drift');
+  }
+  if (!tempoDelay.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('Tempo Delay download URL repository drift');
+  }
+  if (!tempoDelay.downloadUrl.endsWith(`/${tempoDelay.filename}`)) {
+    throw new Error('Tempo Delay download URL filename drift');
+  }
+  const tempoDelayDownloadTag = tempoDelay.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const tempoDelayReleaseTag = tempoDelay.releaseUrl.split('/releases/tag/')[1];
+  if (!tempoDelayDownloadTag || tempoDelayDownloadTag !== tempoDelayReleaseTag) {
+    throw new Error('Tempo Delay release tag mismatch between download and release URLs');
   }
   /* The hub states versions and availability; it does not host downloads. A
      download URL, release URL or release date here would be a second copy of
@@ -244,6 +266,64 @@ export function validateSource() {
   if (!/^[a-f0-9]{64}$/i.test(compressor.sha256)) {
     throw new Error('Invalid checksum format for Compressor');
   }
+
+  /* The fourth hub-native product. Same reasoning as the three above: its
+     price, its release tag and its artifact name are decisions about De-Esser,
+     not inherited from whichever entry sits next to it. */
+  const deEsser = getProduct('de-esser');
+  if (
+    deEsser.name !== 'StudioZIO De-Esser' ||
+    deEsser.price !== 'Free' ||
+    deEsser.availability !== 'Available now' ||
+    !isSemanticPatch(deEsser.version) ||
+    deEsser.platform !== 'macOS' ||
+    deEsser.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
+    deEsser.detailsUrl !== '/products/de-esser/' ||
+    deEsser.externalDetails
+  ) {
+    throw new Error('De-Esser public metadata drift');
+  }
+  if (!deEsser.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('De-Esser download URL repository drift');
+  }
+  if (!deEsser.downloadUrl.endsWith(`/${deEsser.filename}`)) {
+    throw new Error('De-Esser download URL filename drift');
+  }
+  const deEsserDownloadTag = deEsser.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const deEsserReleaseTag = deEsser.releaseUrl.split('/releases/tag/')[1];
+  if (!deEsserDownloadTag || deEsserDownloadTag !== deEsserReleaseTag) {
+    throw new Error('De-Esser release tag mismatch between download and release URLs');
+  }
+  if (!/^[a-f0-9]{64}$/i.test(deEsser.sha256)) {
+    throw new Error('Invalid checksum format for De-Esser');
+  }
+
+  /* The bundle, and the only entry in the catalogue that is asserted for what
+     it must NOT carry. StudioZIO Everything is published on the releases
+     repository already; the hub deliberately does not point at it yet. A
+     downloadUrl or a checksum appearing here would put the hub ahead of that
+     decision silently, on a page that is otherwise ready to ship -- so the
+     absence is a build gate rather than something to remember. Remove these
+     four lines on the day the bundle goes live, and add the download checks
+     the other products carry. */
+  const everything = getProduct('everything');
+  if (
+    everything.name !== 'StudioZIO Everything' ||
+    everything.price !== 'Free' ||
+    everything.availability !== 'Coming soon' ||
+    !isSemanticPatch(everything.version) ||
+    everything.platform !== 'macOS' ||
+    everything.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
+    everything.detailsUrl !== '/products/everything/' ||
+    everything.externalDetails
+  ) {
+    throw new Error('Everything public metadata drift');
+  }
+  for (const field of ['downloadUrl', 'releaseUrl', 'sha256', 'filename']) {
+    if (everything[field] !== undefined) {
+      throw new Error(`Everything is still Coming soon on the hub; remove ${field} or publish it deliberately`);
+    }
+  }
   const home = renderHome();
   const catalog = renderProducts();
   const inflatorPage = renderProductInflator();
@@ -270,8 +350,10 @@ export function validateSource() {
   ];
   const maximizerPage = renderProductMaximizer();
   const compressorPage = renderProductCompressor();
-  const pages = [home, catalog, inflatorPage, maximizerPage, compressorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
-  const indexablePages = [home, catalog, inflatorPage, maximizerPage, compressorPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
+  const everythingPage = renderProductEverything();
+  const deEsserPage = renderProductDeEsser();
+  const pages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
+  const indexablePages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');

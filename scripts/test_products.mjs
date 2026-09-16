@@ -24,9 +24,11 @@ function verify({ files, hosting }) {
   const expectedUrls = [
     '/',
     '/products/',
+    '/products/everything/',
     '/products/inflator/',
     '/products/maximizer/',
     '/products/compressor/',
+    '/products/de-esser/',
     '/contact/',
     '/notes/',
     ...notes.map(note => `/notes/${note.slug}/`),

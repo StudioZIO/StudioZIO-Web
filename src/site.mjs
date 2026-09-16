@@ -610,6 +610,42 @@ function maximizerMock() {
     </div>`;
 }
 
+const everythingJsonLd = () => {
+  const product = getProduct('everything');
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${HUB_ORIGIN}/products/everything/#software`,
+      name: product.name,
+      url: `${HUB_ORIGIN}${product.detailsUrl}`,
+      description: product.description,
+      operatingSystem: product.platform,
+      applicationCategory: 'MultimediaApplication',
+      softwareVersion: product.version,
+      publisher: { '@id': ORGANIZATION_ID }
+    }
+  ]);
+};
+
+const deEsserJsonLd = () => {
+  const product = getProduct('de-esser');
+  return jsonLdBlock([
+    organizationNode,
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${HUB_ORIGIN}/products/de-esser/#software`,
+      name: product.name,
+      url: `${HUB_ORIGIN}${product.detailsUrl}`,
+      description: product.description,
+      operatingSystem: product.platform,
+      applicationCategory: 'MultimediaApplication',
+      softwareVersion: product.version,
+      publisher: { '@id': ORGANIZATION_ID }
+    }
+  ]);
+};
+
 const compressorJsonLd = () => {
   const product = getProduct('compressor');
   return jsonLdBlock([
@@ -637,6 +673,35 @@ const compressorJsonLd = () => {
    Plain hyphens in the values on purpose: signalRail escapes what it is given,
    so an &minus; entity here reaches the page as six literal characters. That
    shipped once on the Maximizer card. */
+function deEsserMock() {
+  const stages = [
+    ['Mode', 'Control'],
+    ['Amount', '100%'],
+    ['Engaged', 'On']
+  ];
+  return `<div class="mock" aria-hidden="true">
+      <div class="mock-head">
+        <span class="mock-title"><span class="dot"></span>De-Esser</span>
+        <span class="chip-row">${formatChip('de-esser')}${chip('Notarized', 'flag')}</span>
+      </div>
+      <div class="mock-body">
+        ${signalRail(stages)}
+        <div class="meters">
+          <span class="meters-head"><span>Input</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters">
+          <span class="meters-head"><span>Output</span><span>dBFS</span></span>
+          <span class="meters-row"><i></i><i></i></span>
+        </div>
+        <div class="meters meters--gr">
+          <span class="meters-head"><span>Gain reduction</span><span>dB</span></span>
+          <span class="meters-row"><i></i></span>
+        </div>
+      </div>
+    </div>`;
+}
+
 function compressorMock() {
   const stages = [
     ['Mode', 'Glue'],
@@ -672,7 +737,8 @@ const MOCKS = {
   mixrack: mixRackMock,
   inflator: inflatorMock,
   maximizer: maximizerMock,
-  compressor: compressorMock
+  compressor: compressorMock,
+  'de-esser': deEsserMock
 };
 
 /* ---------- A/B listening -----------------------------------------------
@@ -757,6 +823,17 @@ const AB_DEMOS = Object.freeze({
      the loop point of the render, not a crossfade -- the step across it is
      0.005, against a 99.9th-percentile sample step of 0.18 in the same file,
      so there is nothing there to hear. */
+  'de-esser': Object.freeze({
+    title: 'De-Esser \u00b7 dry vs de-essed',
+    group: 'Compare the dry and de-essed renders',
+    processedLabel: 'De-essed',
+    flag: 'Real render \u00b7 matched \u221218 LUFS',
+    dry: '/assets/media/de-esser-dry',
+    wet: '/assets/media/de-esser-wet',
+    /* No shot: this card sits directly under the window it would repeat. */
+    note:
+      'One passage rendered twice through De-Esser 1.0.0 at 44.1 kHz, untouched and in Control mode. Below 2 kHz the two are identical; the reduction is centred on 6-8 kHz. Judge the sibilants, not the level.'
+  }),
   compressor: Object.freeze({
     title: 'Compressor · dry vs compressed',
     group: 'Compare the dry and compressed renders',
@@ -883,6 +960,7 @@ const AB_SCRIPT = '<script src="/assets/ab.js" defer></script>';
 /* The rack is on both catalogue surfaces and nowhere else, so it loads on
    both and nowhere else. */
 const RACK_SCRIPT = '<script src="/assets/rack.js" defer></script>';
+const COUNTER_SCRIPT = '<script src="/assets/counter.js" defer></script>';
 
 /* ---------- cards ------------------------------------------------------- */
 
@@ -1379,6 +1457,217 @@ export function renderProductCompressor() {
    posts through src/contact.js; the CSP allows that single endpoint and
    nothing else, and blocks a native POST entirely, so there is no quiet path
    for a message to leave this page by. */
+
+/* The bundle page. Its contents list is the catalogue rendered through the
+   same card component the catalogue itself uses, filtered to everything but
+   the bundle -- so a product added to catalog.mjs appears here without this
+   function being touched, and the two surfaces can never disagree about what
+   ships. It is also the one page that names the catalogue product by product,
+   which is what a bundle page is: the catalogue describing itself. */
+export function renderProductEverything() {
+  const product = getProduct('everything');
+  const contents = products.filter((entry) => entry.slug !== 'everything');
+  return shell({
+    title: 'StudioZIO Everything — every plug-in in one installer',
+    description:
+      'StudioZIO Everything puts all seven StudioZIO plug-ins on macOS from a single signed and notarized installer, in Audio Unit, VST3, AAX and Standalone.',
+    canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
+    current: 'products',
+    scripts: COUNTER_SCRIPT,
+    jsonLd: everythingJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">StudioZIO software</p>
+          <h1>StudioZIO Everything</h1>
+          <p class="lede">Seven plug-ins. One installer.</p>
+          <div class="hero-actions">
+            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>${escapeHtml(product.availability)}</span>
+            ${chip(product.price)}
+            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="count-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Why one package</p>
+          <h2 id="count-title">Seven downloads become one</h2>
+          <p class="lede">Every plug-in here is already free on its own. What the bundle changes is the number of steps between you and a working install.</p>
+        </div>
+        <div class="panel count-figure">
+          <div class="count-row">
+            <span class="count-cell">
+              <span class="count-num" data-count-from="0" data-count-to="7">7</span>
+              <span class="count-label">separate downloads</span>
+            </span>
+            <span class="count-arrow" aria-hidden="true">&rarr;</span>
+            <span class="count-cell count-cell--to">
+              <span class="count-num">1</span>
+              <span class="count-label">installer</span>
+            </span>
+          </div>
+          <div class="count-row">
+            <span class="count-cell">
+              <span class="count-num" data-count-from="0" data-count-to="7">7</span>
+              <span class="count-label">checksums to verify</span>
+            </span>
+            <span class="count-arrow" aria-hidden="true">&rarr;</span>
+            <span class="count-cell count-cell--to">
+              <span class="count-num">1</span>
+              <span class="count-label">checksum</span>
+            </span>
+          </div>
+          <p class="count-note">${escapeHtml(FREE_PROMISE)}</p>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="included-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Contents</p>
+          <h2 id="included-title">What&rsquo;s included in StudioZIO Everything</h2>
+          <p class="lede">Every one of these installs from the single package, and every one of them is also a free download on its own. Open any of them for its controls, its documentation and its own installer.</p>
+        </div>
+        <div class="card-grid">${contents.map(productCard).join('')}</div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="install-title">
+      <div class="shell">
+        <div class="panel-float download-row">
+          <div>
+            <p class="eyebrow">Official macOS installer</p>
+            <h2 id="install-title">Everything ${escapeHtml(product.version)}</h2>
+            <p class="lede">${formatList(product.formats)}, in one package.</p>
+            <div class="chip-row mt-sm">
+              ${chip(product.availability, 'flag')}${chip(product.price)}${chip(product.architecture.split(' —')[0])}
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn" href="${escapeHtml(RELEASE_REPOSITORY_URL)}">Releases on GitHub</a>
+          </div>
+        </div>
+        <dl class="spec-grid mt-lg">
+          <div><dt>Requires</dt><dd>macOS 11 or later.</dd></div>
+          <div><dt>Architecture</dt><dd>Universal. Six of the seven run on Apple Silicon and on Intel.</dd></div>
+          <div><dt>On an Intel Mac</dt><dd>StudioZIO Tempo Delay is Apple Silicon only and will not load there. The installer lets you clear its box; everything else installs and runs.</dd></div>
+          <div><dt>Checksum</dt><dd>Published with the release, and on each product page.</dd></div>
+        </dl>
+      </div>
+    </section>`
+  });
+}
+
+export function renderProductDeEsser() {
+  const product = getProduct('de-esser');
+  return shell({
+    title: 'StudioZIO De-Esser — sibilance control for macOS',
+    description:
+      'StudioZIO De-Esser is a two-mode de-esser plug-in for macOS, Natural and Control, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
+    canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
+    current: 'products',
+    scripts: AB_SCRIPT,
+    jsonLd: deEsserJsonLd(),
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">StudioZIO software</p>
+          <h1>StudioZIO De-Esser</h1>
+          <p class="lede">A dynamic bell, or a split band.</p>
+          <p>${escapeHtml(product.description)}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+            ${chip(product.price)}
+            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="shot-title">
+      <div class="shell">
+        <h2 id="shot-title" class="sr-only">The De-Esser window</h2>
+        <img class="product-shot" src="/assets/media/de-esser-ui.webp" width="500" height="380"
+          decoding="async" loading="lazy"
+          alt="The StudioZIO De-Esser window: the Mode selector offering Natural and Control, a single Amount slider, the Engaged switch, and input, output and gain-reduction meters in dBFS and dB.">
+      </div>
+    </section>
+    <section class="section" id="listen" aria-labelledby="listen-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Hear it</p>
+          <h2 id="listen-title">The same passage, twice</h2>
+          <p class="lede">One passage rendered twice and switched instantly, so the playhead never moves. Both takes are matched to &minus;18.0 LUFS integrated: at different levels the louder one always wins and the comparison tells you nothing. The peaks are left alone, because the difference between them is the work.</p>
+        </div>
+        ${abCard('de-esser')}
+      </div>
+    </section>
+    <section class="section" aria-labelledby="modes-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Modes</p>
+          <h2 id="modes-title">Two ways to take the edge off</h2>
+          <p class="lede">Both work on the sibilance and leave the body alone. They differ in how narrowly they reach for it.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Natural</dt><dd>A dynamic bell around 7 kHz, narrow enough to leave the rest of the top end where it is.</dd></div>
+          <div><dt>Control</dt><dd>A split band above 5 kHz, held down as a whole for firmer, steadier reduction.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="controls-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Surface</p>
+          <h2 id="controls-title">Deliberately simple</h2>
+          <p class="lede">De-Esser does one job, so its window asks one thing of you at a time.</p>
+        </div>
+        <dl class="spec-grid">
+          <div><dt>Mode</dt><dd>Natural or Control.</dd></div>
+          <div><dt>Amount</dt><dd>How much of the chosen mode you get.</dd></div>
+          <div><dt>Engaged</dt><dd>Crossfaded bypass, switched without a click.</dd></div>
+          <div><dt>Metering</dt><dd>Input, output and gain reduction, live.</dd></div>
+          <div><dt>Latency</dt><dd>0 samples, in either mode.</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="install-title">
+      <div class="shell">
+        <div class="panel-float download-row">
+          <div>
+            <p class="eyebrow">Official macOS installer</p>
+            <h2 id="install-title">De-Esser ${escapeHtml(product.version)}</h2>
+            <p class="lede">Version ${escapeHtml(product.version)} &middot; ${formatList(product.formats)}</p>
+            <div class="chip-row mt-sm">
+              ${chip(product.signing)}${chip(product.notarization, 'flag')}${chip(product.architecture.split(' —')[0])}
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
+          </div>
+        </div>
+        <dl class="spec-grid mt-md">
+          <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
+          <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
+          <div><dt>Latency</dt><dd>0 samples, in either mode.</dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="support-title">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Help</p>
+          <h2 id="support-title">Support</h2>
+          <p class="lede">Bug reports and technical questions reach the person who writes the code, through the <a href="/contact/">contact form</a>.</p>
+        </div>
+      </div>
+    </section>`
+  });
+}
+
 export function renderContact() {
   return shell({
     title: 'Contact and support — StudioZIO',
