@@ -150,13 +150,20 @@ export function validateSource() {
   if (
     mixRack.name !== 'StudioZIO MixRack' ||
     mixRack.manufacturer !== 'StudioZIO' ||
-    mixRack.availability !== 'Coming soon' ||
+    mixRack.availability !== 'Available now' ||
     mixRack.platform !== 'macOS' ||
     mixRack.compactFormats !== 'AU / VST3 / AAX / Standalone'
   ) {
     throw new Error('MixRack public metadata drift');
   }
-  for (const unsupportedField of ['version', 'downloadUrl', 'releaseUrl', 'releaseDate']) {
+  if (!isSemanticPatch(mixRack.version)) {
+    throw new Error('MixRack version drift');
+  }
+  /* The download stays on the MixRack site, which gates it on its own release
+     endpoint. A copy of the URL here would be a second source for the same
+     artefact, free to drift, with no gate behind it -- so the hub states the
+     version and the availability and links out for the file itself. */
+  for (const unsupportedField of ['downloadUrl', 'releaseUrl', 'releaseDate']) {
     if (mixRack[unsupportedField] !== undefined) {
       throw new Error(`Unsupported MixRack field: ${unsupportedField}`);
     }

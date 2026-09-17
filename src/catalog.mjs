@@ -105,10 +105,14 @@ export const products = Object.freeze([
     name: 'StudioZIO MixRack',
     shortName: 'StudioZIO MixRack',
     manufacturer: 'StudioZIO',
+    version: '1.0.0',
     platform: 'macOS',
+    /* Stated for the same reason Tempo Delay states it: this installer is
+       Universal, and an owner reading only "macOS" cannot tell which. */
+    architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
-    availability: 'Coming soon',
+    availability: 'Available now',
     description:
       'A modular mixing environment that brings essential processing into one focused rack.',
     detailsUrl: MIXRACK_WEBSITE,
