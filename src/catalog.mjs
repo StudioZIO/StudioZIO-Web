@@ -37,9 +37,9 @@ export const products = Object.freeze([
     /* Read from the installer, not decided here: the package declares
        hostArchitectures x86_64,arm64 and a macOS 11.0 minimum, so it installs
        on an Intel Mac. Six of the seven plug-ins inside are Universal and run
-       there; Tempo Delay is arm64-only and will not load. The page says so,
-       and says how to skip it, because the installer leaves that choice on by
-       default. */
+       there; Tempo Delay needs Apple Silicon and macOS 12. From Everything
+       1.0.2 the installer leaves Tempo Delay unselected and switched off on
+       any other Mac, and the page says so. */
     architecture: 'Universal \u2014 Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
