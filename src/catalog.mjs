@@ -32,7 +32,7 @@ export const products = Object.freeze([
     name: 'StudioZIO Everything',
     shortName: 'Everything',
     manufacturer: 'StudioZIO',
-    version: '1.0.0',
+    version: '1.0.2',
     platform: 'macOS',
     /* Read from the installer, not decided here: the package declares
        hostArchitectures x86_64,arm64 and a macOS 11.0 minimum, so it installs
