@@ -153,18 +153,18 @@ export const products = Object.freeze([
     slug: 'maximizer',
     name: 'StudioZIO Maximizer',
     shortName: 'Maximizer',
-    version: '1.0.2',
+    version: '1.0.3',
     platform: 'macOS',
     architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
-    filename: 'StudioZIO-Maximizer-1.0.2.pkg',
+    filename: 'StudioZIO-Maximizer-1.0.3.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/maximizer-v1.0.2-clean-packaging-2026.09.16/StudioZIO-Maximizer-1.0.2.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/maximizer-v1.0.3/StudioZIO-Maximizer-1.0.3.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/maximizer-v1.0.2-clean-packaging-2026.09.16',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/maximizer-v1.0.3',
     sha256:
-      '69510b08a118aece2f8e33feb0d10d13b45458864d5696c49d897876860eedfe',
+      'd589be77a2d72355a86a2bd2b7d5ea70dcd9d2b5871ec61c6960e5754abecc50',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
