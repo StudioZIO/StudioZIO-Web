@@ -1548,7 +1548,7 @@ export function renderProductEverything() {
         <dl class="spec-grid mt-lg">
           <div><dt>Requires</dt><dd>macOS 11 or later.</dd></div>
           <div><dt>Architecture</dt><dd>Universal. Six of the seven run on Apple Silicon and on Intel.</dd></div>
-          <div><dt>On an Intel Mac</dt><dd>StudioZIO Tempo Delay is Apple Silicon only and will not load there. The installer lets you clear its box; everything else installs and runs.</dd></div>
+          <div><dt>On an Intel Mac or macOS 11</dt><dd>StudioZIO Tempo Delay needs Apple Silicon and macOS 12 or later. On any other Mac the installer leaves it unselected and switched off; everything else installs and runs.</dd></div>
           <div><dt>Checksum</dt><dd>Published with the release, and on each product page.</dd></div>
         </dl>
       </div>
