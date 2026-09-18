@@ -305,19 +305,17 @@ export function validateSource() {
     throw new Error('Invalid checksum format for De-Esser');
   }
 
-  /* The bundle, and the only entry in the catalogue that is asserted for what
-     it must NOT carry. StudioZIO Everything is published on the releases
-     repository already; the hub deliberately does not point at it yet. A
-     downloadUrl or a checksum appearing here would put the hub ahead of that
-     decision silently, on a page that is otherwise ready to ship -- so the
-     absence is a build gate rather than something to remember. Remove these
-     four lines on the day the bundle goes live, and add the download checks
-     the other products carry. */
+  /* The bundle, and the one hub-native page whose installer is the whole
+     catalogue at once. It is held here to the same download checks the single
+     products carry -- filename derived from the version, download URL inside
+     the releases repository, download tag equal to the release tag, checksum
+     well formed -- so a version bump that forgets one of the four cannot ship
+     a page that offers the previous package under the new number. */
   const everything = getProduct('everything');
   if (
     everything.name !== 'StudioZIO Everything' ||
     everything.price !== 'Free' ||
-    everything.availability !== 'Coming soon' ||
+    everything.availability !== 'Available now' ||
     !isSemanticPatch(everything.version) ||
     everything.platform !== 'macOS' ||
     everything.compactFormats !== 'AU / VST3 / AAX / Standalone' ||
@@ -326,10 +324,22 @@ export function validateSource() {
   ) {
     throw new Error('Everything public metadata drift');
   }
-  for (const field of ['downloadUrl', 'releaseUrl', 'sha256', 'filename']) {
-    if (everything[field] !== undefined) {
-      throw new Error(`Everything is still Coming soon on the hub; remove ${field} or publish it deliberately`);
-    }
+  if (everything.filename !== `StudioZIO-Everything-${everything.version}.pkg`) {
+    throw new Error('Everything filename drift');
+  }
+  if (!everything.downloadUrl.startsWith(`${RELEASE_REPOSITORY_URL}/releases/download/`)) {
+    throw new Error('Everything download URL repository drift');
+  }
+  if (!everything.downloadUrl.endsWith(`/${everything.filename}`)) {
+    throw new Error('Everything download URL filename drift');
+  }
+  const everythingDownloadTag = everything.downloadUrl.split('/releases/download/')[1]?.split('/')[0];
+  const everythingReleaseTag = everything.releaseUrl.split('/releases/tag/')[1];
+  if (!everythingDownloadTag || everythingDownloadTag !== everythingReleaseTag) {
+    throw new Error('Everything release tag mismatch between download and release URLs');
+  }
+  if (!/^[a-f0-9]{64}$/i.test(everything.sha256)) {
+    throw new Error('Invalid checksum format for Everything');
   }
   const home = renderHome();
   const catalog = renderProducts();
@@ -489,13 +499,17 @@ export function validateSource() {
     }
   }
 
+  /* The availability labels are taken from the catalogue rather than listed
+     here. What this asserts is that both catalogue surfaces actually render
+     the state each product declares -- not that some particular state exists,
+     which stops being true the moment the last "Coming soon" ships. */
+  const availabilityLabels = [...new Set(products.map((entry) => entry.availability))];
   for (const catalogPage of [home, catalog]) {
     for (const required of [
       'StudioZIO Mastering Suite',
       'StudioZIO Tempo Delay',
       'StudioZIO MixRack',
-      'Available now',
-      'Coming soon',
+      ...availabilityLabels,
       TEMPO_DELAY_WEBSITE
     ]) {
       if (!catalogPage.includes(required)) {

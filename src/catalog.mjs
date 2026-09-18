@@ -23,10 +23,11 @@ export const ZIO_WEBSITE = 'https://zio-audio.vercel.app/';
 export const products = Object.freeze([
   /* The bundle. It is a catalogue product like any other, and its page is the
      one surface that lists the catalogue by name -- which is exactly what a
-     bundle page is for. It carries no downloadUrl yet: the installer is
-     published through the releases repository first, and the hub points at it
-     only once that release exists and its checksum has been read back from the
-     published file. */
+     bundle page is for. The installer is published through the releases
+     repository first, and the hub points at it only once that release exists
+     and its checksum has been read back from the published file: the values
+     below were read back from the live asset, 170,122,606 bytes, and not
+     copied from a note. */
   Object.freeze({
     slug: 'everything',
     name: 'StudioZIO Everything',
@@ -43,8 +44,17 @@ export const products = Object.freeze([
     architecture: 'Universal \u2014 Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
+    filename: 'StudioZIO-Everything-1.0.0.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/everything-v1.0.0/StudioZIO-Everything-1.0.0.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/everything-v1.0.0',
+    sha256:
+      '0f148ecd72c03bc38de9f6129f375f253f5a814f5606b812ce6c4f45ad248bcb',
+    signing: 'Developer ID signed',
+    notarization: 'Apple notarized',
     price: 'Free',
-    availability: 'Coming soon',
+    availability: 'Available now',
     description:
       'One installer that puts all seven StudioZIO plug-ins on the machine, so there is one download and one checksum instead of seven.',
     detailsUrl: '/products/everything/'

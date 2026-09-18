@@ -504,10 +504,14 @@ function mixRackMock() {
     (name) => `<button class="slot" type="button">${escapeHtml(name)}</button>`
   ).join('');
 
+  /* The availability is read from the catalogue rather than written here.
+     This mock renders on the home page, on /products/ and on the bundle page,
+     so a literal string would keep saying "Coming soon" beside the product on
+     three pages on the day the card next to it starts saying otherwise. */
   return `<div class="mock mock--live">
       <div class="mock-head" aria-hidden="true">
         <span class="mock-title"><span class="dot"></span>MixRack</span>
-        <span class="chip-row">${formatChip('mixrack')}${chip('Coming soon', 'flag')}</span>
+        <span class="chip-row">${formatChip('mixrack')}${chip(getProduct('mixrack').availability, 'flag')}</span>
       </div>
       <div class="mock-body">
         <div class="rail-head" aria-hidden="true"><span>The rack</span><span>eight modules in four groups</span></div>
@@ -1482,7 +1486,8 @@ export function renderProductEverything() {
           <h1>StudioZIO Everything</h1>
           <p class="lede">Seven plug-ins. One installer.</p>
           <div class="hero-actions">
-            <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>${escapeHtml(product.availability)}</span>
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
             ${chip(product.price)}
             <span class="chip chip--bare chip--flag"><span class="dot" aria-hidden="true"></span>Notarized build</span>
           </div>
@@ -1541,15 +1546,20 @@ export function renderProductEverything() {
             <h2 id="install-title">Everything ${escapeHtml(product.version)}</h2>
             <p class="lede">${formatList(product.formats)}, in one package.</p>
             <div class="chip-row mt-sm">
-              ${chip(product.availability, 'flag')}${chip(product.price)}${chip(product.architecture.split(' —')[0])}
+              ${chip(product.signing)}${chip(product.notarization, 'flag')}${chip(product.architecture.split(' —')[0])}
             </div>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
+              data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
           </div>
         </div>
         <dl class="spec-grid mt-lg">
+          <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Requires</dt><dd>macOS 11 or later.</dd></div>
           <div><dt>Architecture</dt><dd>Universal. Six of the seven run on Apple Silicon and on Intel.</dd></div>
           <div><dt>On an Intel Mac</dt><dd>StudioZIO Tempo Delay is Apple Silicon only and will not load there. The installer lets you clear its box; everything else installs and runs.</dd></div>
-          <div><dt>Checksum</dt><dd>Published with the release, and on each product page.</dd></div>
+          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(product.sha256)}</dd></div>
         </dl>
       </div>
     </section>`
