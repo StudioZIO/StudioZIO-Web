@@ -17,7 +17,8 @@
 
   var COPY = {
     label: 'Cookie preference',
-    text: 'This site uses Google Analytics to count visits and to measure which ads bring people here. You are not added to an advertising audience, and no profile is built about you.',
+    text: 'This site uses Google Analytics cookies to count visits and to measure which ads bring people here. Ad personalisation stays switched off, so you are not added to an advertising audience.',
+    privacy: 'Privacy policy',
     accept: 'Accept',
     decline: 'Decline',
     reopen: 'Cookies'
@@ -33,7 +34,10 @@
       window.gtag('consent', 'update', {
         ad_storage: value,
         ad_user_data: value,
-        ad_personalization: value,
+        /* Always denied, whatever the choice: the banner promises that no
+           visitor is added to an advertising audience, and this is the
+           switch that keeps that promise rather than a sentence alone. */
+        ad_personalization: 'denied',
         analytics_storage: value
       });
     }
@@ -69,7 +73,11 @@
 
     var p = document.createElement('p');
     p.className = 'consent-text';
-    p.textContent = COPY.text;
+    p.textContent = COPY.text + ' ';
+    var policy = document.createElement('a');
+    policy.href = '/privacy/';
+    policy.textContent = COPY.privacy;
+    p.appendChild(policy);
 
     var actions = document.createElement('div');
     actions.className = 'consent-actions';

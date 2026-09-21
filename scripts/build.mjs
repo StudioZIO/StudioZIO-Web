@@ -24,6 +24,9 @@ import {
   renderProductDeEsser,
   renderProductEverything,
   renderSearch,
+  renderPrivacy,
+  renderEarlyAccess,
+  EARLY_ACCESS_ENABLED,
   PRESS_KIT_FILE,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
@@ -85,6 +88,12 @@ const routes = [
      result whose destination is the search box helps nobody. It is a real
      page with a canonical and a sitemap entry; it just never matches. */
   { file: 'search/index.html', url: '/search/', render: renderSearch, indexable: true, searchable: false },
+  { file: 'privacy/index.html', url: '/privacy/', render: renderPrivacy, indexable: true },
+  /* Built only while the Early Access list is switched on (see site.mjs), so
+     the sitemap cannot advertise a sign-up page that is not running. */
+  ...(EARLY_ACCESS_ENABLED
+    ? [{ file: 'early-access/index.html', url: '/early-access/', render: renderEarlyAccess, indexable: true }]
+    : []),
   { file: '404.html', url: null, render: renderNotFound, indexable: false }
 ];
 
@@ -112,6 +121,10 @@ await cp(resolve(projectRoot, 'src/consent.js'), resolve(outputRoot, 'assets/con
 // The support form's own script. It is served from the site origin because
 // the CSP has no 'unsafe-inline'; see the comment in src/contact.js.
 await cp(resolve(projectRoot, 'src/contact.js'), resolve(outputRoot, 'assets/contact.js'));
+// The Early Access form's script: one analytics event and a status line.
+if (EARLY_ACCESS_ENABLED) {
+  await cp(resolve(projectRoot, 'src/early-access.js'), resolve(outputRoot, 'assets/early-access.js'));
+}
 /* The MixRack release-notice form, its tester-interest form and the
    click-to-play preview moved with the page to studioziomixrack.vercel.app.
    Their scripts and the film left this repository with them; /products/mixrack

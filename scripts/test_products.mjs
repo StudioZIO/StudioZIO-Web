@@ -39,7 +39,9 @@ function verify({ files, hosting }) {
     '/community/compatibility/',
     '/community/known-issues/',
     '/community/roadmap/',
-    '/search/'
+    '/search/',
+    '/privacy/',
+    '/early-access/'
   ];
   assert.deepEqual(urls, expectedUrls.map(path => origin + path));
   /* The feed is a published artifact like the sitemap, and it goes stale the

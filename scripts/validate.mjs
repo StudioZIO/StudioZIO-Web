@@ -31,6 +31,10 @@ import {
   renderProductDeEsser,
   renderProductEverything,
   renderSearch,
+  renderPrivacy,
+  renderEarlyAccess,
+  EARLY_ACCESS_ENABLED,
+  EARLY_ACCESS_ENDPOINT,
   HUB_ORIGIN,
 } from '../src/site.mjs';
 
@@ -352,8 +356,39 @@ export function validateSource() {
   const compressorPage = renderProductCompressor();
   const everythingPage = renderProductEverything();
   const deEsserPage = renderProductDeEsser();
-  const pages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, notFound];
-  const indexablePages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search];
+  const privacy = renderPrivacy();
+  const earlyAccess = EARLY_ACCESS_ENABLED ? renderEarlyAccess() : null;
+  const policyPages = [privacy, ...(earlyAccess ? [earlyAccess] : [])];
+  const pages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, ...policyPages, notFound];
+  const indexablePages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, ...policyPages];
+
+  /* Every surface that collects data points at the privacy policy: the
+     footer of every page, the contact form, the consent banner and the Early
+     Access form. A collection point without the notice is the gap this page
+     exists to close, so its absence fails the build. */
+  for (const [index, page] of pages.entries()) {
+    const footerMarkup = page.split('<footer')[1] ?? '';
+    if (!footerMarkup.includes('href="/privacy/"')) throw new Error(`Page ${index} has no Privacy link in its footer`);
+  }
+  if (!mainContent(contact).includes('href="/privacy/"')) throw new Error('The contact form must link the privacy policy');
+  if (!readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../src/consent.js'), 'utf8').includes("policy.href = '/privacy/'")) {
+    throw new Error('The consent banner must link the privacy policy');
+  }
+  for (const required of ['Formspree', 'Google Analytics', 'Vercel', 'GitHub', 'lang="tr"', 'KVKK Aydınlatma Metni']) {
+    if (!privacy.includes(required)) throw new Error(`Privacy policy does not mention ${required}`);
+  }
+  if (EARLY_ACCESS_ENABLED !== privacy.includes('Buttondown')) {
+    throw new Error('The privacy policy must describe Buttondown exactly when Early Access is switched on');
+  }
+  /* Nothing a sign-up could be read as buying. The list is a list. */
+  if (earlyAccess) {
+    const main = mainContent(earlyAccess);
+    if (!main.includes('href="/privacy/"')) throw new Error('Early Access form must link the privacy policy');
+    if (/<input[^>]*type="checkbox"[^>]*\bchecked\b/.test(main)) throw new Error('Early Access consent must not be pre-ticked');
+    if (!/<input[^>]*id="ea-consent"[^>]*\brequired\b/.test(main)) throw new Error('Early Access consent must be required');
+    if (/sonavyr/i.test(earlyAccess)) throw new Error('Early Access must not name the product before trademark clearance');
+    if (/\$\d|€\d|\bpre-?order|\bdeposit\b|\bbuy\b/i.test(main)) throw new Error('Early Access page must not carry a price or a purchase');
+  }
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -664,6 +699,11 @@ export function validateSource() {
      arrived. */
   for (const [index, page] of pages.entries()) {
     for (const [, attrs] of page.matchAll(/<form([^>]*)>/g)) {
+      /* The one exception: Buttondown's embed endpoint accepts only a native
+         POST, so the Early Access form carries an action -- and is served
+         under its own CSP whose form-action names exactly that host
+         (verifyEarlyAccessPolicy below). Any other action still fails. */
+      if (page === earlyAccess && attrs.includes(`action="${EARLY_ACCESS_ENDPOINT}"`) && /\bmethod="post"/.test(attrs)) continue;
       if (/\baction=/.test(attrs)) {
         throw new Error(
           `Page ${index} has a <form action=...>, which form-action 'none' refuses `
@@ -977,6 +1017,42 @@ export function validateSource() {
   }
 
   verifyMeasurementPolicy();
+  verifyEarlyAccessPolicy();
+}
+
+/* ---- the Early Access page's own header rule -----------------------------
+   The site-wide rule says form-action 'none'. The Early Access page needs
+   exactly one host there, so it is served by its own rule and the site-wide
+   rule excludes its path -- rather than relying on which of two matching
+   rules Vercel lets win. Asserted: the page exists if and only if the rule
+   does; the rule differs from the site-wide one in form-action alone; every
+   other header is carried unchanged. */
+function verifyEarlyAccessPolicy() {
+  const config = JSON.parse(
+    readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'vercel.json'), 'utf8')
+  );
+  const siteWide = config.headers[0];
+  const scoped = config.headers.find((entry) => entry.source === '/early-access/');
+  if (!EARLY_ACCESS_ENABLED) {
+    if (scoped) throw new Error('vercel.json relaxes form-action for /early-access/ but the page is switched off');
+    return;
+  }
+  if (!scoped) throw new Error('Early Access is on but vercel.json has no /early-access/ header rule; its form would be refused');
+  if (siteWide.source !== '/:path((?!early-access/).*)') {
+    throw new Error(`The site-wide header rule must exclude /early-access/; its source is ${siteWide.source}`);
+  }
+  const csp = (entry) => entry.headers.find((h) => h.key === 'Content-Security-Policy').value;
+  const expected = csp(siteWide).replace("form-action 'none'", 'form-action https://buttondown.com');
+  if (!csp(siteWide).includes("form-action 'none'") || csp(scoped) !== expected) {
+    throw new Error('The /early-access/ CSP must equal the site-wide CSP with form-action https://buttondown.com and nothing else changed');
+  }
+  const others = (entry) => JSON.stringify(entry.headers.filter((h) => h.key !== 'Content-Security-Policy'));
+  if (others(siteWide) !== others(scoped)) {
+    throw new Error('The /early-access/ rule must carry every other site-wide security header unchanged');
+  }
+  if (!EARLY_ACCESS_ENDPOINT.startsWith('https://buttondown.com/api/emails/embed-subscribe/')) {
+    throw new Error(`Early Access endpoint is not Buttondown's embed endpoint: ${EARLY_ACCESS_ENDPOINT}`);
+  }
 }
 
 /* ---- the CSP has to let the tag finish measuring -------------------------

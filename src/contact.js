@@ -47,19 +47,21 @@
     submit.disabled = true;
     say('', 'Sending…');
 
+    var body = {
+      name: value('name'),
+      email: value('email'),
+      category: value('category'),
+      os: value('os'),
+      daw: value('daw'),
+      message: value('message'),
+      site: 'StudioZIO Hub',
+      _subject: 'StudioZIO Hub support: ' + value('category') + ' — ' + value('name')
+    };
+
     fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        name: value('name'),
-        email: value('email'),
-        category: value('category'),
-        os: value('os'),
-        daw: value('daw'),
-        message: value('message'),
-        site: 'StudioZIO Hub',
-        _subject: 'StudioZIO Hub support: ' + value('category') + ' — ' + value('name')
-      })
+      body: JSON.stringify(body)
     })
       .then(function (response) {
         /* A failure that reports success is worse than no form at all: the
@@ -71,6 +73,11 @@
         }
         form.reset();
         submit.disabled = false;
+        /* Counted only once Formspree has accepted the message. The event
+           carries the category and nothing the visitor typed. */
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'contact_submit', { category: body.category });
+        }
         say('sent', 'Thanks — your message is with the support desk. Replies normally go out within 24–48 business hours.');
       })
       .catch(function () {
