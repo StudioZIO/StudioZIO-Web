@@ -1429,11 +1429,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
    share the shell so none can drift into a look of its own. */
 .support-form,
 .notify-form,
+.early-access-form,
 .search-form,
 .tester-form { display: grid; gap: 1.5rem; padding: 1.75rem; }
 /* One short field does not want the full 1100px shell; the support form and
    the tester form have a grid of them and do. */
-.notify-form { max-width: 34rem; }
+.notify-form,
+.early-access-form { max-width: 34rem; }
 .form-grid { display: grid; gap: 1.25rem; }
 @media (min-width: 700px) {
   .form-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1480,6 +1482,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 .form-note { margin: 1.25rem 0 0; font-size: 0.9375rem; color: var(--muted-foreground); }
 
+/* A consent checkbox with its full sentence as the label: the box is the
+   44px-tall hit area's anchor, the text wraps beside it, and focus shows on
+   the box itself the way it does on every other field. */
+.form-check { display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: start; }
+.form-check input[type="checkbox"] { width: 1.25rem; height: 1.25rem; margin: 0.15rem 0 0; accent-color: var(--primary); }
+.form-check input[type="checkbox"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.form-check label { font-size: 0.9375rem; line-height: 1.5; color: var(--foreground); }
+.form-check .req { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary-text); margin-left: 0.4rem; }
+
 /* The honeypot: reachable by a bot reading the DOM, never by a person.
    Moved out of view rather than display:none, which some bots skip. */
 .form-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -1515,6 +1526,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   font-size: 0.9375rem;
   color: var(--muted-foreground);
 }
+.consent-text a { color: var(--foreground); text-decoration: underline; text-underline-offset: 0.2em; }
 .consent-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .consent-btn { flex: 0 0 auto; }
 

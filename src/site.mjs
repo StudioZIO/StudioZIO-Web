@@ -60,6 +60,31 @@ function homebrewInstall(product) {
    scripts/validate.mjs asserts all three on every page, so a page that ever
    stops carrying the tag fails the build instead of shipping untracked. */
 const MEASUREMENT_ID = 'G-VL8Z542XMP';
+
+/* StudioZIO Early Access -- the pre-registration mailing list.
+
+   The username is the owner's own free Buttondown account (buttondown.com/
+   studiozio); the embed form posts to a URL that names it. Empty turns the
+   whole feature off: the page is not built, the footer does not link to it
+   and the privacy policy does not describe it, so nothing is promised that is
+   not running.
+
+   Buttondown's embed endpoint must be the action of a native <form> (its docs
+   rule out fetch), and the site-wide CSP says form-action 'none'. vercel.json
+   therefore serves /early-access/ its own copy of the headers with exactly one
+   change, form-action https://buttondown.com, and excludes that path from the
+   site-wide rule. scripts/validate.mjs refuses a build where the page exists
+   without that rule, or the rule without the page.
+   The consent wording is versioned: change the text, change the date. */
+export const EARLY_ACCESS_BUTTONDOWN_USERNAME = 'studiozio';
+export const EARLY_ACCESS_ENABLED = EARLY_ACCESS_BUTTONDOWN_USERNAME !== '';
+export const EARLY_ACCESS_ENDPOINT = `https://buttondown.com/api/emails/embed-subscribe/${EARLY_ACCESS_BUTTONDOWN_USERNAME}`;
+export const EARLY_ACCESS_CONSENT_VERSION = '2026-09-21';
+const EARLY_ACCESS_CONSENT_TEXT =
+  'I want to receive StudioZIO Early Access emails about product updates, release news and testing opportunities. I can unsubscribe at any time.';
+
+export const PRIVACY_POLICY_DATE = '2026-09-21';
+const PRIVACY_CONTACT_EMAIL = 'studiozioplugins@gmail.com';
 const analytics = `<script src="/assets/gtag.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
   <script src="/assets/consent.js" defer></script>
@@ -187,6 +212,8 @@ function headerSearch(variant) {
 const FOOTER_LINKS = [
   ...NAVIGATION,
   ['Press kit', '/press/', 'press'],
+  ...(EARLY_ACCESS_ENABLED ? [['Early Access', '/early-access/', 'early-access']] : []),
+  ['Privacy', '/privacy/', 'privacy'],
   ['ZIO', ZIO_WEBSITE, 'zio']
 ];
 
@@ -209,7 +236,9 @@ function chip(label, tone = '') {
 
 const DEFAULT_SOCIAL_IMAGE = '/assets/og/og-studiozio.png';
 
-const FREE_PROMISE = 'No account, no iLok, no email registration. Signed and notarised.';
+/* Rendered only under a free product (price === 'Free'), and worded as a
+   property of that free download rather than of StudioZIO as a whole. */
+const FREE_PROMISE = 'Free download: no account, no iLok, no email registration. Signed and notarised.';
 
 export const ORGANIZATION_ID = `${HUB_ORIGIN}/#organization`;
 
@@ -1044,7 +1073,7 @@ export function renderHome() {
   return shell({
     title: 'StudioZIO — Audio Plugins Built on Visible Signal Flow',
     description:
-      'StudioZIO makes free macOS audio plug-ins in AU, VST3, AAX and Standalone, signed and notarized, with no account and no registration.',
+      'StudioZIO makes free macOS audio plug-ins in AU, VST3, AAX and Standalone. Each free plug-in is signed and notarized and needs no account and no registration.',
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
@@ -1066,7 +1095,7 @@ export function renderHome() {
         <div class="section-head">
           <p class="eyebrow">Catalog</p>
           <h2 id="catalog-title">The instruments</h2>
-          <p class="lede">Each one ships as a signed, notarized macOS installer with no account and no registration. The cards say what is available now and what is still coming.</p>
+          <p class="lede">Each free plug-in here ships as a signed, notarized macOS installer with no account and no registration. The cards say what is available now and what is still coming.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
         <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
@@ -1712,6 +1741,7 @@ export function renderContact() {
                 <option value="Bug report">Bug report</option>
                 <option value="Feature inquiry">Feature inquiry</option>
                 <option value="Licence and download">Licence and download</option>
+                <option value="Privacy request">Privacy request</option>
               </select>
             </div>
             <div class="form-row">
@@ -1735,6 +1765,7 @@ export function renderContact() {
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Send message</button>
           </div>
+          <p class="form-hint" id="contact-privacy">What you send here is used only to answer you. Formspree, a US-based form service, delivers it to StudioZIO's inbox. The <a href="/privacy/">privacy policy</a> says how long it is kept and how to have it deleted.</p>
         </form>
 
         <noscript>
@@ -1789,6 +1820,247 @@ export function renderSearch() {
         <noscript>
           <p class="mt-lg">Search needs JavaScript, because the index is matched in your browser rather than on a server. Without it, the <a href="/notes/">technical notes</a>, the <a href="/products/">product catalogue</a> and the <a href="/community/">community pages</a> are the places to look, and <a href="/contact/">support</a> will answer a question directly.</p>
         </noscript>
+      </div>
+    </section>`
+  });
+}
+
+/* ---------- privacy ------------------------------------------------------
+   What this site collects today, stated flow by flow, in English and -- for
+   the operator's home jurisdiction -- as a KVKK aydınlatma metni in Turkish.
+
+   Published before StudioZIO is a registered business, by owner decision of
+   2026-09-21, because the site already collects data (Google Analytics,
+   Formspree) and a visitor is owed the notice now, not after registration.
+   So the controller is the person who operates the site today, named as the
+   press page already names him, and the page says plainly that the business
+   is not registered yet. Nothing here claims a compliance status.
+
+   Clauses still awaiting professional review (the draft marked them ⚖) are
+   written as narrow statements of fact and listed here rather than on the
+   page. Tracked in the commercialisation workspace:
+   commercial/website/PRIVACY_KVKK_LEGAL_REVIEW_ITEMS.md
+     LEGAL_REVIEW_REQUIRED  controller postal address (KVKK md. 10) -- added at
+                            registration (virtual office), not a home address
+     LEGAL_REVIEW_REQUIRED  VERBİS registration obligation
+     LEGAL_REVIEW_REQUIRED  legal basis per flow (KVKK md. 5; GDPR Art. 6)
+     LEGAL_REVIEW_REQUIRED  cross-border transfer mechanism (KVKK md. 9 as
+                            amended by Law 7499; GDPR Chapter V)
+     LEGAL_REVIEW_REQUIRED  whether the GDPR applies (Art. 3(2))
+     LEGAL_REVIEW_REQUIRED  KVKK application channels (Başvuru Tebliği md. 5)
+     LEGAL_REVIEW_REQUIRED  Early Access emails under Law 6563 / İYS
+     LEGAL_REVIEW_REQUIRED  contact-message retention period (draft: 12 months) */
+
+function privacyFlow({ title, rows }) {
+  return `<div><dt>${escapeHtml(title)}</dt><dd><ul class="actionable-list">${rows
+    .map(([label, text]) => `<li><strong>${escapeHtml(label)}:</strong> ${text}</li>`)
+    .join('')}</ul></dd></div>`;
+}
+
+export function renderPrivacy() {
+  const flows = [
+    {
+      title: 'Every visit: hosting',
+      rows: [
+        ['Data', 'IP address, browser and device details, the page requested and the time.'],
+        ['Purpose', 'Deliver the site and protect it from abuse.'],
+        ['Processor', 'Vercel Inc., United States.'],
+        ['Kept', 'By Vercel under its own log retention. StudioZIO does not use this data to identify visitors.']
+      ]
+    },
+    {
+      title: 'Google Analytics',
+      rows: [
+        ['Data', 'A pseudonymous cookie identifier, pages viewed, clicks on download, listening and sign-up controls, whether a contact message was sent, words typed into the site search, device and browser type, and approximate location. Google Analytics does not store IP addresses.'],
+        ['Purpose', 'Count visits, see which pages and downloads are used, and measure which ads bring visitors here.'],
+        ['When', 'In the EU, EEA, UK, Switzerland and Türkiye, analytics and advertising cookies are set only after you choose Accept. Until then the Google tag still loads but sets no cookies and sends only cookieless signals. Elsewhere, measurement is on until you choose Decline. Ad personalisation is always off.'],
+        ['Processor', 'Google Ireland Limited and Google LLC (United States).'],
+        ['Kept', 'For the retention period set in this site&rsquo;s Google Analytics property, at most 14 months for event-level data.']
+      ]
+    },
+    {
+      title: 'Contact form',
+      rows: [
+        ['Data', 'Name, email address, category, operating system, host DAW and your message.'],
+        ['Purpose', 'Answer you. It is not added to any mailing list.'],
+        ['Processor', 'Formspree (United States) delivers the message to StudioZIO&rsquo;s Gmail inbox (Google).'],
+        ['Kept', 'Deleted from the inbox and from Formspree within 12 months after the conversation ends, sooner if you ask.']
+      ]
+    },
+    ...(EARLY_ACCESS_ENABLED
+      ? [{
+          title: 'StudioZIO Early Access',
+          rows: [
+            ['Data', 'Your email address, the date and wording of the consent you gave, your confirmation, and the technical data Buttondown records when you sign up and open emails.'],
+            ['Purpose', 'Send StudioZIO Early Access emails: product updates, release news and testing opportunities. Only after you tick the consent box and confirm your address from the email Buttondown sends.'],
+            ['Processor', 'Buttondown (United States) stores the list and sends the emails.'],
+            ['Kept', 'Until you unsubscribe (a link is in every email) or ask for deletion. An address that is never confirmed receives no Early Access emails.']
+          ]
+        }]
+      : []),
+    {
+      title: 'Downloads',
+      rows: [
+        ['Data', 'Installers are served by GitHub (United States), which receives your IP address when you download.'],
+        ['Purpose', 'Deliver the installer. StudioZIO receives no personal data from the download itself.']
+      ]
+    }
+  ];
+
+  return shell({
+    title: 'Privacy policy — StudioZIO',
+    description:
+      'What the StudioZIO website collects today, why, who processes it and how to ask for a copy or deletion. Includes the KVKK aydınlatma metni in Turkish.',
+    canonical: `${HUB_ORIGIN}/privacy/`,
+    current: 'privacy',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Privacy</p>
+          <h1>Privacy policy</h1>
+          <p class="lede">What this site collects today, why, who processes it, and how to ask for a copy or deletion. Last updated <time datetime="${PRIVACY_POLICY_DATE}">21 September 2026</time>.</p>
+          <p><a href="#kvkk" lang="tr">KVKK Aydınlatma Metni (Türkçe)</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="privacy-controller">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="privacy-controller">Who is responsible</h2>
+        </div>
+        <p class="lede">StudioZIO is not a registered company. It is the name under which Mert Erkan, an individual resident in Türkiye, publishes software. Mert Erkan is the data controller for the personal data described on this page. When StudioZIO is registered as a business, this page will name the registered business and its address.</p>
+        <p class="lede">Contact for anything on this page: the <a href="/contact/">contact form</a> (choose &ldquo;Privacy request&rdquo;) or <a href="mailto:${PRIVACY_CONTACT_EMAIL}">${PRIVACY_CONTACT_EMAIL}</a>.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="privacy-flows">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="privacy-flows">What is collected, and by whom</h2>
+        </div>
+        <dl class="spec-grid">${flows.map(privacyFlow).join('')}</dl>
+        <p class="lede mt-lg">Nothing else is collected. There are no customer accounts, no payments and no crash reporting on this site, and StudioZIO does not sell personal data.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="privacy-cookies">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="privacy-cookies">Cookies and browser storage</h2>
+        </div>
+        <ul class="actionable-list">
+          <li>Google Analytics cookies (<code>_ga</code>, <code>_ga_*</code>), only under the consent rules above.</li>
+          <li>Your cookie choice, stored in your browser&rsquo;s local storage under <code>studiozio-consent</code>, so the banner does not ask again.</li>
+          <li>A session-only flag (<code>studiozio-debug</code>), set only when a tester adds <code>?_dbg=1</code> to an address.</li>
+        </ul>
+        <p class="lede mt-md">To change your choice at any time, use the <strong>Cookies</strong> control in the footer of every page.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="privacy-transfers">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="privacy-transfers">Outside Türkiye</h2>
+        </div>
+        <p class="lede">Every service named above is based outside Türkiye, mainly in the United States, so using this site means your data is processed there.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="privacy-rights">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="privacy-rights">Your rights</h2>
+        </div>
+        <p class="lede">You can ask whether your data is processed, get a copy, have it corrected or deleted, object to processing, and withdraw consent at any time; under Turkish law these are the rights in Article 11 of the KVKK (Law No. 6698). If the EU or UK GDPR applies to you, you also have the rights it gives. Send requests through the contact routes above; they are answered within 30 days. You can also complain to the Personal Data Protection Authority (KVKK) or, in the EU or UK, to your data-protection authority.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="privacy-changes">
+      <div class="shell">
+        <div class="section-head">
+          <h2 id="privacy-changes">Changes</h2>
+        </div>
+        <p class="lede">This page changes when the site changes. Each version carries its date at the top.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="kvkk" lang="tr">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Türkçe</p>
+          <h2 id="kvkk">KVKK Aydınlatma Metni</h2>
+        </div>
+        <p class="lede"><strong>Veri sorumlusu:</strong> StudioZIO henüz tescilli bir işletme değildir. Bu internet sitesini Türkiye&rsquo;de yerleşik gerçek kişi Mert Erkan işletmektedir ve 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında veri sorumlusudur. İşletme tescil edildiğinde bu metin tescilli işletmenin unvanı ve adresiyle güncellenecektir.</p>
+        <p class="lede"><strong>İşlenen veriler ve amaçlar:</strong> Siteyi ziyaret ettiğinizde IP adresi, tarayıcı ve cihaz bilgisi siteyi sunmak ve kötüye kullanıma karşı korumak için; Google Analytics çerezleri ve kullanım verileri, ziyaretleri saymak ve hangi reklamların ziyaretçi getirdiğini ölçmek için (Türkiye&rsquo;de yalnızca &ldquo;Accept&rdquo; seçeneğini seçmenizden sonra); iletişim formunda verdiğiniz ad, e-posta adresi, konu, işletim sistemi, DAW bilgisi ve mesajınız size yanıt vermek için işlenir.${EARLY_ACCESS_ENABLED ? ' StudioZIO Early Access listesine verdiğiniz e-posta adresi, yalnızca onay kutusunu işaretleyip adresinizi onayladıktan sonra, ürün güncellemeleri, sürüm haberleri ve test fırsatları hakkında e-posta göndermek için işlenir.' : ''}</p>
+        <p class="lede"><strong>Toplama yöntemi ve hukuki sebep:</strong> Veriler elektronik ortamda, site formları ve çerezler aracılığıyla toplanır. Analitik çerezler${EARLY_ACCESS_ENABLED ? ' ve Early Access e-postaları' : ''} açık rızanıza, iletişim formu ve teknik barındırma verileri veri sorumlusunun meşru menfaatine ve talebinize yanıt verilmesine dayanır.</p>
+        <p class="lede"><strong>Aktarım:</strong> Veriler, hizmet aldığımız ve Türkiye dışında (ağırlıklı olarak ABD&rsquo;de) bulunan Vercel (barındırma), Google (analitik ve e-posta), Formspree (iletişim formu)${EARLY_ACCESS_ENABLED ? ', Buttondown (Early Access e-posta listesi)' : ''} ve GitHub (indirmeler) tarafından işlenir. Kişisel veriler satılmaz.</p>
+        <p class="lede"><strong>Haklarınız:</strong> KVKK md. 11 uyarınca kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme, aktarıldığı üçüncü kişileri bilme, eksik veya yanlış işlenmişse düzeltilmesini, silinmesini veya yok edilmesini isteme, bu işlemlerin aktarılan üçüncü kişilere bildirilmesini isteme, otomatik sistemlerle analiz sonucu aleyhinize bir sonuç çıkmasına itiraz etme ve kanuna aykırı işleme nedeniyle zarara uğramanız hâlinde zararın giderilmesini talep etme haklarına sahipsiniz.</p>
+        <p class="lede"><strong>Başvuru:</strong> Taleplerinizi <a href="/contact/">iletişim formu</a> (&ldquo;Privacy request&rdquo;) veya <a href="mailto:${PRIVACY_CONTACT_EMAIL}">${PRIVACY_CONTACT_EMAIL}</a> adresi üzerinden iletebilirsiniz; ayrıca Veri Sorumlusuna Başvuru Usul ve Esasları Hakkında Tebliğ&rsquo;de sayılan yöntemleri de kullanabilirsiniz. Başvurular en geç 30 gün içinde yanıtlanır.</p>
+      </div>
+    </section>`
+  });
+}
+
+/* ---------- StudioZIO Early Access ---------------------------------------
+   A mailing list, nothing more: no product, date, price, discount, beta place
+   or purchase priority is promised, and the page says so. The product in
+   development is not named, because its name has not cleared trademark search.
+
+   Consent is a separate, unticked, required checkbox. It posts
+   metadata__consent=True, the value Buttondown's own required "consent"
+   checkbox field expects (Settings > Subscribing), and consent_version names
+   the wording agreed to, so the record sits next to the address it was
+   given for. The hosted page buttondown.com/studiozio carries the same
+   required box with the same sentence. Buttondown
+   then sends its own confirmation email (double opt-in cannot be switched off
+   on Buttondown), and nothing else is sent until the address is confirmed.
+
+   A native POST, because Buttondown's embed endpoint requires one; the page
+   is served with form-action https://buttondown.com and nothing wider. */
+export function renderEarlyAccess() {
+  return shell({
+    title: 'StudioZIO Early Access — product news and testing opportunities',
+    description:
+      'Join StudioZIO Early Access for product updates, release news and future testing opportunities. Free, no commitment, unsubscribe at any time.',
+    canonical: `${HUB_ORIGIN}/early-access/`,
+    current: 'early-access',
+    scripts: '<script src="/assets/early-access.js" defer></script>',
+    content: `<section class="hero tech-grid">
+      <div class="shell">
+        <div class="rise">
+          <p class="eyebrow">Early Access</p>
+          <h1>StudioZIO Early Access</h1>
+          <p class="lede">Join StudioZIO Early Access for product updates, release news and future testing opportunities.</p>
+          <p class="lede">It is an email list and nothing more: it costs nothing, and signing up does not reserve a product, a price, a discount, a release date or a place in any test.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="shell">
+        <form class="panel-float early-access-form" action="${escapeHtml(EARLY_ACCESS_ENDPOINT)}" method="post">
+          <input type="hidden" name="metadata__consent_version" value="${EARLY_ACCESS_CONSENT_VERSION}">
+          <input type="hidden" name="metadata__source" value="studiozio.tech/early-access">
+
+          <div class="form-row">
+            <label class="form-label" for="ea-email">Email <span class="req">required</span></label>
+            <input id="ea-email" name="email" class="field" type="email" required autocomplete="email" aria-describedby="ea-email-hint">
+            <p class="form-hint" id="ea-email-hint">Used only for StudioZIO Early Access emails.</p>
+          </div>
+
+          <div class="form-check">
+            <input id="ea-consent" name="metadata__consent" type="checkbox" value="True" required>
+            <label for="ea-consent">${escapeHtml(EARLY_ACCESS_CONSENT_TEXT)} <span class="req">required</span></label>
+          </div>
+
+          <p class="form-hint">After you join, Buttondown sends an email asking you to confirm your address; nothing else arrives until you do. Every email has an unsubscribe link. Buttondown, a US-based newsletter service, stores the list and sends the emails. See the <a href="/privacy/">privacy policy</a>.</p>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Join Early Access</button>
+          </div>
+        </form>
       </div>
     </section>`
   });
@@ -2388,7 +2660,7 @@ export function renderPress() {
         </div>
         <div class="panel module-card">
           <p class="eyebrow eyebrow--muted">One line</p>
-          <p class="lede">StudioZIO makes free macOS audio plug-ins laid out in the order the audio takes, with the measurement always visible and no account or registration required.</p>
+          <p class="lede">StudioZIO makes free macOS audio plug-ins laid out in the order the audio takes, with the measurement always visible. The free plug-ins need no account or registration.</p>
         </div>
         <div class="panel module-card mt-md">
           <p class="eyebrow eyebrow--muted">Fifty words</p>
@@ -2467,9 +2739,9 @@ export function renderPress() {
         </div>
         <dl class="spec-grid">
           <div><dt>Developer</dt><dd>One person, not a company. Credit: Mert Erkan.</dd></div>
-          <div><dt>Price</dt><dd>Free permanently. Not a trial, not time-limited, not feature-locked, not a reduced version of a paid tier.</dd></div>
+          <div><dt>Price</dt><dd>The released plug-ins are free permanently. Not a trial, not time-limited, not feature-locked, not a reduced version of a paid tier.</dd></div>
           <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
-          <div><dt>Registration</dt><dd>No account, no iLok and no email registration at any point.</dd></div>
+          <div><dt>Registration</dt><dd>The free plug-ins need no account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
           <div><dt>Architecture</dt><dd>${architectureSentence()}</dd></div>
           <div><dt>Pro Tools</dt><dd>Every product ships an AAX build, validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
@@ -2608,7 +2880,7 @@ export function renderCommunityQuestions() {
   return shell({
     title: 'Where and how to ask — StudioZIO Community',
     description:
-      'Bug reports and technical questions reach the person who writes the code. There are no support tickets, accounts or queues.',
+      'Bug reports and technical questions reach the person who writes the code. Asking about the free plug-ins needs no ticket system and no account.',
     canonical: `${HUB_ORIGIN}/community/questions/`,
     current: 'community',
     content: `<section class="hero tech-grid">
@@ -2616,7 +2888,7 @@ export function renderCommunityQuestions() {
         <div class="rise">
           <p class="eyebrow">Community &middot; Support</p>
           <h1>Where and how to ask</h1>
-          <p class="lede">Bug reports and technical questions reach the person who writes the code. There are no support tickets, accounts or queues.</p>
+          <p class="lede">Bug reports and technical questions reach the person who writes the code. Asking about the free plug-ins needs no ticket system and no account.</p>
           ${communityNav('questions')}
         </div>
       </div>

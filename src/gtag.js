@@ -32,10 +32,13 @@ var CONSENT_OPT_IN_REGIONS = [
    order does not matter there — but writing it this way is also correct if
    the calls were ever resolved last-wins, which the reverse order would not
    be. Either way the opt-in regions end up denied. */
+/* ad_personalization is denied everywhere and never granted by consent.js:
+   the banner tells every visitor they are not added to an advertising
+   audience, and the privacy policy says ad personalisation is always off. */
 gtag('consent', 'default', {
   ad_storage: 'granted',
   ad_user_data: 'granted',
-  ad_personalization: 'granted',
+  ad_personalization: 'denied',
   analytics_storage: 'granted'
 });
 gtag('consent', 'default', {
@@ -56,7 +59,7 @@ try {
     gtag('consent', 'update', {
       ad_storage: stored,
       ad_user_data: stored,
-      ad_personalization: stored,
+      ad_personalization: 'denied',
       analytics_storage: stored
     });
   }
