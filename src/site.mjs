@@ -2007,9 +2007,12 @@ export function renderPrivacy() {
    or purchase priority is promised, and the page says so. The product in
    development is not named, because its name has not cleared trademark search.
 
-   Consent is a separate, unticked, required checkbox whose exact wording and
-   version travel with the sign-up as Buttondown metadata, so the record of
-   what was agreed to sits next to the address it was given for. Buttondown
+   Consent is a separate, unticked, required checkbox. It posts
+   metadata__consent=True, the value Buttondown's own required "consent"
+   checkbox field expects (Settings > Subscribing), and consent_version names
+   the wording agreed to, so the record sits next to the address it was
+   given for. The hosted page buttondown.com/studiozio carries the same
+   required box with the same sentence. Buttondown
    then sends its own confirmation email (double opt-in cannot be switched off
    on Buttondown), and nothing else is sent until the address is confirmed.
 
@@ -2046,7 +2049,7 @@ export function renderEarlyAccess() {
           </div>
 
           <div class="form-check">
-            <input id="ea-consent" name="metadata__consent" type="checkbox" value="${escapeHtml(EARLY_ACCESS_CONSENT_TEXT)}" required>
+            <input id="ea-consent" name="metadata__consent" type="checkbox" value="True" required>
             <label for="ea-consent">${escapeHtml(EARLY_ACCESS_CONSENT_TEXT)} <span class="req">required</span></label>
           </div>
 
