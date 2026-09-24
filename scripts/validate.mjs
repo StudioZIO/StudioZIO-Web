@@ -43,8 +43,12 @@ const KVR_URLS = [
   'https://www.kvraudio.com/product/studiozio-tempo-delay-by-studiozio',
   'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio'
 ];
+/* Only named public repositories may be linked; anything else under the
+   organization is treated as a leak. stream-metadata-vs-content is the public
+   evidence repository for the stream-start-time note, matched exactly (no
+   suffix can ride on it) so the guard still catches every other repository. */
 const forbidden = [
-  /github\.com\/StudioZIO\/(?!(StudioZIO-Releases|Support))/i,
+  /github\.com\/StudioZIO\/(?!(StudioZIO-Releases|Support|stream-metadata-vs-content(?![\w.-])))/i,
   /\/Users\/mert\//i,
   /StudioZIO-Master-Plugin-Suite/i,
   /\bCodex\b/i,
@@ -438,6 +442,34 @@ export function validateSource() {
     if (article.headline !== note.heading) throw new Error(`Note ${note.slug}: structured headline drift`);
     if (article.datePublished !== note.published) throw new Error(`Note ${note.slug}: structured date drift`);
     if (!article.image.endsWith(`og-note-${note.slug}.png`)) throw new Error(`Note ${note.slug}: structured image drift`);
+
+    /* The opt-in article parts. A signed note shows the same author the
+       structured data names, and an unsigned one shows no byline at all; an
+       update is never dated before the note; cited evidence is linked on the
+       page that cites it; every static figure a note declares is drawn. */
+    if (note.updated !== undefined) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(note.updated)) throw new Error(`Note ${note.slug}: malformed updated date`);
+      if (note.updated < note.published) throw new Error(`Note ${note.slug}: updated before published`);
+    }
+    if (article.dateModified !== (note.updated || note.published)) throw new Error(`Note ${note.slug}: structured modified-date drift`);
+    if (note.author) {
+      if (!page.includes(`<p class="note-meta">By ${note.author.name} · <time datetime="${note.published}">`)) {
+        throw new Error(`Note ${note.slug}: byline or date missing from the page`);
+      }
+      if (article.author?.['@type'] !== 'Person' || article.author.name !== note.author.name) {
+        throw new Error(`Note ${note.slug}: structured author drift`);
+      }
+    } else if (page.includes('class="note-meta"')) {
+      throw new Error(`Note ${note.slug}: unsigned note shows a byline`);
+    }
+    if (note.evidence) {
+      if (!/^https:\/\//.test(note.evidence.href)) throw new Error(`Note ${note.slug}: evidence must be an https link`);
+      if (!page.includes(`href="${note.evidence.href}"`)) throw new Error(`Note ${note.slug}: evidence is declared but not linked`);
+      if (article.isBasedOn !== note.evidence.href) throw new Error(`Note ${note.slug}: structured evidence drift`);
+    }
+    const staticFigures = note.body.flatMap((part) => part.content || []).filter((block) => 'svg' in block || 'img' in block).length;
+    const drawn = (page.match(/<figure class="note-figure">/g) || []).length;
+    if (drawn !== staticFigures) throw new Error(`Note ${note.slug}: ${staticFigures} static figures declared, ${drawn} drawn`);
   }
 
   /* Each figure names the script that moves it and the markup that proves it

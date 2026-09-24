@@ -8,7 +8,7 @@ import {
   ZIO_WEBSITE
 } from './catalog.mjs';
 import { mediaSeconds } from './media.mjs';
-import { notes, getNote } from './notes.mjs';
+import { notes, notesNewestFirst, getNote } from './notes.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -2121,18 +2121,115 @@ export function renderNotes() {
           <p class="eyebrow">Notes</p>
           <h2 id="notes-title">Measurement and design, explained</h2>
         </div>
-        <div class="card-grid card-grid--2">${notes.map(noteCard).join('')}</div>
+        <div class="card-grid card-grid--2">${notesNewestFirst().map(noteCard).join('')}</div>
         <p class="mt-lg">More about the plug-ins on the <a href="/products/">products page</a>, or <a href="${HOMEBREW_URL}">install via Homebrew</a> with the cask commands shown there. For help, <a href="/contact/">get in touch</a>.</p>
       </div>
     </section>`
   });
 }
 
+/* Note prose is escaped, then a small allow-list is let back through: links,
+   and -- for the notes that quote commands and field names -- inline code and
+   emphasis, with no attributes. Nothing else a note writes can become markup. */
 function formatNoteParagraph(line) {
-  return escapeHtml(line).replace(
-    /&lt;a href=&quot;([^&"]+)&quot;&gt;(.*?)&lt;\/a&gt;/g,
-    '<a href="$1">$2</a>'
-  );
+  return escapeHtml(line)
+    .replace(/&lt;a href=&quot;([^&"]+)&quot;&gt;(.*?)&lt;\/a&gt;/g, '<a href="$1">$2</a>')
+    .replace(/&lt;(code|em|strong)&gt;(.*?)&lt;\/\1&gt;/g, '<$1>$2</$1>');
+}
+
+/* ---------- note article parts ------------------------------------------
+   The first twelve notes are headings and paragraphs, and they render exactly
+   as before. A note that needs more -- a byline, a command, a table, a static
+   figure, the evidence behind it -- opts in per field, so nothing here changes
+   a note that does not ask for it.
+
+   A section either carries `p` (paragraphs, the original shape) or `content`:
+   an ordered list of blocks, each one of p, ul, code, table, svg, img or
+   evidence. An unknown block stops the build rather than rendering nothing. */
+
+const NOTE_FIGURE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), 'notes-figures');
+const NOTE_FIGURE_FILE = /^[a-z0-9][a-z0-9.-]*\.(svg|png|webp|jpg)$/;
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/* Written out rather than left to Intl, so the build prints the same date on
+   every machine regardless of locale. */
+function formatNoteDate(iso) {
+  const [year, month, day] = iso.split('-').map(Number);
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+}
+
+/* The byline is shown only for notes that name an author; the library's
+   unsigned notes keep their unsigned header. */
+function noteMeta(note) {
+  if (!note.author) return '';
+  const updated = note.updated
+    ? ` · Updated <time datetime="${escapeHtml(note.updated)}">${formatNoteDate(note.updated)}</time>`
+    : '';
+  return `<p class="note-meta">By ${escapeHtml(note.author.name)} · <time datetime="${escapeHtml(note.published)}">${formatNoteDate(note.published)}</time>${updated}</p>`;
+}
+
+function noteFigureFile(file) {
+  if (!NOTE_FIGURE_FILE.test(file)) throw new Error(`Note figure file name not allowed: ${file}`);
+  return resolve(NOTE_FIGURE_ROOT, file);
+}
+
+/* A static SVG figure is inlined rather than linked, so it draws with the
+   site's own tokens (see .nf-* in styles.css) instead of carrying colours of
+   its own, and needs no request of its own. */
+function noteInlineSvg(file) {
+  const svg = readFileSync(noteFigureFile(file), 'utf8').trim();
+  if (!svg.startsWith('<svg') || /<script|\son\w+=/i.test(svg)) {
+    throw new Error(`Note figure ${file} is not a plain static SVG`);
+  }
+  return svg;
+}
+
+function noteCaption(caption) {
+  return caption ? `<figcaption>${formatNoteParagraph(caption)}</figcaption>` : '';
+}
+
+function noteEvidence(evidence) {
+  return `<aside class="note-evidence" aria-label="Evidence">
+          <p class="eyebrow">Evidence</p>
+          <p>${formatNoteParagraph(evidence.summary)}</p>
+          <ul class="note-list">${evidence.items.map((item) => `<li>${formatNoteParagraph(item)}</li>`).join('')}</ul>
+          <p class="note-evidence-link"><a href="${escapeHtml(evidence.href)}" rel="noopener">${escapeHtml(evidence.label)}</a></p>
+        </aside>`;
+}
+
+function noteBlock(block, note) {
+  if ('p' in block) return `<p class="lede">${formatNoteParagraph(block.p)}</p>`;
+  if ('ul' in block) {
+    return `<ul class="note-list">${block.ul.map((item) => `<li>${formatNoteParagraph(item)}</li>`).join('')}</ul>`;
+  }
+  if ('code' in block) {
+    const label = block.label ? `<figcaption class="note-code-label">${escapeHtml(block.label)}</figcaption>` : '';
+    return `<figure class="note-code">${label}<pre tabindex="0"><code>${escapeHtml(block.code)}</code></pre></figure>`;
+  }
+  if ('table' in block) {
+    const { head, rows, caption } = block.table;
+    const thead = `<thead><tr>${head.map((cell) => `<th scope="col">${formatNoteParagraph(cell)}</th>`).join('')}</tr></thead>`;
+    const tbody = `<tbody>${rows
+      .map(([first, ...rest]) => `<tr><th scope="row">${formatNoteParagraph(first)}</th>${rest.map((cell) => `<td>${formatNoteParagraph(cell)}</td>`).join('')}</tr>`)
+      .join('')}</tbody>`;
+    return `<figure class="note-table"><div class="note-table-scroll" tabindex="0"><table>${thead}${tbody}</table></div>${noteCaption(caption)}</figure>`;
+  }
+  if ('svg' in block) return `<figure class="note-figure">${noteInlineSvg(block.svg)}${noteCaption(block.caption)}</figure>`;
+  if ('img' in block) {
+    noteFigureFile(block.img);
+    return `<figure class="note-figure"><img src="/assets/notes/${escapeHtml(block.img)}" alt="${escapeHtml(block.alt)}" width="${Number(block.width)}" height="${Number(block.height)}" loading="lazy" decoding="async">${noteCaption(block.caption)}</figure>`;
+  }
+  if ('evidence' in block) {
+    if (!note.evidence) throw new Error(`Note ${note.slug} places evidence but declares none`);
+    return noteEvidence(note.evidence);
+  }
+  throw new Error(`Note ${note.slug} has an unknown block: ${Object.keys(block).join(', ')}`);
+}
+
+function noteSectionBody(part, note) {
+  if (part.content) return part.content.map((block) => noteBlock(block, note)).join('');
+  return part.p.map((line) => `<p class="lede">${formatNoteParagraph(line)}</p>`).join('');
 }
 
 /* ---------- note figures ------------------------------------------------
@@ -2486,10 +2583,15 @@ function noteJsonLd(note) {
       description: note.description,
       abstract: note.standfirst,
       datePublished: note.published,
-      dateModified: note.published,
+      dateModified: note.updated || note.published,
       inLanguage: 'en',
       image: `${HUB_ORIGIN}/assets/og/og-note-${note.slug}.png`,
-      author: { '@id': ORGANIZATION_ID },
+      /* A signed note names its author as the page does; the library's
+         unsigned notes stay attributed to StudioZIO, as before. */
+      author: note.author
+        ? { '@type': 'Person', name: note.author.name, ...(note.author.url ? { url: note.author.url } : {}) }
+        : { '@id': ORGANIZATION_ID },
+      ...(note.evidence ? { isBasedOn: note.evidence.href } : {}),
       publisher: { '@id': ORGANIZATION_ID },
       isPartOf: { '@id': `${HUB_ORIGIN}/notes/#library` },
       mainEntityOfPage: `${HUB_ORIGIN}/notes/${note.slug}/`
@@ -2508,7 +2610,7 @@ function notesJsonLd() {
       name: 'StudioZIO technical notes',
       url: `${HUB_ORIGIN}/notes/`,
       publisher: { '@id': ORGANIZATION_ID },
-      hasPart: notes.map((note) => ({
+      hasPart: notesNewestFirst().map((note) => ({
         '@type': 'TechArticle',
         '@id': `${HUB_ORIGIN}/notes/${note.slug}/#article`,
         headline: note.heading,
@@ -2528,7 +2630,7 @@ export function renderNote(slug) {
         <div class="section-head">
           <h2 id="note-h-${index}">${escapeHtml(part.h)}</h2>
         </div>
-        ${part.p.map((line) => `<p class="lede">${formatNoteParagraph(line)}</p>`).join('')}
+        ${noteSectionBody(part, note)}
         ${noteFigure(part.figure)}
       </div>
     </section>`
@@ -2556,7 +2658,7 @@ export function renderNote(slug) {
       <div class="shell">
         <div class="rise">
           <p class="eyebrow">Technical note</p>
-          <h1>${escapeHtml(note.heading)}</h1>
+          <h1>${escapeHtml(note.heading)}</h1>${noteMeta(note)}
           <p><a href="/notes/">All technical notes</a></p>
           <p class="lede">${escapeHtml(note.standfirst)}</p>
         </div>

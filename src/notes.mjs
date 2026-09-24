@@ -541,8 +541,180 @@ export const notes = Object.freeze([
         ])
       })
     ])
+  }),
+  /* The first signed note. It uses the opt-in article parts (author, content
+     blocks, evidence) described above renderNote in site.mjs. Every number in
+     it comes from the public evidence repository it links to; the two static
+     figures in src/notes-figures/ were generated from that repository's
+     measured_output.txt, not drawn.
+
+     Published 24 September 2026, the day it was merged. The evidence
+     repository was created, fresh-cloned and verified against its SHA256SUMS
+     before this date was set. */
+  Object.freeze({
+    slug: 'stream-start-time-is-not-sync',
+    published: '2026-09-24',
+    author: Object.freeze({ name: 'Mert Erkan' }),
+    heading: 'Both streams start at 0.000. The content is still 120 ms apart.',
+    title: 'Stream start time is not sync',
+    description:
+      'Two test files report identical stream start times. Measured on the content, one is 0 ms out, the other 120 ms. A reproducible test of metadata versus behavior.',
+    standfirst:
+      'A small, reproducible test of the gap between what a file reports and what it contains.',
+    evidence: Object.freeze({
+      href: 'https://github.com/StudioZIO/stream-metadata-vs-content',
+      label: 'github.com/StudioZIO/stream-metadata-vs-content',
+      summary:
+        'Everything needed to reproduce this is public. With the same FFmpeg/x264 build the files regenerate byte-identically; with another build the bytes may differ, but the timings should not.',
+      items: Object.freeze([
+        '<code>make_sync_demo.sh</code>: generates both test files',
+        '<code>measure.sh</code>: the container view, then each tone onset paired with its flash',
+        '<code>good.mp4</code>, <code>bad.mp4</code>: the test files, about 40 KB each',
+        '<code>measured_output.txt</code>: the run shown here (FFmpeg 9.0.1)',
+        '<code>SHA256SUMS</code>: the hash manifest for all of the above'
+      ])
+    }),
+    body: Object.freeze([
+      Object.freeze({
+        h: 'What ffprobe reported',
+        content: Object.freeze([
+          Object.freeze({ p: 'I made two 10-second MP4 files and asked <code>ffprobe</code> about them. It reported the same codecs, the same durations and the same stream start times for both: video 0.000, audio 0.000.' }),
+          Object.freeze({
+            table: Object.freeze({
+              head: Object.freeze(['File', 'Stream', 'start_time', 'duration']),
+              rows: Object.freeze([
+                Object.freeze(['good.mp4', 'video', '0.000000', '10.000000']),
+                Object.freeze(['good.mp4', 'audio', '0.000000', '10.000000']),
+                Object.freeze(['bad.mp4', 'video', '0.000000', '10.000000']),
+                Object.freeze(['bad.mp4', 'audio', '0.000000', '10.000000'])
+              ]),
+              caption: 'Figure 1. The container\'s view of both files.'
+            })
+          }),
+          Object.freeze({ p: 'The files are not identical, though. Their hashes differ, and so does their audio. In one file, each tone starts on the same frame as its visual flash. In the other, each tone starts 120 ms after its flash.' }),
+          Object.freeze({ p: '<code>ffprobe</code> is not wrong here. It answered the question it was asked. It just was not the question that mattered.' })
+        ])
+      }),
+      Object.freeze({
+        h: 'The test',
+        content: Object.freeze([
+          Object.freeze({ p: 'Each file has a white video frame and a 50 ms, 1 kHz tone at every whole second, both generated with FFmpeg\'s built-in sources. For the second file, I delayed the audio <em>content</em> by 120 ms <strong>before</strong> muxing:' }),
+          Object.freeze({
+            label: 'shell',
+            code: [
+              'V="color=c=black:s=640x360:r=30:d=10,drawbox=x=0:y=0:w=iw:h=ih:c=white:t=fill:enable=\'lt(mod(t+0.001\\,1)\\,0.02)\'"',
+              'A="aevalsrc=\'0.5*sin(2*PI*1000*t)*lt(mod(t\\,1)\\,0.05)\':s=48000:d=10"',
+              '',
+              'ffmpeg -f lavfi -i "$V" -f lavfi -i "$A" \\',
+              '  -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 128k -t 10 good.mp4',
+              'ffmpeg -f lavfi -i "$V" -f lavfi -i "$A,adelay=120:all=1" \\',
+              '  -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 128k -t 10 bad.mp4'
+            ].join('\n')
+          }),
+          Object.freeze({ p: 'Then I measured two things. First, the container view: each stream\'s <code>start_time</code>. Second, the content: when each flash appears (a frame\'s mean brightness jumps, via FFmpeg\'s <code>signalstats</code>) and when each tone starts (the end of a silence, via <code>silencedetect</code>). Each tone onset is paired with the flash before it. The full script is in the evidence repository.' })
+        ])
+      }),
+      Object.freeze({
+        h: 'The result',
+        content: Object.freeze([
+          Object.freeze({
+            svg: 'stream-metadata-content-offsets.svg',
+            caption: 'Figure 2. Tone onset minus flash time, per event. Values from <code>measured_output.txt</code>.'
+          }),
+          Object.freeze({
+            table: Object.freeze({
+              head: Object.freeze(['File', 'Stream start (video / audio)', 'Content offset, every event']),
+              rows: Object.freeze([
+                Object.freeze(['good.mp4', '0.000 / 0.000 s', '0.0 ms (9 events)']),
+                Object.freeze(['bad.mp4', '0.000 / 0.000 s', '120.0 ms (10 events)'])
+              ])
+            })
+          }),
+          Object.freeze({ p: 'The container view cannot tell the files apart. The content measurement recovers the injected delay exactly, at every event.' }),
+          Object.freeze({ p: '<code>good.mp4</code> has one event fewer because its first tone starts the file, so there is no silence before it for <code>silencedetect</code> to end.' })
+        ])
+      }),
+      Object.freeze({
+        h: 'Why the metadata cannot see it',
+        content: Object.freeze([
+          Object.freeze({ p: '"Sync" is being used for two different things:' }),
+          Object.freeze({
+            ul: Object.freeze([
+              '<strong>Stream timestamps:</strong> when each stream\'s first frame or sample is scheduled on the container\'s timeline. That is what <code>start_time</code> reports.',
+              '<strong>Content-event alignment:</strong> whether a sound and the picture event it belongs to land at the same moment.'
+            ])
+          }),
+          Object.freeze({
+            svg: 'stream-metadata-two-clocks.svg',
+            caption: 'Figure 3. Aligned wrapper, offset content. The timeline is to scale; bar heights are illustrative.'
+          }),
+          Object.freeze({ p: 'If the audio is already late <em>inside</em> the stream, the container will still schedule that stream at 0.000. It is reporting accurately on the wrong layer.' }),
+          Object.freeze({ p: 'The 0.000 is also partly constructed. In both files, FFmpeg\'s MP4 muxer wrote an edit list for each stream so the timeline starts cleanly at zero despite the encoders\' startup delay. That is normal and correct, but it is another reminder that <code>start_time</code> describes the container\'s timeline, not the content.' })
+        ])
+      }),
+      Object.freeze({
+        h: 'A correction I made along the way',
+        content: Object.freeze([
+          Object.freeze({ p: 'The first version of this test gated the tone with FFmpeg\'s <code>volume</code> filter. That filter evaluates its expression once per 1,024-sample audio frame, so tone onsets in <strong>both</strong> files landed 0 to 19 ms late, varying from second to second. The difference between the files was still exactly 120 ms, but the "good" file did not measure as 0 ms. Explaining that away would have been easy.' }),
+          Object.freeze({ p: 'Instead, I replaced the generator with a sample-accurate one (<code>aevalsrc</code>) and re-ran everything. The numbers here come from that version, and the evidence repository records the correction.' }),
+          Object.freeze({ p: 'This is the part I would most like readers to take away. A clean result from a test you have not examined is weak evidence. The first job is to make sure the test measures what you think it measures.' })
+        ])
+      }),
+      Object.freeze({
+        h: 'What this shows, and what it does not',
+        content: Object.freeze([
+          Object.freeze({ p: 'It shows a <strong>mechanism</strong>: identical stream metadata can sit on top of misaligned content, and measuring events exposes the difference.' }),
+          Object.freeze({ p: 'It does not show:' }),
+          Object.freeze({
+            ul: Object.freeze([
+              '<strong>A lip-sync method for real footage.</strong> Synthetic markers are far easier to detect than faces and voices. On real material, the practical anchors are a slate or handclap, or a sharp sound with a visible cause, checked at the start, middle and end so you can tell a constant offset from drift.',
+              '<strong>How common offsets are,</strong> or how large an offset viewers notice. That depends on content and viewing conditions, and this test makes no perceptual claim.'
+            ])
+          })
+        ])
+      }),
+      Object.freeze({
+        h: 'Where this applies',
+        content: Object.freeze([
+          Object.freeze({ p: 'Metadata checks are the easiest layer to automate, so they are often the only one that gets automated. They are still worth running: codec, frame rate, sample rate and duration errors are real. But they sit beside other layers, not above them:' }),
+          Object.freeze({
+            ul: Object.freeze([
+              'content-event sync',
+              'loudness measured against the destination\'s current spec',
+              'one full playback at normal speed',
+              'a listen on the device the audience actually uses'
+            ])
+          }),
+          Object.freeze({ p: 'A file can pass the first layer and fail any of the others.' }),
+          Object.freeze({ p: 'The same pattern shows up well outside video. A plug-in that reports zero latency still has to line up in a null test. A build labeled "universal" still has to contain both architectures. A green check is only as good as the question it asks.' }),
+          Object.freeze({ p: 'This is the principle I try to apply in software and audio work: <strong>measure the behavior you actually care about, not the proxy that happens to be easy to read.</strong>' }),
+          Object.freeze({ evidence: true })
+        ])
+      }),
+      Object.freeze({
+        h: 'Claim discipline',
+        content: Object.freeze([
+          Object.freeze({
+            ul: Object.freeze([
+              '<strong>Observed:</strong> both files report identical stream start times (0.000) and durations. Their content events differ by 120 ms.',
+              '<strong>Measured:</strong> 0.0 ms (good, 9 events) and 120.0 ms (bad, 10 events). The files regenerate byte-identically on FFmpeg 9.0.1.',
+              '<strong>Inferred:</strong> real-world offsets have many causes. This test demonstrates the mechanism, not how often offsets happen or how visible they are.',
+              '<strong>Recommended:</strong> when timing matters, measure it on content events, not on stream metadata alone.'
+            ])
+          })
+        ])
+      })
+    ])
   })
 ]);
+
+/* The library's one ordering rule: newest first, by the day each note went
+   up -- the order the feed has always used, now shared by the library page so
+   the two cannot disagree. Array sort is stable, so notes published on the
+   same day keep the order they are written in above. */
+export function notesNewestFirst() {
+  return [...notes].sort((a, b) => (a.published < b.published ? 1 : a.published > b.published ? -1 : 0));
+}
 
 export function getNote(slug) {
   const note = notes.find((candidate) => candidate.slug === slug);
