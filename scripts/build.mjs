@@ -2,7 +2,7 @@ import { existsSync, statSync } from 'node:fs';
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { notes } from '../src/notes.mjs';
+import { notes, notesNewestFirst } from '../src/notes.mjs';
 import {
   HUB_ORIGIN,
   renderCommunity,
@@ -158,6 +158,9 @@ await cp(resolve(projectRoot, 'src/architecture-figure.js'), resolve(outputRoot,
 await cp(resolve(projectRoot, 'src/loop-figure.js'), resolve(outputRoot, 'assets/loop-figure.js'));
 await cp(resolve(projectRoot, 'src/media'), resolve(outputRoot, 'assets/media'), { recursive: true });
 await cp(resolve(projectRoot, 'src/press'), resolve(outputRoot, 'assets/press'), { recursive: true });
+// Static note figures. SVGs are inlined into the page at render time; raster
+// figures a note references with `img` are served from here.
+await cp(resolve(projectRoot, 'src/notes-figures'), resolve(outputRoot, 'assets/notes'), { recursive: true });
 /* The search index, assembled here rather than fetched at runtime.
 
    The hub's own share of it is read out of the HTML this build just rendered,
@@ -220,8 +223,7 @@ await writeFile(
 
    Newest first, by the day each note went up. The description is the note's
    own standfirst -- the feed says what the page says, and nothing more. */
-const feedItems = [...notes]
-  .sort((a, b) => (a.published < b.published ? 1 : a.published > b.published ? -1 : 0))
+const feedItems = notesNewestFirst()
   .map((note) => {
     const url = `${HUB_ORIGIN}/notes/${note.slug}/`;
     return `    <item>\n`

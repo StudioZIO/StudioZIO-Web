@@ -1371,6 +1371,157 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .loopfig-passes { text-align: left; white-space: normal; }
 }
 
+/* ---------- note articles: byline, code, tables, static figures ---------
+   Opt-in parts for notes that are signed articles (see noteBlock in
+   site.mjs). Every colour is a token; the static SVG figures carry no colour
+   of their own and are drawn by the .nf-* classes below, so they follow the
+   site rather than a palette baked into a file. */
+.note-meta {
+  margin: 1.1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.note-meta time { color: var(--foreground); }
+
+main .lede code,
+.note-list code,
+.note-table code,
+.note-figure figcaption code,
+.note-evidence code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: var(--foreground);
+  background: var(--surface-control);
+  border: 1px solid var(--hairline);
+  border-radius: 5px;
+  padding: 0.05em 0.35em;
+  overflow-wrap: anywhere;
+}
+
+.note-list {
+  max-width: var(--measure);
+  margin: 0 0 1.25rem;
+  padding-left: 1.25rem;
+  color: var(--muted-foreground);
+  font-size: 1.0625rem;
+}
+.note-list li { list-style: disc; }
+.note-list li::marker { color: var(--primary-text); }
+.note-list li + li { margin-top: 0.45rem; }
+.note-list strong, main .lede strong { color: var(--foreground); font-weight: 500; }
+
+.note-code { margin: 1.5rem 0; max-width: 100%; }
+.note-code-label {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.note-code pre {
+  margin: 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 1rem 1.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  tab-size: 2;
+}
+/* The UA gives <code> its own monospace; take the pre's instead. */
+.note-code pre code { font: inherit; }
+.note-code pre:focus-visible,
+.note-table-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+.note-figure,
+.note-table { margin: 2rem 0 0; max-width: 46rem; }
+.note-figure {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 1.25rem;
+}
+.note-figure svg,
+.note-figure img { display: block; width: 100%; height: auto; }
+/* The static figures are drawn at a fixed viewBox; on a phone every pixel of
+   width is legibility, so the frame gives most of its padding back. */
+@media (max-width: 560px) {
+  .note-figure { padding: 0.75rem 0.5rem; }
+}
+.note-figure svg text { font-family: var(--font-body); }
+.note-figure figcaption,
+.note-table figcaption {
+  margin-top: 0.9rem;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+.note-table + .lede, .note-figure + .lede { margin-top: 1.5rem; }
+
+.note-table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+}
+.note-table table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+.note-table th,
+.note-table td {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+  white-space: nowrap;
+}
+.note-table thead th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.note-table tbody th { font-weight: 500; color: var(--foreground); }
+.note-table td { font-family: var(--font-mono); font-size: 0.875rem; color: var(--foreground); }
+.note-table tbody tr:last-child > * { border-bottom: 0; }
+
+.note-evidence {
+  margin: 2rem 0 0;
+  max-width: 46rem;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--primary);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  padding: 1.25rem 1.4rem;
+}
+.note-evidence .eyebrow { margin-bottom: 0.75rem; }
+.note-evidence p { margin: 0 0 0.9rem; color: var(--muted-foreground); }
+.note-evidence .note-list { font-size: 0.9375rem; }
+.note-evidence-link { margin-bottom: 0; font-family: var(--font-mono); font-size: 0.8125rem; overflow-wrap: anywhere; }
+
+/* static figure strokes and fills, from tokens */
+.nf-text { fill: var(--foreground); }
+.nf-muted { fill: var(--muted-foreground); }
+.nf-good { fill: var(--primary-text); }
+.nf-bad { fill: var(--destructive); }
+.nf-grid { stroke: var(--border); stroke-width: 1; }
+.nf-axis { stroke: var(--muted-foreground); stroke-width: 1.5; }
+.nf-good-line { fill: none; stroke: var(--primary-text); stroke-width: 3; }
+.nf-bad-line { fill: none; stroke: var(--destructive); stroke-width: 3; }
+.nf-good-dot { fill: var(--primary-text); }
+.nf-bad-dot { fill: var(--destructive); }
+.nf-track { fill: var(--surface-control); stroke: var(--border); }
+.nf-flash { fill: var(--foreground); }
+.nf-tone { fill: var(--destructive); }
+.nf-start { stroke: var(--primary-text); stroke-width: 2.5; stroke-dasharray: 6 5; }
+.nf-bracket { stroke: var(--destructive); stroke-width: 3; }
+.nf-bracket-guide { stroke: var(--destructive); stroke-width: 1.5; stroke-dasharray: 4 4; }
+
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: none; }
