@@ -112,14 +112,13 @@ export function validateSource() {
   /* The filename, the download URL and the release URL used to be derived
      here from tempoDelay.version, on the assumption that the version a
      plug-in reports and the number in its release tag are always the same one.
-     The clean-packaging release of 2026-09-16 ended that assumption: the
-     plug-ins report 4.0.1, which is the version this catalogue publishes,
-     while the tag and the installer filename carry 4.1.0 -- the number the
-     four-component package topology uses. Deriving either from the other now
-     builds a URL that 404s, and a build gate that constructs the wrong answer
-     is worse than one that checks the given answer. So Tempo Delay is checked
-     the way the hub-native products are: the shape, and whether the catalogue
-     agrees with itself. */
+     The clean-packaging release of 2026-09-16 broke that assumption for a
+     while (plug-ins at 4.0.1, tag and installer at 4.1.0). From 4.0.3 the
+     plug-ins, the tag and the installer carry one number again, but the
+     check stays shape-based: a build gate that constructs an answer is worse
+     than one that checks the given answer. So Tempo Delay is checked the way
+     the hub-native products are: the shape, and whether the catalogue agrees
+     with itself. */
   if (
     tempoDelay.name !== 'StudioZIO Tempo Delay' ||
     tempoDelay.price !== 'Free' ||
