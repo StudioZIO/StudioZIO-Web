@@ -86,14 +86,14 @@ export const products = Object.freeze([
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
     price: 'Free',
-    version: '4.0.1',
-    filename: 'StudioZIOTempoDelay-v4.1.0-macOS-arm64.pkg',
+    version: '4.0.3',
+    filename: 'StudioZIOTempoDelay-v4.0.3-macOS-arm64.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.1.0-clean-packaging-2026.09.16/StudioZIOTempoDelay-v4.1.0-macOS-arm64.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.0.3/StudioZIOTempoDelay-v4.0.3-macOS-arm64.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.1.0-clean-packaging-2026.09.16',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.0.3',
     sha256:
-      'fa16f0c9f04f5f56e446ae06074a0f3b0a8e193fa21089e0bf92c486d197910d',
+      '6ba310fadf4435a2929675035298b27da534d7215e2370c6b50075ab52d60330',
     availability: 'Available now',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
