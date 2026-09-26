@@ -818,7 +818,7 @@ const AB_DEMOS = Object.freeze({
     shotAlt:
       'The StudioZIO Tempo Delay window: a signal-path rail across the top running tempo, left, right, tone, feedback, character, width and mix, with the primary delay engine open at 100 ms on each side, 45 per cent feedback, 100 per cent width and 50 per cent mix, a stereo echo field on the right, and the tone and filters tab showing an 80 Hz high-pass and an 8 kHz low-pass.',
     note:
-      'Rendered through Tempo Delay 4.0.1 at 44.1 kHz. Judge placement, tail and stereo spread.'
+      'Rendered through Tempo Delay 4.0.3 at 44.1 kHz. Judge placement, tail and stereo spread.'
   }),
   /* The one pair that cannot be matched at -12 LUFS, and the reason is the
      product. An unlimited drum take with 14 dB of crest reaches -1 dBTP long
@@ -2489,7 +2489,7 @@ function architectureFigure() {
             <span class="archfig-verdict">runs natively</span>
           </li>
           <li class="archfig-product" data-slices="arm64" data-verdict="runs">
-            <span class="archfig-name">Tempo Delay 4.0.1</span>
+            <span class="archfig-name">Tempo Delay 4.0.3</span>
             <span class="archfig-slices"><span class="archfig-slice">arm64</span></span>
             <span class="archfig-kind">Apple Silicon only &middot; macOS 12+</span>
             <span class="archfig-verdict">runs natively</span>
@@ -3422,7 +3422,7 @@ export function renderCommunityRoadmap() {
           </article>
           <article class="panel roadmap-card">
             <div class="roadmap-card-head">
-              <h3>StudioZIO Tempo Delay 4.0.1</h3>
+              <h3>StudioZIO Tempo Delay 4.0.3</h3>
               ${chip('Shipped')}
             </div>
             <p>Current production release for Apple Silicon Macs running macOS 12+. AUv2, VST3, AAX and Standalone.</p>

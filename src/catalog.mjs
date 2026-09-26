@@ -26,31 +26,33 @@ export const products = Object.freeze([
      bundle page is for. The installer is published through the releases
      repository first, and the hub points at it only once that release exists
      and its checksum has been read back from the published file: the values
-     below were read back from the live 1.0.2 asset, 169,208,126 bytes, and
-     not copied from a note. */
+     below are the owner's measured values for the 1.0.3 asset, 169,176,439
+     bytes, and must be read back from the published file before this goes
+     live: `npm run verify:downloads` does exactly that. */
   Object.freeze({
     slug: 'everything',
     name: 'StudioZIO Everything',
     shortName: 'Everything',
     manufacturer: 'StudioZIO',
-    version: '1.0.2',
+    version: '1.0.3',
     platform: 'macOS',
     /* Read from the installer, not decided here: the package declares
        hostArchitectures x86_64,arm64 and a macOS 11.0 minimum, so it installs
        on an Intel Mac. Six of the seven plug-ins inside are Universal and run
        there; Tempo Delay needs Apple Silicon and macOS 12. From Everything
        1.0.2 the installer leaves Tempo Delay unselected and switched off on
-       any other Mac, and the page says so. */
+       any other Mac, and the page says so. Everything 1.0.3 carries Tempo
+       Delay 4.0.3; the other six plug-ins are byte-identical to 1.0.2. */
     architecture: 'Universal \u2014 Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
-    filename: 'StudioZIO-Everything-1.0.2.pkg',
+    filename: 'StudioZIO-Everything-1.0.3.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/everything-v1.0.2/StudioZIO-Everything-1.0.2.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/everything-v1.0.3/StudioZIO-Everything-1.0.3.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/everything-v1.0.2',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/everything-v1.0.3',
     sha256:
-      '9a51e7768f5bc8530c368b98bc79811144def1dfdcbb3f94143e1cbc13a43952',
+      '71b1f432463cc3659d2e810c7300282ac17b391cfd265c8eb461f80af08a1436',
     signing: 'Developer ID signed',
     notarization: 'Apple notarized',
     price: 'Free',
@@ -96,14 +98,14 @@ export const products = Object.freeze([
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
     price: 'Free',
-    version: '4.0.1',
-    filename: 'StudioZIOTempoDelay-v4.1.0-macOS-arm64.pkg',
+    version: '4.0.3',
+    filename: 'StudioZIOTempoDelay-v4.0.3-macOS-arm64.pkg',
     downloadUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.1.0-clean-packaging-2026.09.16/StudioZIOTempoDelay-v4.1.0-macOS-arm64.pkg',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/tempo-delay-v4.0.3/StudioZIOTempoDelay-v4.0.3-macOS-arm64.pkg',
     releaseUrl:
-      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.1.0-clean-packaging-2026.09.16',
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/tempo-delay-v4.0.3',
     sha256:
-      'fa16f0c9f04f5f56e446ae06074a0f3b0a8e193fa21089e0bf92c486d197910d',
+      '6ba310fadf4435a2929675035298b27da534d7215e2370c6b50075ab52d60330',
     availability: 'Available now',
     description:
       'Tempo-synced stereo delay with independent left and right timing, feedback shaping, and ping-pong spatial behavior.',
