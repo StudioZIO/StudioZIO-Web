@@ -12,8 +12,8 @@
        tempo and its own random sequence, so no two cards move together;
      - L and R that share that source but differ by a decibel or so, the way
        a stereo mix does;
-     - peak-meter ballistics: a fast rise and a slow, steady fall of about
-       20 dB in 1.7 s (the IEC 60268-10 Type I programme meter);
+     - meter ballistics that climb faster than they fall, slowed to the
+       pace of the Mastering Suite and Tempo Delay mocks beside them;
      - input, output and gain reduction that follow from one another the way
        the product's own processing would at the values its rail shows, not
        three unrelated loops. Inflator's rail reads Amount 0 %, so its output
@@ -32,8 +32,12 @@
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var FLOOR_DB = -42;          // left edge of a level bar
-  var FALL_DB_PER_S = 20 / 1.7; // IEC 60268-10 Type I return
-  var ATTACK_S = 0.01;
+  /* Slower than a studio peak meter on purpose: the cards sit next to the
+     Mastering Suite and Tempo Delay mocks, whose motion takes seconds, and a
+     row of fast meters beside them tires the eye. The shape stays a meter's:
+     it still climbs faster than it falls. */
+  var FALL_DB_PER_S = 20 / 12;
+  var ATTACK_S = 0.9;
 
   /* Every card starts from its own seed, so two cards are never in step. */
   function rng(seed) {
@@ -53,42 +57,47 @@
   /* Programme-like source, in dBFS. `hot` shifts the whole thing, for the
      product that sits last in a chain; `vocal` swaps the beat for syllables. */
   function makeSource(rand, hot, vocal) {
-    var bpm = 84 + rand() * 44;
-    var step = vocal ? 0.16 + rand() * 0.1 : 60 / bpm / 2; // eighth notes
+    var bpm = 64 + rand() * 24;
+    var step = 60 / bpm; // one hit a beat
     var t = rand() * step;
     var n = Math.floor(rand() * 16);
-    var phrase = -12 + hot + (rand() * 4 - 2);
+    var phrase = -12 + hot + (hot ? rand() * 2 - 1 : rand() * 4 - 2);
     var phraseTarget = phrase;
     var breakdown = 0;
-    var hit = FLOOR_DB;
+    var hit = phrase - 5;
     return function (dt) {
       t -= dt;
       if (t <= 0) {
-        t += vocal ? 0.12 + rand() * 0.22 : step;
+        t += vocal ? 0.45 + rand() * 0.5 : step;
         n = (n + 1) % 16;
         var accent;
         if (vocal) {
           accent = rand() < 0.18 ? -30 : -2 + rand() * 4; // gaps between words
         } else {
-          accent = n % 4 === 0 ? 2.5 : n % 4 === 2 ? 1 : -5 + rand() * 2;
+          accent = n % 4 === 0 ? 2 : n % 4 === 2 ? 1 : -2 + rand() * 1.5;
         }
         hit = phrase + breakdown + accent + (rand() * 2 - 1);
-        if (rand() < 0.08) phraseTarget = -12 + hot + (rand() * 6 - 3);
-        if (breakdown === 0 && rand() < 0.012) breakdown = -7;
-        else if (breakdown !== 0 && rand() < 0.06) breakdown = 0;
+        // a finished master stays loud: its level barely drifts and never drops away
+        var spread = hot ? 1 : 3;
+        if (rand() < 0.05) phraseTarget = -12 + hot + (rand() * 2 * spread - spread);
+        if (breakdown === 0 && !hot && rand() < 0.02) breakdown = -6;
+        else if (breakdown !== 0 && rand() < 0.12) breakdown = 0;
       }
-      phrase += (phraseTarget - phrase) * Math.min(1, dt / 1.5);
+      phrase += (phraseTarget - phrase) * Math.min(1, dt / 3);
       // between hits the level settles towards the body of the mix
-      var body = phrase + breakdown - (vocal ? 14 : 7);
-      hit += (body - hit) * Math.min(1, dt / (vocal ? 0.09 : 0.14));
+      var body = phrase + breakdown - (vocal ? 8 : 5);
+      hit += (body - hit) * Math.min(1, dt / (vocal ? 0.6 : 0.8));
       return hit;
     };
   }
 
   /* A peak meter: rises almost at once, falls at a fixed rate. */
   function peakMeter() {
-    var shown = FLOOR_DB;
+    var shown = null;
     return function (db, dt) {
+      // start where the music is, not at silence: a shared climb from the
+      // floor would put every card in step for the first seconds
+      if (shown === null) shown = db;
       if (db > shown) shown += (db - shown) * Math.min(1, dt / ATTACK_S);
       else shown = Math.max(db, shown - FALL_DB_PER_S * dt);
       return shown;
@@ -111,8 +120,8 @@
     var v = rand() * 2 - 1;
     var target = v;
     return function (dt) {
-      if (rand() < dt * 0.8) target = rand() * 2.4 - 1.2;
-      v += (target - v) * Math.min(1, dt / 0.6);
+      if (rand() < dt * 0.3) target = rand() * 2.4 - 1.2;
+      v += (target - v) * Math.min(1, dt / 1.5);
       return v;
     };
   }
@@ -122,7 +131,7 @@
   var PROCESS = {
     Compressor: function () {
       // Glue, Compression 0.56: gentle ratio, slow release, a little make-up
-      var gr = follower(0.03, 0.3);
+      var gr = follower(0.6, 2.2);
       return function (inDb, dt) {
         var over = Math.max(0, inDb + 20);
         var g = gr(over * 0.5, dt);
@@ -130,8 +139,9 @@
       };
     },
     Maximizer: function () {
-      // Input Gain 0 dB, Ceiling -0.3 dBTP: only the hottest peaks are held
-      var gr = follower(0.002, 0.12);
+      // Input Gain 0 dB, Ceiling -0.3 dBTP: a hot final mix whose downbeats
+      // cross the ceiling, so the limiter works on the peaks and rests between
+      var gr = follower(0.8, 2.6);
       return function (inDb, dt) {
         var g = gr(Math.max(0, inDb + 0.3), dt);
         return [Math.min(inDb - g, -0.3), g];
@@ -140,11 +150,15 @@
     'De-Esser': function (rand) {
       // Control, 100 %: reduction only on sibilant bursts, not on every hit
       var burst = 0;
-      var gr = follower(0.005, 0.08);
+      var depth = 0;
+      var gr = follower(0.8, 2.4);
       return function (inDb, dt) {
         if (burst > 0) burst -= dt;
-        else if (inDb > -20 && rand() < dt * 1.4) burst = 0.06 + rand() * 0.1;
-        var g = gr(burst > 0 ? 3 + rand() * 4 : 0, dt);
+        else if (inDb > -20 && rand() < dt * 0.25) {
+          burst = 0.35 + rand() * 0.3;
+          depth = 3 + rand() * 2;
+        }
+        var g = gr(burst > 0 ? depth : 0, dt);
         return [inDb - g * 0.5, g];
       };
     },
@@ -160,8 +174,8 @@
       };
     }
   };
-  var GR_FULL_SCALE = { Compressor: 12, Maximizer: 6, 'De-Esser': 10 };
-  var HOT = { Maximizer: 7 };
+  var GR_FULL_SCALE = { Compressor: 8, Maximizer: 6, 'De-Esser': 12 };
+  var HOT = { Maximizer: 12 };
 
   function hash(text) {
     var h = 2166136261;
