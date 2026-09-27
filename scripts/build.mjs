@@ -142,6 +142,9 @@ await cp(resolve(projectRoot, 'src/rack.js'), resolve(outputRoot, 'assets/rack.j
 // reason as the rest; the figure already carries its final numbers, so the
 // page is correct with or without it.
 await cp(resolve(projectRoot, 'src/counter.js'), resolve(outputRoot, 'assets/counter.js'));
+// The level meters on the product mocks. Same-origin for the same CSP reason;
+// without it the bars hold a still frame.
+await cp(resolve(projectRoot, 'src/meters.js'), resolve(outputRoot, 'assets/meters.js'));
 // The search page's matcher. Same-origin for the same CSP reason; it is the
 // only script on the site that reads a file rather than sending one.
 await cp(resolve(projectRoot, 'src/search.js'), resolve(outputRoot, 'assets/search.js'));

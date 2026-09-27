@@ -768,32 +768,27 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   display: block;
   height: 6px;
   border-radius: 3px;
-  background: color-mix(in oklab, var(--primary) 55%, transparent);
+  /* The same solid accent as the Tempo Delay correlation bar, so every meter
+     on the page reads as one family. */
+  background: var(--primary);
   transform-origin: left center;
-  animation: meter-ride 3.2s ease-in-out infinite;
+  transform: scaleX(0.62);
 }
-.meters-row i:nth-child(2) { animation-delay: 0.45s; }
-@keyframes meter-ride {
-  0%, 100% { transform: scaleX(0.42); }
-  30%      { transform: scaleX(0.86); }
-  55%      { transform: scaleX(0.63); }
-  78%      { transform: scaleX(0.91); }
-}
+.meters-row i:nth-child(2) { transform: scaleX(0.58); }
+/* src/meters.js drives the bars frame by frame once it has taken a card over:
+   its own programme-like source, peak ballistics, and input, output and gain
+   reduction that follow from one another. Before that, without it, and under
+   reduced motion, the bars hold the still frame above. The old shared
+   keyframe loop is gone because it put every card on the page in lockstep. */
+.meters-live .meters-row i { will-change: transform; }
 
 /* Gain reduction is one line rather than a stereo pair, and it grows from the
    right. The plug-in's own GR meter hangs down from zero instead of rising
    from silence, so a bar filling left to right would read as level -- the
-   opposite of what this one reports. Its excursion is smaller than a level
-   meter's for the same reason. */
+   opposite of what this one reports. */
 .meters--gr .meters-row i {
   transform-origin: right center;
-  animation: gr-ride 3.2s ease-in-out infinite;
-}
-@keyframes gr-ride {
-  0%, 100% { transform: scaleX(0.10); }
-  26%      { transform: scaleX(0.52); }
-  48%      { transform: scaleX(0.28); }
-  72%      { transform: scaleX(0.64); }
+  transform: scaleX(0.2);
 }
 
 /* Three stages is the smallest rail on the site, and without its own block it
@@ -1558,8 +1553,6 @@ main .lede code,
   /* The rail and the band read as a still frame: every stage armed, every
      band at its learned position, nothing moving. */
   .rail .st, .rack .slot { border-top-color: color-mix(in oklab, var(--primary) 45%, transparent); }
-  .meters-row i { transform: scaleX(0.7); }
-  .meters--gr .meters-row i { transform: scaleX(0.35); }
   /* The oversampling figure is driven by the reader, not by a timer, so it
      keeps working here; only the easing between states goes. */
   .osfig-lane, .osfig-stage, .osfig-pick,
