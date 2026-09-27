@@ -55,7 +55,8 @@ dashboard, which keeps the commit attached. If production ever shows a
 deployment whose source is `vercel deploy` instead of a branch and commit, that
 is the defect: promote a `main` deployment again so the live site is traceable.
 
-The hub is one of three surfaces. The rule and the repository-to-project
-mapping for all of them are recorded in `docs/CANONICAL-ARCHITECTURE.md` in the
-[TempoDelay](https://github.com/StudioZIO/TempoDelay) repository. A change here
+The hub is one of five surfaces: the hub, the Mastering Suite, Tempo Delay
+and MixRack sites, and the ZIO artist site. The rule and the
+repository-to-project mapping for all of them are recorded in
+`docs/CANONICAL-ARCHITECTURE.md` in the [TempoDelay](https://github.com/StudioZIO/TempoDelay) repository. A change here
 does not authorize rebuilding or repointing another surface.
