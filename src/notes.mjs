@@ -20,7 +20,7 @@ export const notes = Object.freeze([
     heading: 'AAX is now live',
     title: 'AAX is now live',
     description:
-      'AAX is now available for StudioZIO Mastering Suite 2.1.1 and Tempo Delay 4.0.1, with both releases validated in Pro Tools.',
+      'AAX is now available for StudioZIO Mastering Suite 2.1.1 and Tempo Delay 4.0.3, with both releases validated in Pro Tools.',
     standfirst:
       'AAX is now available for Mastering Suite and Tempo Delay, with both releases validated in Pro Tools.',
     body: Object.freeze([
@@ -39,9 +39,9 @@ export const notes = Object.freeze([
         ])
       }),
       Object.freeze({
-        h: 'Tempo Delay 4.0.1',
+        h: 'Tempo Delay 4.0.3',
         p: Object.freeze([
-          'Tempo Delay 4.0.1 is similarly distributed as AU, VST3, AAX, and a Standalone application.',
+          'Tempo Delay 4.0.3 is similarly distributed as AU, VST3, AAX, and a Standalone application.',
           'Unlike Mastering Suite, the DSP executable for Tempo Delay is compiled exclusively for Apple Silicon (arm64). There is no Intel build. That architectural boundary remains identical to prior releases.'
         ])
       }),
@@ -160,9 +160,9 @@ export const notes = Object.freeze([
         ])
       }),
       Object.freeze({
-        h: 'Tempo Delay 4.0.1 is Apple Silicon only',
+        h: 'Tempo Delay 4.0.3 is Apple Silicon only',
         p: Object.freeze([
-          '<a href="https://www.tempodelay.tech/">StudioZIO Tempo Delay</a> 4.0.1 is compiled specifically for Apple Silicon (arm64). All four outputs (AU, VST3, AAX, and Standalone) contain exclusively arm64 code.',
+          '<a href="https://www.tempodelay.tech/">StudioZIO Tempo Delay</a> 4.0.3 is compiled specifically for Apple Silicon (arm64). All four outputs (AU, VST3, AAX, and Standalone) contain exclusively arm64 code.',
           'There is no Intel slice in the executable, and it will not run on Intel Macs. Stating this limit plainly ensures users on Intel systems do not download an installer that cannot run in their environment.'
         ])
       }),
@@ -404,7 +404,7 @@ export const notes = Object.freeze([
         h: 'The three',
         p: Object.freeze([
           'StudioZIO Mastering Suite 2.1.1 is the nine-stage mastering console described above. Universal — Apple Silicon and Intel, macOS 11 or newer.',
-          'StudioZIO Tempo Delay 4.0.1 is a tempo-synced stereo delay whose left and right delay lines are genuinely independent, each with its own buffer and its own note division, so the two sides can sit on different rhythmic values against one tempo. Ping-pong routing, filters and soft-clip saturation inside the feedback loop, three character voicings, LFO modulation, ducking, mid/side width. 32 automatable parameters with stable identifiers, and 0 samples of reported latency. Apple Silicon only, macOS 12 or newer.',
+          'StudioZIO Tempo Delay 4.0.3 is a tempo-synced stereo delay whose left and right delay lines are genuinely independent, each with its own buffer and its own note division, so the two sides can sit on different rhythmic values against one tempo. Ping-pong routing, filters and soft-clip saturation inside the feedback loop, three character voicings, LFO modulation, ducking, mid/side width. 32 automatable parameters with stable identifiers, and 0 samples of reported latency. Apple Silicon only, macOS 12 or newer.',
           'StudioZIO MixRack is a modular mixing environment bringing essential processing into one focused rack. It releases on 29 September 2026 in Audio Unit, VST3, AAX and Standalone formats, Universal for macOS 11 or newer.',
           'Three focused instruments, not a bundle. Each one does a job you can name.'
         ])
