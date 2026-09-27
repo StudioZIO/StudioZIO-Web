@@ -768,7 +768,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   display: block;
   height: 6px;
   border-radius: 3px;
-  background: color-mix(in oklab, var(--primary) 55%, transparent);
+  /* The same solid accent as the Tempo Delay correlation bar, so every meter
+     on the page reads as one family. */
+  background: var(--primary);
   transform-origin: left center;
   transform: scaleX(0.62);
 }
