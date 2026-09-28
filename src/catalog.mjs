@@ -23,10 +23,12 @@ export const ZIO_WEBSITE = 'https://zio-audio.vercel.app/';
 export const products = Object.freeze([
   /* The bundle. It is a catalogue product like any other, and its page is the
      one surface that lists the catalogue by name -- which is exactly what a
-     bundle page is for. It carries no downloadUrl yet: the installer is
-     published through the releases repository first, and the hub points at it
-     only once that release exists and its checksum has been read back from the
-     published file. */
+     bundle page is for. The installer is published through the releases
+     repository first, and the hub points at it only once that release exists
+     and its checksum has been read back from the published file: the values
+     below are the owner's measured values for the 1.0.3 asset, 169,176,439
+     bytes, and must be read back from the published file before this goes
+     live: `npm run verify:downloads` does exactly that. */
   Object.freeze({
     slug: 'everything',
     name: 'StudioZIO Everything',
@@ -39,12 +41,22 @@ export const products = Object.freeze([
        on an Intel Mac. Six of the seven plug-ins inside are Universal and run
        there; Tempo Delay needs Apple Silicon and macOS 12. From Everything
        1.0.2 the installer leaves Tempo Delay unselected and switched off on
-       any other Mac, and the page says so. */
+       any other Mac, and the page says so. Everything 1.0.3 carries Tempo
+       Delay 4.0.3; the other six plug-ins are byte-identical to 1.0.2. */
     architecture: 'Universal \u2014 Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
+    filename: 'StudioZIO-Everything-1.0.3.pkg',
+    downloadUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/download/everything-v1.0.3/StudioZIO-Everything-1.0.3.pkg',
+    releaseUrl:
+      'https://github.com/StudioZIO/StudioZIO-Releases/releases/tag/everything-v1.0.3',
+    sha256:
+      '71b1f432463cc3659d2e810c7300282ac17b391cfd265c8eb461f80af08a1436',
+    signing: 'Developer ID signed',
+    notarization: 'Apple notarized',
     price: 'Free',
-    availability: 'Coming soon',
+    availability: 'Available now',
     description:
       'One installer that puts all seven StudioZIO plug-ins on the machine, so there is one download and one checksum instead of seven.',
     detailsUrl: '/products/everything/'
@@ -105,10 +117,14 @@ export const products = Object.freeze([
     name: 'StudioZIO MixRack',
     shortName: 'StudioZIO MixRack',
     manufacturer: 'StudioZIO',
+    version: '1.0.0',
     platform: 'macOS',
+    /* Stated for the same reason Tempo Delay states it: this installer is
+       Universal, and an owner reading only "macOS" cannot tell which. */
+    architecture: 'Universal — Apple Silicon and Intel',
     formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
     compactFormats: 'AU / VST3 / AAX / Standalone',
-    availability: 'Coming soon',
+    availability: 'Available now',
     description:
       'A modular mixing environment that brings essential processing into one focused rack.',
     detailsUrl: MIXRACK_WEBSITE,
