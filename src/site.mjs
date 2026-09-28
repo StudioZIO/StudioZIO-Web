@@ -994,6 +994,9 @@ const AB_SCRIPT = '<script src="/assets/ab.js" defer></script>';
    both and nowhere else. */
 const RACK_SCRIPT = '<script src="/assets/rack.js" defer></script>';
 const COUNTER_SCRIPT = '<script src="/assets/counter.js" defer></script>';
+/* The level meters on the mocks, wherever the mocks are: both catalogue
+   surfaces and the Everything page. */
+const METERS_SCRIPT = '<script src="/assets/meters.js" defer></script>';
 
 /* ---------- cards ------------------------------------------------------- */
 
@@ -1081,7 +1084,7 @@ export function renderHome() {
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
-    scripts: `${AB_SCRIPT}${RACK_SCRIPT}`,
+    scripts: `${AB_SCRIPT}${RACK_SCRIPT}${METERS_SCRIPT}`,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="hero-grid hero--stacked">
@@ -1125,7 +1128,7 @@ export function renderProducts() {
     canonical: `${HUB_ORIGIN}/products/`,
     current: 'products',
     jsonLd: productsJsonLd(),
-    scripts: RACK_SCRIPT,
+    scripts: `${RACK_SCRIPT}${METERS_SCRIPT}`,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -1506,7 +1509,7 @@ export function renderProductEverything() {
       'StudioZIO Everything puts all seven StudioZIO plug-ins on macOS from a single signed and notarized installer, in Audio Unit, VST3, AAX and Standalone.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
-    scripts: COUNTER_SCRIPT,
+    scripts: `${COUNTER_SCRIPT}${METERS_SCRIPT}`,
     jsonLd: everythingJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
