@@ -70,11 +70,10 @@ const MEASUREMENT_ID = 'G-VL8Z542XMP';
    not running.
 
    Buttondown's embed endpoint must be the action of a native <form> (its docs
-   rule out fetch), and the site-wide CSP says form-action 'none'. vercel.json
-   therefore serves /early-access/ its own copy of the headers with exactly one
-   change, form-action https://buttondown.com, and excludes that path from the
-   site-wide rule. scripts/validate.mjs refuses a build where the page exists
-   without that rule, or the rule without the page.
+   rule out fetch). The form sits on /early-access/ and directly under every
+   product download box, so vercel.json's single header rule sets form-action
+   https://buttondown.com site-wide; scripts/validate.mjs ties that value to
+   this switch (form-action 'none' when it is off).
    The consent wording is versioned: change the text, change the date. */
 export const EARLY_ACCESS_BUTTONDOWN_USERNAME = 'studiozio';
 export const EARLY_ACCESS_ENABLED = EARLY_ACCESS_BUTTONDOWN_USERNAME !== '';
@@ -83,7 +82,7 @@ export const EARLY_ACCESS_CONSENT_VERSION = '2026-09-21';
 const EARLY_ACCESS_CONSENT_TEXT =
   'I want to receive StudioZIO Early Access emails about product updates, release news and testing opportunities. I can unsubscribe at any time.';
 
-export const PRIVACY_POLICY_DATE = '2026-09-21';
+export const PRIVACY_POLICY_DATE = '2026-10-01';
 const PRIVACY_CONTACT_EMAIL = 'studiozioplugins@gmail.com';
 const analytics = `<script src="/assets/gtag.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}"></script>
@@ -1167,6 +1166,7 @@ export function renderProductInflator() {
       'StudioZIO Inflator is a focused harmonic enhancement processor for macOS, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
+    scripts: EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : '',
     jsonLd: inflatorJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -1223,7 +1223,7 @@ export function renderProductInflator() {
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
           </div>
-        </div>
+        </div>${earlyAccessSignup(product.slug)}
         <dl class="spec-grid mt-md">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
@@ -1268,7 +1268,7 @@ export function renderProductMaximizer() {
       'StudioZIO Maximizer is an adaptive mastering limiter for macOS with a strict true-peak ceiling, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
-    scripts: AB_SCRIPT,
+    scripts: AB_SCRIPT + (EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''),
     jsonLd: maximizerJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -1347,7 +1347,7 @@ export function renderProductMaximizer() {
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
           </div>
-        </div>
+        </div>${earlyAccessSignup(product.slug)}
         <dl class="spec-grid mt-md">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)} 11.0 (Big Sur) or newer</dd></div>
@@ -1376,7 +1376,7 @@ export function renderProductCompressor() {
       'StudioZIO Compressor is a two-mode compressor plug-in for macOS, Adaptive and Glue, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
-    scripts: AB_SCRIPT,
+    scripts: AB_SCRIPT + (EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''),
     jsonLd: compressorJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -1468,7 +1468,7 @@ export function renderProductCompressor() {
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
           </div>
-        </div>
+        </div>${earlyAccessSignup(product.slug)}
         <dl class="spec-grid mt-md">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
@@ -1509,7 +1509,7 @@ export function renderProductEverything() {
       'StudioZIO Everything puts all seven StudioZIO plug-ins on macOS from a single signed and notarized installer, in Audio Unit, VST3, AAX and Standalone.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
-    scripts: `${COUNTER_SCRIPT}${METERS_SCRIPT}`,
+    scripts: `${COUNTER_SCRIPT}${METERS_SCRIPT}` + (EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''),
     jsonLd: everythingJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -1585,7 +1585,7 @@ export function renderProductEverything() {
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
           </div>
-        </div>
+        </div>${earlyAccessSignup(product.slug)}
         <dl class="spec-grid mt-lg">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Requires</dt><dd>macOS 11 or later.</dd></div>
@@ -1606,7 +1606,7 @@ export function renderProductDeEsser() {
       'StudioZIO De-Esser is a two-mode de-esser plug-in for macOS, Natural and Control, in Audio Unit, VST3, AAX and Standalone, signed and notarized.',
     canonical: `${HUB_ORIGIN}${product.detailsUrl}`,
     current: 'products',
-    scripts: AB_SCRIPT,
+    scripts: AB_SCRIPT + (EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''),
     jsonLd: deEsserJsonLd(),
     content: `<section class="hero tech-grid">
       <div class="shell">
@@ -1686,7 +1686,7 @@ export function renderProductDeEsser() {
             <a class="btn btn-primary" href="${escapeHtml(product.downloadUrl)}"
               data-event="download_click" data-ev-product="${product.slug}" data-ev-version="${escapeHtml(product.version)}">Download for macOS</a>
           </div>
-        </div>
+        </div>${earlyAccessSignup(product.slug)}
         <dl class="spec-grid mt-md">
           <div><dt>Installer</dt><dd><code>${escapeHtml(product.filename)}</code></dd></div>
           <div><dt>Platform</dt><dd>${escapeHtml(product.platform)}</dd></div>
@@ -1799,8 +1799,9 @@ export function renderContact() {
    It runs entirely in the browser: search.js downloads one JSON file from
    this origin and matches against it locally. Nothing typed here is sent
    anywhere, there is no search backend, and the CSP's connect-src stays
-   'self'. There is deliberately no <form>: the CSP sets form-action 'none',
-   and a form that cannot submit is a promise the page could not keep. */
+   'self'. There is deliberately no <form>: the CSP's form-action allows only
+   Buttondown, and a form that cannot submit is a promise the page could not
+   keep. */
 
 export function renderSearch() {
   return shell({
@@ -1904,7 +1905,7 @@ export function renderPrivacy() {
       ? [{
           title: 'StudioZIO Early Access',
           rows: [
-            ['Data', 'Your email address, the date and wording of the consent you gave, your confirmation, and the technical data Buttondown records when you sign up and open emails.'],
+            ['Data', 'Your email address, the page you signed up on, the date and wording of the consent you gave, your confirmation, and the technical data Buttondown records when you sign up and open emails.'],
             ['Purpose', 'Send StudioZIO Early Access emails: product updates, release news and testing opportunities. Only after you tick the consent box and confirm your address from the email Buttondown sends.'],
             ['Processor', 'Buttondown (United States) stores the list and sends the emails.'],
             ['Kept', 'Until you unsubscribe (a link is in every email) or ask for deletion. An address that is never confirmed receives no Early Access emails.']
@@ -2031,6 +2032,49 @@ export function renderPrivacy() {
 
    A native POST, because Buttondown's embed endpoint requires one; the page
    is served with form-action https://buttondown.com and nothing wider. */
+/* The Early Access sign-up, repeated directly under the download box on each
+   product page, with the same wording as /early-access/ (owner's call,
+   1 October 2026).
+
+   After the download, never in front of it: the download itself still needs
+   no email, which is the promise FREE_PROMISE makes. Same list, same consent
+   wording and version; only metadata__source differs, so the list records
+   which page a sign-up came from. One form per page, so the ids stay fixed. */
+const EARLY_ACCESS_SCRIPT = '<script src="/assets/early-access.js" defer></script>';
+
+function earlyAccessSignup(slug) {
+  if (!EARLY_ACCESS_ENABLED) return '';
+  return `
+        <form class="panel-float early-access-form mt-md" action="${escapeHtml(EARLY_ACCESS_ENDPOINT)}" method="post" aria-labelledby="ea-title">
+          <input type="hidden" name="metadata__consent_version" value="${EARLY_ACCESS_CONSENT_VERSION}">
+          <input type="hidden" name="metadata__source" value="studiozio.tech/products/${escapeHtml(slug)}">
+
+          <p class="eyebrow">Early Access</p>
+          <h3 id="ea-title">StudioZIO Early Access</h3>
+          <p class="lede">Join StudioZIO Early Access for product updates, release news and future testing opportunities.</p>
+          <p class="lede">It is an email list and nothing more: it costs nothing, and signing up does not reserve a product, a price, a discount, a release date or a place in any test.</p>
+
+          <div class="form-row">
+            <label class="form-label" for="ea-email">Email <span class="req">required</span></label>
+            <input id="ea-email" name="email" class="field" type="email" required autocomplete="email" aria-describedby="ea-email-hint">
+            <p class="form-hint" id="ea-email-hint">Used only for StudioZIO Early Access emails.</p>
+          </div>
+
+          <div class="form-check">
+            <input id="ea-consent" name="metadata__consent" type="checkbox" value="True" required>
+            <label for="ea-consent">${escapeHtml(EARLY_ACCESS_CONSENT_TEXT)} <span class="req">required</span></label>
+          </div>
+
+          <p class="form-hint">After you join, Buttondown sends an email asking you to confirm your address; nothing else arrives until you do. Every email has an unsubscribe link. Buttondown, a US-based newsletter service, stores the list and sends the emails. See the <a href="/privacy/">privacy policy</a>.</p>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Join Early Access</button>
+          </div>
+        </form>`;
+}
+
 export function renderEarlyAccess() {
   return shell({
     title: 'StudioZIO Early Access — product news and testing opportunities',
@@ -2038,7 +2082,7 @@ export function renderEarlyAccess() {
       'Join StudioZIO Early Access for product updates, release news and future testing opportunities. Free, no commitment, unsubscribe at any time.',
     canonical: `${HUB_ORIGIN}/early-access/`,
     current: 'early-access',
-    scripts: '<script src="/assets/early-access.js" defer></script>',
+    scripts: EARLY_ACCESS_SCRIPT,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">

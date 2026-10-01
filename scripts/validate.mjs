@@ -409,6 +409,27 @@ export function validateSource() {
     if (/sonavyr/i.test(earlyAccess)) throw new Error('Early Access must not name the product before trademark clearance');
     if (/\$\d|€\d|\bpre-?order|\bdeposit\b|\bbuy\b/i.test(main)) throw new Error('Early Access page must not carry a price or a purchase');
   }
+  /* The sign-up box under every product download: present exactly once when
+     Early Access is on and absent when it is off, after the download button
+     rather than in front of it (the download needs no email), tagged with
+     the page it came from, never pre-ticked, never naming the unreleased
+     product. */
+  for (const [slug, page] of [['inflator', inflatorPage], ['maximizer', maximizerPage], ['compressor', compressorPage], ['everything', everythingPage], ['de-esser', deEsserPage]]) {
+    const main = mainContent(page);
+    const forms = (main.match(/<form class="panel-float early-access-form/g) || []).length;
+    if (forms !== (EARLY_ACCESS_ENABLED ? 1 : 0)) throw new Error(`Product page ${slug} has ${forms} Early Access form(s)`);
+    if (!EARLY_ACCESS_ENABLED) continue;
+    const box = main.slice(main.indexOf('<form class="panel-float early-access-form'));
+    if (main.lastIndexOf('data-event="download_click"') > main.indexOf('<form class="panel-float early-access-form')) {
+      throw new Error(`Product page ${slug}: the Early Access box must sit under the download button, not above it`);
+    }
+    if (!box.includes(`name="metadata__source" value="studiozio.tech/products/${slug}"`)) throw new Error(`Product page ${slug}: Early Access box must record its source`);
+    if (!box.includes('href="/privacy/"')) throw new Error(`Product page ${slug}: Early Access box must link the privacy policy`);
+    if (/<input[^>]*type="checkbox"[^>]*\bchecked\b/.test(box)) throw new Error(`Product page ${slug}: Early Access consent must not be pre-ticked`);
+    if (!/<input[^>]*id="ea-consent"[^>]*\brequired\b/.test(box)) throw new Error(`Product page ${slug}: Early Access consent must be required`);
+    if (/sonavyr/i.test(page)) throw new Error(`Product page ${slug} must not name the unreleased product`);
+    if (!page.includes('src="/assets/early-access.js"')) throw new Error(`Product page ${slug} has the Early Access form but not its script`);
+  }
   for (const page of pages) {
     if (!page.includes('<meta name="viewport"')) throw new Error('Viewport metadata missing');
     if (!page.includes('Skip to content')) throw new Error('Skip link missing');
@@ -741,8 +762,9 @@ export function validateSource() {
     }
   }
 
-  /* The trap this site is built to fall into: `form-action 'none'` in
-     vercel.json means a native form submission is refused by the browser, and
+  /* The trap this site is built to fall into: the CSP's form-action (only
+     Buttondown, or 'none' with Early Access off) means a native form
+     submission anywhere else is refused by the browser, and
      refused silently -- the form renders, validates, submits, and the message
      goes nowhere. Both forms therefore post by fetch and neither may carry an
      action attribute, because an action attribute is the thing that makes a
@@ -752,13 +774,14 @@ export function validateSource() {
   for (const [index, page] of pages.entries()) {
     for (const [, attrs] of page.matchAll(/<form([^>]*)>/g)) {
       /* The one exception: Buttondown's embed endpoint accepts only a native
-         POST, so the Early Access form carries an action -- and is served
-         under its own CSP whose form-action names exactly that host
-         (verifyEarlyAccessPolicy below). Any other action still fails. */
-      if (page === earlyAccess && attrs.includes(`action="${EARLY_ACCESS_ENDPOINT}"`) && /\bmethod="post"/.test(attrs)) continue;
+         POST, so the Early Access forms (the /early-access/ page and the box
+         under each product download) carry an action -- and the CSP's
+         form-action names exactly that host (verifyEarlyAccessPolicy below).
+         Any other action still fails. */
+      if (EARLY_ACCESS_ENABLED && attrs.includes(`action="${EARLY_ACCESS_ENDPOINT}"`) && /\bmethod="post"/.test(attrs)) continue;
       if (/\baction=/.test(attrs)) {
         throw new Error(
-          `Page ${index} has a <form action=...>, which form-action 'none' refuses `
+          `Page ${index} has a <form action=...>, which the CSP's form-action refuses `
             + `silently; post it by fetch instead: <form${attrs}>`
         );
       }
@@ -1072,37 +1095,27 @@ export function validateSource() {
   verifyEarlyAccessPolicy();
 }
 
-/* ---- the Early Access page's own header rule -----------------------------
-   The site-wide rule says form-action 'none'. The Early Access page needs
-   exactly one host there, so it is served by its own rule and the site-wide
-   rule excludes its path -- rather than relying on which of two matching
-   rules Vercel lets win. Asserted: the page exists if and only if the rule
-   does; the rule differs from the site-wide one in form-action alone; every
-   other header is carried unchanged. */
+/* ---- form-action follows the Early Access switch -------------------------
+   Early Access forms post natively to Buttondown, on /early-access/ and under
+   every product download, so the one site-wide header rule names exactly that
+   host in form-action. With Early Access switched off nothing may post
+   anywhere, so form-action goes back to 'none'. One rule for every path:
+   there is no second, per-page header rule left to drift from the first. */
 function verifyEarlyAccessPolicy() {
   const config = JSON.parse(
     readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', 'vercel.json'), 'utf8')
   );
-  const siteWide = config.headers[0];
-  const scoped = config.headers.find((entry) => entry.source === '/early-access/');
-  if (!EARLY_ACCESS_ENABLED) {
-    if (scoped) throw new Error('vercel.json relaxes form-action for /early-access/ but the page is switched off');
-    return;
+  const cspRules = config.headers.filter((entry) => entry.headers.some((h) => h.key === 'Content-Security-Policy'));
+  if (cspRules.length !== 1 || cspRules[0].source !== '/(.*)') {
+    throw new Error('vercel.json must serve one Content-Security-Policy rule, for /(.*)');
   }
-  if (!scoped) throw new Error('Early Access is on but vercel.json has no /early-access/ header rule; its form would be refused');
-  if (siteWide.source !== '/:path((?!early-access/).*)') {
-    throw new Error(`The site-wide header rule must exclude /early-access/; its source is ${siteWide.source}`);
+  const csp = cspRules[0].headers.find((h) => h.key === 'Content-Security-Policy').value;
+  const formAction = (csp.split(';').map((part) => part.trim()).find((part) => part.startsWith('form-action ')) ?? '').slice('form-action '.length);
+  const expected = EARLY_ACCESS_ENABLED ? 'https://buttondown.com' : "'none'";
+  if (formAction !== expected) {
+    throw new Error(`CSP form-action must be ${expected} while Early Access is ${EARLY_ACCESS_ENABLED ? 'on' : 'off'}; it is ${formAction || 'missing'}`);
   }
-  const csp = (entry) => entry.headers.find((h) => h.key === 'Content-Security-Policy').value;
-  const expected = csp(siteWide).replace("form-action 'none'", 'form-action https://buttondown.com');
-  if (!csp(siteWide).includes("form-action 'none'") || csp(scoped) !== expected) {
-    throw new Error('The /early-access/ CSP must equal the site-wide CSP with form-action https://buttondown.com and nothing else changed');
-  }
-  const others = (entry) => JSON.stringify(entry.headers.filter((h) => h.key !== 'Content-Security-Policy'));
-  if (others(siteWide) !== others(scoped)) {
-    throw new Error('The /early-access/ rule must carry every other site-wide security header unchanged');
-  }
-  if (!EARLY_ACCESS_ENDPOINT.startsWith('https://buttondown.com/api/emails/embed-subscribe/')) {
+  if (EARLY_ACCESS_ENABLED && !EARLY_ACCESS_ENDPOINT.startsWith('https://buttondown.com/api/emails/embed-subscribe/')) {
     throw new Error(`Early Access endpoint is not Buttondown's embed endpoint: ${EARLY_ACCESS_ENDPOINT}`);
   }
 }

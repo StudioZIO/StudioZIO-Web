@@ -19,9 +19,16 @@
   var status = form.querySelector('.form-status');
   var submit = form.querySelector('button[type="submit"]');
 
+  /* The same form sits on /early-access/ and under every product download;
+     its hidden source field says which, so the event carries it too. */
+  var source = form.querySelector('input[name="metadata__source"]');
+
   form.addEventListener('submit', function () {
     if (typeof window.gtag === 'function') {
-      window.gtag('event', 'early_access_submit', { transport_type: 'beacon' });
+      window.gtag('event', 'early_access_submit', {
+        source: source ? source.value : '',
+        transport_type: 'beacon'
+      });
     }
     if (status) {
       status.className = 'form-status';
