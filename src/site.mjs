@@ -2886,7 +2886,7 @@ export function renderPress() {
         <h3 class="mt-lg">${escapeHtml(mixRack.name)}</h3>
         <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
           mixRack.availability
-        )} &mdash; releasing on 29 September 2026, with nothing to download before then. There is a <a href="${MIXRACK_WEBSITE}">product page</a> carrying a countdown and a two-minute look at the interface; the press kit is at the foot of this page.</p>
+        )} &mdash; released on 29 September 2026. Visit the <a href="${MIXRACK_WEBSITE}">product page</a> for a two-minute look at the interface; the press kit is at the foot of this page.</p>
       </div>
     </section>
 
@@ -3221,12 +3221,12 @@ export function renderCommunityCompatibility() {
           <article class="panel product-spec-card">
             <div class="product-spec-head">
               <h3>MixRack</h3>
-              <span class="chip">In development</span>
+              <span class="chip">Available now</span>
             </div>
             <dl class="spec-grid">
               <div>
                 <dt>Status</dt>
-                <dd>In development</dd>
+                <dd>Available now</dd>
               </div>
               <div>
                 <dt>Platform</dt>
