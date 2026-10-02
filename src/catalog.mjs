@@ -240,9 +240,22 @@ export const products = Object.freeze([
 ]);
 
 export function getProduct(slug) {
-  const product = products.find((candidate) => candidate.slug === slug);
+  const product = catalogProducts.find((candidate) => candidate.slug === slug);
   if (!product) {
     throw new Error(`Unknown product slug: ${slug}`);
   }
   return product;
 }
+
+// Coming-soon products appear in Products without changing the existing bundle
+// or duplicating the homepage's dedicated Sonavyr spotlight.
+export const sonavyr = Object.freeze({
+  slug: 'sonavyr', name: 'StudioZIO Sonavyr', shortName: 'Sonavyr',
+  version: '1.0.0', platform: 'macOS', architecture: 'Universal',
+  formats: Object.freeze(['Audio Unit (AU)', 'VST3', 'AAX', 'Standalone']),
+  compactFormats: 'AU / VST3 / AAX / Standalone',
+  price: '$99 · 14-day free trial', availability: 'Coming soon',
+  description: 'Two engines for vocal pitch correction: expressive Natural tuning and low-latency Synthetic hard tune.',
+  detailsUrl: '/products/sonavyr/'
+});
+export const catalogProducts = Object.freeze([...products, sonavyr]);

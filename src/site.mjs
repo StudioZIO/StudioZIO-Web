@@ -1,8 +1,9 @@
 import {sonavyrContent} from './sonavyr.mjs';
-import {sonavyrTeaser} from './chroma-lens.mjs';
+import {sonavyrTeaser, chromaLens} from './chroma-lens.mjs';
 import {
   getProduct,
   products,
+  catalogProducts,
   MASTERING_SUITE_WEBSITE,
   MIXRACK_WEBSITE,
   RELEASE_REPOSITORY_URL,
@@ -294,8 +295,8 @@ const productsJsonLd = () => jsonLdBlock([
     publisher: { '@id': ORGANIZATION_ID },
     mainEntity: {
       '@type': 'ItemList',
-      numberOfItems: products.length,
-      itemListElement: products.map((product, index) => ({
+      numberOfItems: catalogProducts.length,
+      itemListElement: catalogProducts.map((product, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         item: {
@@ -1018,7 +1019,7 @@ function productCard(product, hideMock = false) {
   ].join('');
 
   return `<article class="panel product-card">
-      ${mock && hideMock !== true ? mock() : ''}
+      ${product.slug === 'sonavyr' ? `<div class="sonavyr-card-visual">${chromaLens()}</div>` : mock && hideMock !== true ? mock() : ''}
       <div class="card-body">
         <div class="card-title-row">
           <h3>${escapeHtml(product.name)}</h3>
@@ -1125,11 +1126,11 @@ export function renderHome() {
 export function renderProducts() {
   return shell({
     title: 'Audio plugins for macOS — StudioZIO Products',
-    description: 'Every StudioZIO plug-in for macOS in one catalogue: formats, Mac compatibility, release state, and a signed, notarized installer for each one.',
+    description: 'Every StudioZIO plug-in for macOS in one catalogue: formats, Mac compatibility, release status and available downloads.',
     canonical: `${HUB_ORIGIN}/products/`,
     current: 'products',
     jsonLd: productsJsonLd(),
-    scripts: `${RACK_SCRIPT}${METERS_SCRIPT}`,
+    scripts: `${RACK_SCRIPT}${METERS_SCRIPT}<link rel="stylesheet" href="/assets/chroma-lens.css"><script type="module" src="/assets/chroma-lens.js"></script>`,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="rise">
@@ -1146,7 +1147,7 @@ export function renderProducts() {
           <h2 id="catalog-title">Choose your instrument</h2>
           <p class="lede">Open a product for its installer, documentation and release details.</p>
         </div>
-        <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
+        <div class="card-grid card-grid--2">${catalogProducts.map(productCard).join('')}</div>
         <p class="mt-lg">Hear the plug-ins on the <a href="/">Hub</a>, or <a href="/contact/">contact StudioZIO</a> for help choosing a product.</p>
       </div>
     </section>`
