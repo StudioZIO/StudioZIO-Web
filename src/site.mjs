@@ -2862,7 +2862,7 @@ export function renderPress() {
           <div><dt>Signing</dt><dd>Developer ID signed and Apple notarised, so there is no Gatekeeper warning.</dd></div>
           <div><dt>Registration</dt><dd>The free plug-ins need no account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
-          <div><dt>Architecture</dt><dd>${architectureSentence()}</dd></div>
+          <div><dt>Compatibility</dt><dd>Mac architecture and minimum macOS requirements vary by product. Check the <a href="/products/">product catalogue</a> before downloading.</dd></div>
           <div><dt>Pro Tools</dt><dd>Every released product ships an AAX build, validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
         </dl>
       </div>
