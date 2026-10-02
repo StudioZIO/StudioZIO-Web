@@ -29,7 +29,8 @@ test('built product is coming soon, demos local, secrets and review material exc
  assert.match(page,/Coming soon/);assert.match(page,/<button[^>]*disabled[^>]*>Buy Sonavyr/);assert.match(page,/<button[^>]*disabled[^>]*>Try for 14 days/);
  assert.match(page,/10\.7 ms/);assert.match(page,/22\.8 ms/);assert.match(page,/Plugin latency only/);assert.match(page,/Transpose 0/);
  assert(!/confidential|source PDF|Moonbase|localhost|0\.2\.10|private planning|checkoutUrl/i.test(page));
- const files=await readdir(new URL('../dist/',import.meta.url),{recursive:true});assert(!files.some(f=>/\.sqlite|\.pdf$|private-launch|reference\/|\.env/.test(f)));
+ const files=await readdir(new URL('../dist/',import.meta.url),{recursive:true});assert(!files.some(f=>/\.sqlite|private-launch|reference\/|\.env/.test(f)));
+ assert.deepEqual(files.filter(f=>/\.pdf$/i.test(f)),['assets/press/Sonavyr-Guide-from-Zero.pdf']);
  for(const f of files.filter(f=>/\.(js|html|css|json)$/.test(f))){const text=await readFile(new URL('../dist/'+f,import.meta.url),'utf8');assert(!/KV_REST_API_TOKEN|KV_REST_API_URL|local-test-only/.test(text),f+' leaks server configuration');}
 });
 

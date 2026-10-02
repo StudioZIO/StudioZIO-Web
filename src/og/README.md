@@ -1,6 +1,6 @@
 # Share cards
 
-`og-studiozio.png`, `og-mixrack.png` and one `og-note-<slug>.png` per technical
+`og-studiozio.png`, `og-mixrack.png`, `og-sonavyr.png` and one `og-note-<slug>.png` per technical
 note are 1200×630 Open Graph cards, generated rather than drawn: the same OKLCH tokens, the same three typefaces and the same
 tech-grid background as the site, rendered in a headless browser and captured at
 exactly 1200×630.
@@ -30,3 +30,7 @@ the eyebrow — is the same as the two cards above.
 file under this directory, no two notes declare the same card, and each note
 declares the card named after its own slug. Adding a note therefore fails the
 build until its card exists, which is the point.
+
+The product press-card HTML template is `scripts/press-share-card.mjs`.
+Its fonts are embedded and its tokens are read from `src/styles.css`.
+Sonavyr is Coming Soon; the retained MixRack card is Available Now.

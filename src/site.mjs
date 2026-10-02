@@ -2770,6 +2770,8 @@ const pressJsonLd = () =>
    A rename cannot leave the download button pointing at nothing. */
 export const PRESS_KIT_FILE = 'StudioZIO-MixRack-1.0.0-Press-Kit.zip';
 export const PRESS_KIT_HREF = `/assets/press/${PRESS_KIT_FILE}`;
+export const SONAVYR_GUIDE_FILE = 'Sonavyr-Guide-from-Zero.pdf';
+export const SONAVYR_GUIDE_HREF = `/assets/press/${SONAVYR_GUIDE_FILE}`;
 
 const PRESS_ASSETS = Object.freeze([
   Object.freeze({
@@ -2793,8 +2795,8 @@ const PRESS_ASSETS = Object.freeze([
     detail: 'PNG, 1200 x 630'
   }),
   Object.freeze({
-    href: '/assets/og/og-mixrack.png',
-    label: 'MixRack share card',
+    href: '/assets/og/og-sonavyr.png',
+    label: 'Sonavyr Coming Soon share card',
     detail: 'PNG, 1200 x 630'
   })
 ]);
@@ -2920,7 +2922,7 @@ export function renderPress() {
           <div><dt>Registration</dt><dd>The free plug-ins need no account, no iLok and no email registration at any point.</dd></div>
           <div><dt>Platform</dt><dd>macOS only. No build exists for any other platform and none is planned.</dd></div>
           <div><dt>Architecture</dt><dd>${architectureSentence()}</dd></div>
-          <div><dt>Pro Tools</dt><dd>Every product ships an AAX build, validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
+          <div><dt>Pro Tools</dt><dd>Every released product ships an AAX build, validated in Pro Tools. The history of this development path is available in <a href="/notes/where-aax-support-stands/">a technical note</a>.</dd></div>
         </dl>
       </div>
     </section>
@@ -2937,6 +2939,23 @@ export function renderPress() {
         <p>Elsewhere: the <a href="https://www.kvraudio.com/developer/studiozio">KVR developer page</a> carries release notes and development posts, and <a href="${escapeHtml(
           INSTAGRAM_URL
         )}">Instagram</a> carries the shorter material.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="press-sonavyr-guide">
+      <div class="shell">
+        <div class="section-head">
+          <p class="eyebrow">Product guide</p>
+          <h2 id="press-sonavyr-guide">Sonavyr Guide from Zero</h2>
+        </div>
+        <p class="lede">Explore Sonavyr’s Natural and Synthetic engines, controls, workflow and technical specifications in the illustrated English guide.</p>
+        <dl class="spec-grid mt-sm">
+          <div><dt>Version</dt><dd>Sonavyr 1.0.0</dd></div>
+          <div><dt>Status</dt><dd>Coming soon</dd></div>
+          <div><dt>Language</dt><dd>English</dd></div>
+          <div><dt>Format</dt><dd>PDF, 9 pages</dd></div>
+        </dl>
+        <p class="mt-md"><a class="btn btn-primary" href="${SONAVYR_GUIDE_HREF}" download>Download Sonavyr Guide from Zero (.pdf)</a></p>
       </div>
     </section>
 
