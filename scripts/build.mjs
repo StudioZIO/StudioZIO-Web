@@ -29,6 +29,7 @@ import {
   renderEarlyAccess,
   EARLY_ACCESS_ENABLED,
   PRESS_KIT_FILE,
+  SONAVYR_GUIDE_FILE,
   STYLESHEET_FILE,
 } from '../src/site.mjs';
 import { extract } from './search_text.mjs';
@@ -267,12 +268,14 @@ await writeFile(
 /* The link checker in validate.mjs deliberately skips /assets/ hrefs, so a
    press kit that failed to copy would ship as a download button leading to a
    404. Check the file the page offers is actually there. */
-const pressKit = resolve(outputRoot, 'assets/press', PRESS_KIT_FILE);
-if (!existsSync(pressKit)) {
-  throw new Error(`The press page offers ${PRESS_KIT_FILE} but the build did not write it to dist/assets/press/`);
-}
-if (statSync(pressKit).size === 0) {
-  throw new Error(`${PRESS_KIT_FILE} copied into dist/assets/press/ as an empty file`);
+for (const file of [PRESS_KIT_FILE, SONAVYR_GUIDE_FILE]) {
+  const pressKit = resolve(outputRoot, 'assets/press', file);
+  if (!existsSync(pressKit)) {
+    throw new Error(`The press page offers ${file} but the build did not write it to dist/assets/press/`);
+  }
+  if (statSync(pressKit).size === 0) {
+    throw new Error(`${file} copied into dist/assets/press/ as an empty file`);
+  }
 }
 
 console.log(`Built ${outputs.size} HTML pages and a ${indexableUrls.length}-URL sitemap into dist/`);
