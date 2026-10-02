@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { products } from '../src/catalog.mjs';
+import { catalogProducts as products } from '../src/catalog.mjs';
 import { notes } from '../src/notes.mjs';
 
 const origin = 'https://www.studiozio.tech';
@@ -90,7 +90,14 @@ function verify({ files, hosting }) {
     assert.ok(cards[index].includes(product.availability));
     assert.ok(cards[index].includes(`href="${product.detailsUrl}"`));
     if (product.version) assert.ok(cards[index].includes(`v${product.version}`));
-    if (product.slug === 'mixrack') {
+    if (product.slug === 'sonavyr') {
+      assert.ok(cards[index].includes('$99 · 14-day free trial'));
+      assert.ok(cards[index].includes('AU · VST3 · AAX · Standalone'));
+      assert.ok(cards[index].includes('Universal'));
+      assert.equal((cards[index].match(/class="lens-note"/g)||[]).length,12);
+      assert.ok(!cards[index].includes('Free download'));
+    }
+    if (['mixrack','sonavyr'].includes(product.slug)) {
       for (const invented of ['offers', 'downloadUrl', 'datePublished']) assert.equal(entry.item[invented], undefined);
     }
   });
