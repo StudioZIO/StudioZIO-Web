@@ -32,3 +32,8 @@ test('built product is coming soon, demos local, secrets and review material exc
  const files=await readdir(new URL('../dist/',import.meta.url),{recursive:true});assert(!files.some(f=>/\.sqlite|\.pdf$|private-launch|reference\/|\.env/.test(f)));
  for(const f of files.filter(f=>/\.(js|html|css|json)$/.test(f))){const text=await readFile(new URL('../dist/'+f,import.meta.url),'utf8');assert(!/KV_REST_API_TOKEN|KV_REST_API_URL|local-test-only/.test(text),f+' leaks server configuration');}
 });
+
+test('product analytics require production host and explicit consent; no extra page view',async()=>{
+ const calls=[];globalThis.window={gtag:(...a)=>calls.push(a)};globalThis.location={hostname:'preview.vercel.app'};let consent='granted';globalThis.localStorage={getItem:()=>consent};
+ try{const {track}=await import('../src/sonavyr-measurement.js');track('purchase_intent');assert.equal(calls.length,0);location.hostname='www.studiozio.tech';consent='denied';track('demo_play','mind:dry');assert.equal(calls.length,0);consent='granted';track('demo_play','mind:dry');track('purchase_intent');track('page_view');assert.deepEqual(calls.map(c=>c[1]),['demo_play','purchase_intent']);assert(!JSON.stringify(calls).includes('cookie'));}finally{delete globalThis.window;delete globalThis.location;delete globalThis.localStorage;}
+});
