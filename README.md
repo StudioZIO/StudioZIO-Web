@@ -60,3 +60,29 @@ and MixRack sites, and the ZIO artist site. The rule and the
 repository-to-project mapping for all of them are recorded in
 `docs/CANONICAL-ARCHITECTURE.md` in the [TempoDelay](https://github.com/StudioZIO/TempoDelay) repository. A change here
 does not authorize rebuilding or repointing another surface.
+
+## Sonavyr coming soon and interest counter
+
+The homepage spotlight links to `/products/sonavyr/`. Purchases and trial
+installers remain unavailable. The offer is an expression of interest only.
+
+`api/interest.js` uses the official integration's server-only
+`KV_REST_API_URL` and `KV_REST_API_TOKEN`. No credentials are built into static
+assets. Missing configuration or database errors return 503, never a made-up
+count. The production namespace is fixed; Preview namespaces are isolated by
+branch and local development has its own namespace. There is no seed or
+migration of preview votes into production.
+
+Redis executes one atomic Lua script per successful request. Set membership
+provides both deduplication and the aggregate, so concurrent retries cannot
+increment a separate total twice. Limits are 180 requests/minute globally,
+30 new browsers/minute, 12 requests/browser/minute, and 100,000 expressions
+per offer. The signed, HttpOnly, Secure, SameSite cookie contains a random
+browser token; Redis stores its hash, not IPs or fingerprints. Cookie deletion
+and additional browsers can count again: this is not a unique-person metric.
+
+`npm run check` includes endpoint validation tests. Set `REDIS_TEST_PORT` to a
+disposable local Redis port for atomic concurrency integration tests. CI runs
+the validation tests without a database service. Never point tests at the production database.
+Product analytics require an explicit stored Accept choice and reuse the
+existing Google tag; page views remain owned by that shared tag.

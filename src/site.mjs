@@ -1,3 +1,5 @@
+import {sonavyrContent} from './sonavyr.mjs';
+import {sonavyrTeaser} from './chroma-lens.mjs';
 import {
   getProduct,
   products,
@@ -999,7 +1001,7 @@ const METERS_SCRIPT = '<script src="/assets/meters.js" defer></script>';
 
 /* ---------- cards ------------------------------------------------------- */
 
-function productCard(product) {
+function productCard(product, hideMock = false) {
   /* A release flag is any status that is not simply shipping -- "Coming
      soon" and "Release candidate" alike. It is marked by the chip's dot, not
      by a second accent hue: the plug-in windows themselves are single-accent,
@@ -1016,7 +1018,7 @@ function productCard(product) {
   ].join('');
 
   return `<article class="panel product-card">
-      ${mock ? mock() : ''}
+      ${mock && hideMock !== true ? mock() : ''}
       <div class="card-body">
         <div class="card-title-row">
           <h3>${escapeHtml(product.name)}</h3>
@@ -1083,7 +1085,7 @@ export function renderHome() {
     canonical: `${HUB_ORIGIN}/`,
     current: 'hub',
     jsonLd: homeJsonLd(),
-    scripts: `${AB_SCRIPT}${RACK_SCRIPT}${METERS_SCRIPT}`,
+    scripts: `${RACK_SCRIPT}${METERS_SCRIPT}<link rel="stylesheet" href="/assets/chroma-lens.css"><script type="module" src="/assets/chroma-lens.js"></script>`,
     content: `<section class="hero tech-grid">
       <div class="shell">
         <div class="hero-grid hero--stacked">
@@ -1095,7 +1097,7 @@ export function renderHome() {
         </div>
       </div>
     </section>
-    ${hearItFirst()}
+    ${sonavyrTeaser()}
     <section class="section" aria-labelledby="catalog-title">
       <div class="shell">
         <div class="section-head">
@@ -1104,7 +1106,7 @@ export function renderHome() {
           <p class="lede">Each free plug-in here ships as a signed, notarized macOS installer with no account and no registration. The cards say what is available now and what is still coming.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
-        <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
+        <div class="card-grid card-grid--2">${products.map(p => productCard(p, ['mastering-suite', 'tempo-delay'].includes(p.slug))).join('')}</div>
       </div>
     </section>
     <section class="section" aria-labelledby="through-line-title">
@@ -1965,6 +1967,7 @@ export function renderPrivacy() {
         </div>
         <ul class="actionable-list">
           <li>Google Analytics cookies (<code>_ga</code>, <code>_ga_*</code>), only under the consent rules above.</li>
+          <li>Sonavyr interest uses a first-party <code>__Host-sz-interest</code> cookie for up to one year to prevent repeat counting for the same offer. Only a hashed anonymous browser token and aggregate interest are stored in Upstash Redis (United States). No email, IP address or device fingerprint is stored by the counter. Clearing cookies or changing browser can count again. This is an expression of interest, not a purchase or preorder.</li>
           <li>Your cookie choice, stored in your browser&rsquo;s local storage under <code>studiozio-consent</code>, so the banner does not ask again.</li>
           <li>A session-only flag (<code>studiozio-debug</code>), set only when a tester adds <code>?_dbg=1</code> to an address.</li>
         </ul>
@@ -3517,3 +3520,5 @@ export function renderCommunityRoadmap() {
     </section>`
   });
 }
+
+export function renderProductSonavyr(){return shell({title:"Sonavyr — Vocal Tuning · Coming Soon | StudioZIO",description:"Two vocal tuning engines: expressive Natural correction and low-latency Synthetic hard tune. Hear the demos. Sonavyr is coming soon for macOS.",canonical:`${HUB_ORIGIN}/products/sonavyr/`,current:"products",scripts:`<link rel="stylesheet" href="/assets/sonavyr.css"><script type="module" src="/assets/sonavyr-demo.js"></script><script type="module" src="/assets/sonavyr-interest.js"></script>`,content:sonavyrContent()});}

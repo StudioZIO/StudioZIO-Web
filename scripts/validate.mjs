@@ -20,6 +20,7 @@ import {
   renderCommunityRoadmap,
   renderContact,
   renderHome,
+  renderProductSonavyr,
   renderNotFound,
   renderNote,
   renderNotes,
@@ -379,8 +380,8 @@ export function validateSource() {
   const privacy = renderPrivacy();
   const earlyAccess = EARLY_ACCESS_ENABLED ? renderEarlyAccess() : null;
   const policyPages = [privacy, ...(earlyAccess ? [earlyAccess] : [])];
-  const pages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, ...policyPages, notFound];
-  const indexablePages = [home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, ...policyPages];
+  const pages = [renderProductSonavyr(), home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, ...policyPages, notFound];
+  const indexablePages = [renderProductSonavyr(), home, catalog, everythingPage, inflatorPage, maximizerPage, compressorPage, deEsserPage, contact, notesIndex, ...notePages, press, community, ...communityPages, search, ...policyPages];
 
   /* Every surface that collects data points at the privacy policy: the
      footer of every page, the contact form, the consent banner and the Early
@@ -814,28 +815,8 @@ export function validateSource() {
     }
   }
 
-  // The A/B section is two cards, and a card that renders but cannot play is
-  // worse than no card: the page keeps claiming a comparison it will not make.
-  // Assert the parts that carry playback rather than assuming them.
-  const abCards = home.split('data-ab="card"').length - 1;
-  if (abCards !== 2) {
-    throw new Error(`Expected two A/B cards on the home page, found ${abCards}`);
-  }
-  for (const required of [
-    '<script src="/assets/ab.js" defer></script>',
-    'data-take="dry"',
-    'data-take="wet"',
-    'data-ab="play"',
-    'data-ab="take"',
-    'data-ab="meter-fill"',
-    'data-ab="progress-bar"',
-    'type="audio/ogg; codecs=opus"',
-    'type="audio/mp4; codecs=mp4a.40.2"'
-  ]) {
-    if (!home.includes(required)) {
-      throw new Error(`A/B section is missing a playback-critical part: ${required}`);
-    }
-  }
+  // The approved homepage spotlight replaces the former A/B cards.
+  if (!home.includes('id="sonavyr-title"') || !home.includes('/products/sonavyr/') || (home.match(/class="lens-note"/g)||[]).length!==12) throw new Error('Sonavyr spotlight contract drift');
 
   /* The listener and the cards travel together, in both directions. The script
      does nothing on its own, so a page that loads it without a card pays for it
@@ -885,19 +866,6 @@ export function validateSource() {
     }
   }
 
-  // The A/B toggle is the hub's one conversion. Both takes on both cards must
-  // declare it, or the report fills in for one product and silently not the
-  // other.
-  const declaredToggles = (home.match(/data-event="ab_toggle"/g) || []).length;
-  if (declaredToggles !== 4) {
-    throw new Error(`Expected 4 declared A/B toggles (two takes on two cards); found ${declaredToggles}`);
-  }
-  for (const product of ['mastering-suite', 'tempo-delay']) {
-    if (!home.includes(`data-ev-product="${product}"`)) {
-      throw new Error(`The ${product} A/B card reports no product parameter`);
-    }
-  }
-
   // Every render and capture the markup names has to exist, and be the format
   // its extension claims. A missing or mistyped path is invisible until a
   // visitor presses play and nothing happens, which is exactly the failure
@@ -910,7 +878,7 @@ export function validateSource() {
       buffer.subarray(0, 4).toString('ascii') === 'RIFF'
       && buffer.subarray(8, 12).toString('ascii') === 'WEBP'
   };
-  const referenced = [...home.matchAll(/\/assets\/media\/([\w.-]+)/g)].map((match) => match[1]);
+  const referenced = [...pages.join('').matchAll(/\/assets\/media\/([\w.-]+)/g)].map((match) => match[1]);
   if (referenced.length === 0) throw new Error('A/B section references no media');
   for (const name of new Set(referenced)) {
     const file = resolve(mediaRoot, name);
@@ -944,8 +912,8 @@ export function validateSource() {
 
   // The player divides by this, so a card that lost it would report a
   // position of zero for the whole passage.
-  const declared = [...home.matchAll(/data-length="([\d.]+)"/g)].map((m) => Number(m[1]));
-  if (declared.length !== 2 || declared.some((value) => !(value > 1))) {
+  const declared = [...pages.join('').matchAll(/data-length="([\d.]+)"/g)].map((m) => Number(m[1]));
+  if (declared.length === 0 || declared.some((value) => !(value > 1))) {
     throw new Error(`Each A/B card must declare a real length; got ${declared.join(', ')}`);
   }
 

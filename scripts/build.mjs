@@ -13,6 +13,7 @@ import {
   renderCommunityRoadmap,
   renderContact,
   renderHome,
+  renderProductSonavyr,
   renderNotFound,
   renderNote,
   renderNotes,
@@ -58,6 +59,7 @@ await rm(outputRoot, { recursive: true, force: true });
    404.html carries `indexable: false`: it is a real output but never a search
    result, so it is written and never listed. */
 const routes = [
+  { file: 'products/sonavyr/index.html', url: '/products/sonavyr/', render: renderProductSonavyr, indexable: true },
   { file: 'index.html', url: '/', render: renderHome, indexable: true },
   { file: 'products/index.html', url: '/products/', render: renderProducts, indexable: true },
   { file: 'products/everything/index.html', url: '/products/everything/', render: renderProductEverything, indexable: true },
@@ -274,3 +276,5 @@ if (statSync(pressKit).size === 0) {
 }
 
 console.log(`Built ${outputs.size} HTML pages and a ${indexableUrls.length}-URL sitemap into dist/`);
+
+for (const name of ["sonavyr.css","sonavyr-demo.js","sonavyr-interest.js","sonavyr-measurement.js","chroma-lens.css","chroma-lens.js"]) await cp(resolve(projectRoot,"src",name),resolve(outputRoot,"assets",name));
