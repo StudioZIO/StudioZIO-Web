@@ -22,6 +22,7 @@ function verify({ files, hosting }) {
      literally, because a note silently dropping out of the sitemap is exactly
      the regression this file exists to catch. */
   const expectedUrls = [
+    '/products/sonavyr/',
     '/',
     '/products/',
     '/products/everything/',

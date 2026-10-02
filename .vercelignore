@@ -1,0 +1,6 @@
+private-launch/
+reference/
+.agents/
+.codex/
+.env*
+*.sqlite*
