@@ -2780,16 +2780,6 @@ const PRESS_ASSETS = Object.freeze([
     detail: 'SVG, scalable, cyan on near-black'
   }),
   Object.freeze({
-    href: '/assets/media/mastering-suite-ui.webp',
-    label: 'Mastering Suite interface',
-    detail: 'WebP, shipping build at default settings'
-  }),
-  Object.freeze({
-    href: '/assets/media/tempo-delay-ui.webp',
-    label: 'Tempo Delay interface',
-    detail: 'WebP, shipping build at default settings'
-  }),
-  Object.freeze({
     href: '/assets/og/og-studiozio.png',
     label: 'StudioZIO share card',
     detail: 'PNG, 1200 x 630'
@@ -2808,14 +2798,12 @@ function pressAsset({ href, label, detail }) {
 }
 
 export function renderPress() {
-  const mastering = getProduct('mastering-suite');
-  const tempo = getProduct('tempo-delay');
   const mixRack = getProduct('mixrack');
 
   return shell({
     title: 'Press kit and brand assets — StudioZIO',
     description:
-      'Quotable descriptions, product facts, logo and interface images for the StudioZIO plug-ins. Free to use in reviews, roundups and articles.',
+      'Quotable descriptions, product facts, logo and share cards for the StudioZIO plug-ins. Free to use in reviews, roundups and articles.',
     canonical: `${HUB_ORIGIN}/press/`,
     current: 'press',
     jsonLd: pressJsonLd(),
@@ -2838,19 +2826,15 @@ export function renderPress() {
         </div>
         <div class="panel module-card">
           <p class="eyebrow eyebrow--muted">One line</p>
-          <p class="lede">StudioZIO makes free macOS audio plug-ins laid out in the order the audio takes, with the measurement always visible. The free plug-ins need no account or registration.</p>
+          <p class="lede">StudioZIO makes audio tools for macOS, with clear controls and practical workflows for recording, mixing and mastering.</p>
         </div>
         <div class="panel module-card mt-md">
-          <p class="eyebrow eyebrow--muted">Fifty words</p>
-          <p class="lede">StudioZIO is an independent one-person developer making free audio plug-ins for macOS. Mastering Suite puts nine mastering stages on a single surface in signal order, with the meter column always visible. Tempo Delay gives the left and right delay lines fully independent timing. Both are signed, notarised, and need no registration.</p>
+          <p class="eyebrow eyebrow--muted">Short description</p>
+          <p class="lede">StudioZIO is an independent audio software project by Mert Erkan. Its macOS tools cover mixing, mastering and vocal processing, with an emphasis on readable interfaces, direct controls and useful metering. The released plug-ins are free, with no account or registration required.</p>
         </div>
         <div class="panel module-card mt-md">
-          <p class="eyebrow eyebrow--muted">One hundred words</p>
-          <p class="lede">StudioZIO is an independent one-person developer making free audio plug-ins for macOS, built around the idea that measurement is not a separate product. StudioZIO Mastering Suite ${escapeHtml(
-            mastering.version
-          )} places nine mastering stages on one surface in the order the audio takes &mdash; mid/side, saturation, Pink Match, glue compression, maximizer, tone EQ, clipper, true-peak limiter and output &mdash; with loudness, true peak, crest factor and correlation visible throughout. StudioZIO Tempo Delay ${escapeHtml(
-            tempo.version
-          )} is a tempo-synced stereo delay whose two sides run fully independent buffers and note divisions. Both install from a signed, notarised package with no account, no iLok and no email registration.</p>
+          <p class="eyebrow eyebrow--muted">Full description</p>
+          <p class="lede">StudioZIO develops audio software for musicians, producers and engineers working on macOS. The catalogue spans dynamics, tone shaping, time-based effects, vocal processing and complete mixing and mastering workflows. Across these tools, the design puts controls and feedback close together so users can understand what they are changing while listening. The released plug-ins are free and require no account or registration. Compatibility and format support are documented on each product page, alongside installation details and release information. StudioZIO is an independent project created by Mert Erkan.</p>
         </div>
       </div>
     </section>
@@ -2859,53 +2843,10 @@ export function renderPress() {
       <div class="shell">
         <div class="section-head">
           <p class="eyebrow">Products</p>
-          <h2 id="press-products">The catalogue, with the numbers</h2>
+          <h2 id="press-products">Tools for the whole session</h2>
         </div>
-
-        <h3>${escapeHtml(mastering.name)} ${escapeHtml(mastering.version)}</h3>
-        <p class="lede">A nine-stage mastering console on a single surface. ${escapeHtml(
-          mastering.architecture
-        )}, macOS 11 or newer. ${escapeHtml(mastering.price)}.</p>
-        <dl class="spec-grid mt-sm">
-          <div><dt>Formats</dt><dd>${escapeHtml(formatList(mastering.formats))}</dd></div>
-          <div><dt>Installer</dt><dd><code>${escapeHtml(mastering.filename)}</code></dd></div>
-          <div><dt>SHA-256</dt><dd class="sha">${escapeHtml(mastering.sha256)}</dd></div>
-          <div><dt>Product site</dt><dd><a href="${escapeHtml(
-            MASTERING_SUITE_WEBSITE
-          )}">studioziomasteringsuite.vercel.app</a></dd></div>
-          <div><dt>KVR listing</dt><dd><a href="${escapeHtml(
-            KVR_MASTERING_URL
-          )}">kvraudio.com</a></dd></div>
-          <div><dt>Release</dt><dd><a href="${escapeHtml(
-            mastering.releaseUrl
-          )}">Tag and checksum</a></dd></div>
-        </dl>
-        <p class="mt-sm">Worth mentioning: oversampling is fixed per stage rather than exposed as one global control, and EXPECTED TP is a ceiling-derived reference rather than a measurement of rendered output. Both are explained in the <a href="/notes/">technical notes</a>.</p>
-
-        <h3 class="mt-lg">${escapeHtml(tempo.name)} ${escapeHtml(tempo.version)}</h3>
-        <p class="lede">A tempo-synced stereo delay with independent left and right timing. ${escapeHtml(
-          tempo.architecture
-        )}, macOS 12 or newer. ${escapeHtml(tempo.price)}.</p>
-        <dl class="spec-grid mt-sm">
-          <div><dt>Formats</dt><dd>${escapeHtml(formatList(tempo.formats))}</dd></div>
-          <div><dt>Parameters</dt><dd>32 automatable, stable identifiers</dd></div>
-          <div><dt>Reported latency</dt><dd>0 samples</dd></div>
-          <div><dt>Product site</dt><dd><a href="${escapeHtml(
-            TEMPO_DELAY_WEBSITE
-          )}">tempodelay.tech</a></dd></div>
-          <div><dt>KVR listing</dt><dd><a href="${escapeHtml(
-            KVR_TEMPO_URL
-          )}">kvraudio.com</a></dd></div>
-          <div><dt>Installers</dt><dd><a href="${escapeHtml(
-            RELEASE_REPOSITORY_URL
-          )}">Releases and checksums</a></dd></div>
-        </dl>
-        <p class="mt-sm">Worth mentioning: each side has its own buffer and its own note division, so the two channels can sit on different rhythmic values against one tempo.</p>
-
-        <h3 class="mt-lg">${escapeHtml(mixRack.name)}</h3>
-        <p class="lede">${escapeHtml(mixRack.description)} ${escapeHtml(
-          mixRack.availability
-        )} &mdash; released on 29 September 2026. Visit the <a href="${MIXRACK_WEBSITE}">product page</a> for a two-minute look at the interface; the press kit is at the foot of this page.</p>
+        <p class="lede">From individual processors to integrated workflows, StudioZIO tools support recording, mixing and mastering. Explore the <a href="/products/">product catalogue</a> for current versions, availability, compatibility and downloads.</p>
+        <p>For technical context and design decisions, visit the <a href="/notes/">technical notes</a>.</p>
       </div>
     </section>
 
@@ -2933,9 +2874,9 @@ export function renderPress() {
           <p class="eyebrow">Assets</p>
           <h2 id="press-assets">Images</h2>
         </div>
-        <p class="lede">Screenshots are of the shipping product at default settings, unretouched.</p>
+        <p class="lede">StudioZIO brand assets and share cards for reviews, roundups and articles.</p>
         <dl class="spec-grid mt-sm">${PRESS_ASSETS.map(pressAsset).join('')}</dl>
-        <p class="mt-md">Video: the <a href="https://youtu.be/K-OypjVpx-E">Mastering Suite overview</a> runs 1:05 and may be embedded. More on the <a href="https://www.youtube.com/@StudioZIO-plugins">StudioZIO channel</a>.</p>
+        <p class="mt-md">Videos and product walkthroughs are available on the <a href="https://www.youtube.com/@StudioZIO-plugins">StudioZIO channel</a>.</p>
         <p>Elsewhere: the <a href="https://www.kvraudio.com/developer/studiozio">KVR developer page</a> carries release notes and development posts, and <a href="${escapeHtml(
           INSTAGRAM_URL
         )}">Instagram</a> carries the shorter material.</p>
