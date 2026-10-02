@@ -2,4 +2,4 @@
 
 @media(min-width:900px){.chroma-panel,.chroma-lens{width:500px;height:500px}}
 
-.sonavyr-card-visual{display:flex;justify-content:center;padding:1.5rem 30px;border-bottom:1px solid var(--border)}.sonavyr-card-visual .chroma-panel,.sonavyr-card-visual .chroma-lens{width:220px;height:220px}
+.sonavyr-card-visual{justify-items:center}.sonavyr-card-visual .chroma-panel,.sonavyr-card-visual .chroma-lens{width:220px;height:220px}

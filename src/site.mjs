@@ -766,7 +766,20 @@ function compressorMock() {
     </div>`;
 }
 
+function sonavyrMock() {
+  return `<div class="mock">
+      <div class="mock-head">
+        <span class="mock-title"><span class="dot"></span>Sonavyr</span>
+        <span class="chip-row">${formatChip('sonavyr')}${chip('Notarized', 'flag')}</span>
+      </div>
+      <div class="mock-body sonavyr-card-visual">
+        ${chromaLens()}
+      </div>
+    </div>`;
+}
+
 const MOCKS = {
+  sonavyr: sonavyrMock,
   'mastering-suite': masteringSuiteMock,
   'tempo-delay': tempoDelayMock,
   mixrack: mixRackMock,
@@ -1019,7 +1032,7 @@ function productCard(product, hideMock = false) {
   ].join('');
 
   return `<article class="panel product-card">
-      ${product.slug === 'sonavyr' ? `<div class="sonavyr-card-visual">${chromaLens()}</div>` : mock && hideMock !== true ? mock() : ''}
+      ${mock && hideMock !== true ? mock() : ''}
       <div class="card-body">
         <div class="card-title-row">
           <h3>${escapeHtml(product.name)}</h3>

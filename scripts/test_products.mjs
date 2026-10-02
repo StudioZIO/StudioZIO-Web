@@ -96,6 +96,8 @@ function verify({ files, hosting }) {
       assert.ok(cards[index].includes('Universal'));
       assert.equal((cards[index].match(/class="lens-note"/g)||[]).length,12);
       assert.ok(!cards[index].includes('Free download'));
+      assert.match(cards[index], /class="mock-head"[\s\S]*Sonavyr[\s\S]*Notarized[\s\S]*class="mock-body sonavyr-card-visual"/);
+      assert.ok(cards[index].indexOf('mock-head') < cards[index].indexOf('chroma-panel'));
     }
     if (['mixrack','sonavyr'].includes(product.slug)) {
       for (const invented of ['offers', 'downloadUrl', 'datePublished']) assert.equal(entry.item[invented], undefined);
