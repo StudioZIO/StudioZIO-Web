@@ -7,4 +7,4 @@ section[id]{scroll-margin-top:80px}
 
 .sonavyr-video-poster{object-fit:contain}.sonavyr-video-player{border:0;width:100%;height:auto;aspect-ratio:16/9}
 
-#watch h2 + .video-card { margin-top: 3px; }
+#watch h2 + .video-card { margin-top: 12px; }
