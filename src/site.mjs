@@ -2059,7 +2059,7 @@ export function renderPrivacy() {
    which page a sign-up came from. One form per page, so the ids stay fixed. */
 const EARLY_ACCESS_SCRIPT = '<script src="/assets/early-access.js" defer></script>';
 
-function earlyAccessSignup(slug) {
+function earlyAccessSignup(slug, introduction = 'Join StudioZIO Early Access for product updates, release news and future testing opportunities.') {
   if (!EARLY_ACCESS_ENABLED) return '';
   return `
         <form class="panel-float early-access-form mt-md" action="${escapeHtml(EARLY_ACCESS_ENDPOINT)}" method="post" aria-labelledby="ea-title">
@@ -2068,7 +2068,7 @@ function earlyAccessSignup(slug) {
 
           <p class="eyebrow">Early Access</p>
           <h3 id="ea-title">StudioZIO Early Access</h3>
-          <p class="lede">Join StudioZIO Early Access for product updates, release news and future testing opportunities.</p>
+          <p class="lede">${escapeHtml(introduction)}</p>
           <p class="lede">It is an email list and nothing more: it costs nothing, and signing up does not reserve a product, a price, a discount, a release date or a place in any test.</p>
 
           <div class="form-row">
@@ -3495,4 +3495,4 @@ export function renderCommunityRoadmap() {
   });
 }
 
-export function renderProductSonavyr(){return shell({title:"Sonavyr — Vocal Tuning · Coming Soon | StudioZIO",description:"Two vocal tuning engines: expressive Natural correction and low-latency Synthetic hard tune. Hear the demos. Sonavyr is coming soon for macOS.",canonical:`${HUB_ORIGIN}/products/sonavyr/`,current:"products",scripts:`<link rel="stylesheet" href="/assets/sonavyr.css"><script type="module" src="/assets/sonavyr-demo.js"></script><script type="module" src="/assets/sonavyr-interest.js"></script>`,content:sonavyrContent()});}
+export function renderProductSonavyr(){return shell({title:"Sonavyr — Vocal Tuning · Coming Soon | StudioZIO",description:"Two vocal tuning engines: expressive Natural correction and low-latency Synthetic hard tune. Hear the demos. Sonavyr is coming soon for macOS.",canonical:`${HUB_ORIGIN}/products/sonavyr/`,current:"products",scripts:`<link rel="stylesheet" href="/assets/sonavyr.css"><script type="module" src="/assets/sonavyr-demo.js"></script><script type="module" src="/assets/sonavyr-interest.js"></script>${EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''}`,content:sonavyrContent(earlyAccessSignup('sonavyr', 'Sign up for our newsletter so you don’t miss this release.'))});}
