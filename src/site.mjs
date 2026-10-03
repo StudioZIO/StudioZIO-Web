@@ -1015,7 +1015,7 @@ const METERS_SCRIPT = '<script src="/assets/meters.js" defer></script>';
 
 /* ---------- cards ------------------------------------------------------- */
 
-function productCard(product, hideMock = false) {
+function productCard(product) {
   /* A release flag is any status that is not simply shipping -- "Coming
      soon" and "Release candidate" alike. It is marked by the chip's dot, not
      by a second accent hue: the plug-in windows themselves are single-accent,
@@ -1032,7 +1032,7 @@ function productCard(product, hideMock = false) {
   ].join('');
 
   return `<article class="panel product-card">
-      ${mock && hideMock !== true ? mock() : ''}
+      ${mock ? mock() : ''}
       <div class="card-body">
         <div class="card-title-row">
           <h3>${escapeHtml(product.name)}</h3>
@@ -1120,7 +1120,7 @@ export function renderHome() {
           <p class="lede">Each free plug-in here ships as a signed, notarized macOS installer with no account and no registration. The cards say what is available now and what is still coming.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
-        <div class="card-grid card-grid--2">${products.map(p => productCard(p, ['mastering-suite', 'tempo-delay'].includes(p.slug))).join('')}</div>
+        <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
       </div>
     </section>
     <section class="section" aria-labelledby="through-line-title">
