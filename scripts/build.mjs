@@ -280,4 +280,4 @@ for (const file of [PRESS_KIT_FILE, SONAVYR_GUIDE_FILE]) {
 
 console.log(`Built ${outputs.size} HTML pages and a ${indexableUrls.length}-URL sitemap into dist/`);
 
-for (const name of ["sonavyr.css","sonavyr-demo.js","sonavyr-interest.js","sonavyr-measurement.js","chroma-lens.css","chroma-lens.js"]) await cp(resolve(projectRoot,"src",name),resolve(outputRoot,"assets",name));
+for (const name of ["sonavyr.css","sonavyr-video.js","sonavyr-demo.js","sonavyr-interest.js","sonavyr-measurement.js","chroma-lens.css","chroma-lens.js"]) await cp(resolve(projectRoot,"src",name),resolve(outputRoot,"assets",name));
