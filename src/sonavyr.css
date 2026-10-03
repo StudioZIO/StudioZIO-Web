@@ -6,3 +6,5 @@ section[id]{scroll-margin-top:80px}
 .table-scroll[aria-label="Measured CPU on M1 Mac mini"] table{min-width:0}
 
 .sonavyr-video-poster{object-fit:contain}.sonavyr-video-player{border:0;width:100%;height:auto;aspect-ratio:16/9}
+
+#watch h2 + .video-card { margin-top: 3px; }
