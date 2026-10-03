@@ -4,3 +4,5 @@ section[id]{scroll-margin-top:80px}
 
 .interest-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}.interest-row .btn{white-space:normal}.interest-row span{font-variant-numeric:tabular-nums;color:var(--muted)}#interest-status{min-height:3em}.interest-row button:focus-visible{outline:3px solid currentColor;outline-offset:4px}
 .table-scroll[aria-label="Measured CPU on M1 Mac mini"] table{min-width:0}
+
+.sonavyr-video-poster{object-fit:contain}.sonavyr-video-player{border:0;width:100%;height:auto;aspect-ratio:16/9}
