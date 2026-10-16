@@ -34,6 +34,7 @@ const stylesheet = `/assets/${STYLESHEET_FILE}`;
 export const HUB_ORIGIN = 'https://www.studiozio.tech';
 const INSTAGRAM_URL = 'https://www.instagram.com/studio_zio_plugin/';
 const YOUTUBE_URL = 'https://www.youtube.com/@StudioZIO-plugins';
+const PATREON_URL = 'https://patreon.com/StudioZIO';
 const KVR_MASTERING_URL =
   'https://www.kvraudio.com/product/studiozio-mastering-suite-by-studiozio';
 const KVR_TEMPO_URL =
@@ -216,6 +217,7 @@ const FOOTER_LINKS = [
   ['Press kit', '/press/', 'press'],
   ...(EARLY_ACCESS_ENABLED ? [['Early Access', '/early-access/', 'early-access']] : []),
   ['Privacy', '/privacy/', 'privacy'],
+  ['Support on Patreon', PATREON_URL, 'patreon'],
   ['ZIO', ZIO_WEBSITE, 'zio']
 ];
 
@@ -3005,6 +3007,10 @@ export function renderCommunity() {
           <div>
             <dt><a href="/products/">Products</a></dt>
             <dd>Current StudioZIO product catalog and authoritative product destinations.</dd>
+          </div>
+          <div>
+            <dt><a href="${PATREON_URL}">Support on Patreon</a></dt>
+            <dd>Support the development of free macOS audio plug-ins.</dd>
           </div>
         </dl>
       </div>
