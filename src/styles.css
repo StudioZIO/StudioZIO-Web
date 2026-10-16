@@ -906,7 +906,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- footer ------------------------------------------------------ */
 .site-footer { border-top: 1px solid var(--hairline); padding-block: 2.5rem; }
-.site-footer .inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.site-footer .inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
 .footer-brand { display: inline-flex; align-items: center; gap: 0.8rem; }
 .footer-tools { display: inline-flex; align-items: center; gap: 0.45rem; }
 .social-link, .kvr-link {
@@ -923,18 +923,35 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .social-link svg { width: 19px; height: 19px; }
 .kvr-link svg { width: 28px; height: 18px; }
 .social-link:hover, .social-link:focus-visible, .kvr-link:hover, .kvr-link:focus-visible { color: var(--foreground); border-color: var(--border); }
-.site-footer nav ul { display: flex; flex-wrap: wrap; gap: 1rem; }
+.site-footer nav { min-width: 0; overflow-x: auto; }
+.site-footer nav ul { display: flex; flex-wrap: nowrap; gap: 0.65rem; width: max-content; }
+.site-footer nav li { flex-shrink: 0; }
 .site-footer nav a {
   font-family: var(--font-mono);
   font-size: 0.625rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted-foreground);
   display: inline-block;
   padding-block: 0.6rem;
+  white-space: nowrap;
 }
 .site-footer nav a:hover, .site-footer nav a:focus-visible { color: var(--foreground); }
 .site-footer .copy { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.1em; color: var(--muted-foreground); }
+@media (min-width: 900px) {
+  .site-footer .inner { flex-wrap: nowrap; gap: 0.75rem; }
+  .footer-brand, .site-footer .copy { flex-shrink: 0; }
+}
+@media (min-width: 900px) and (max-width: 1100px) {
+  .footer-brand { gap: 0.5rem; }
+  .footer-tools { gap: 0.25rem; }
+  .site-footer .social-link, .site-footer .kvr-link { width: 30px; }
+  .site-footer nav ul { gap: 0.3rem; }
+  .site-footer nav a { letter-spacing: 0.02em; }
+}
+@media (max-width: 899px) {
+  .site-footer nav { order: 1; flex-basis: 100%; }
+}
 
 /* ---------- CSP-safe helpers -------------------------------------------
    The site is served under `style-src 'self'` with no 'unsafe-inline', so the

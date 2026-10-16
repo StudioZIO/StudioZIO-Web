@@ -217,7 +217,7 @@ const FOOTER_LINKS = [
   ['Press kit', '/press/', 'press'],
   ...(EARLY_ACCESS_ENABLED ? [['Early Access', '/early-access/', 'early-access']] : []),
   ['Privacy', '/privacy/', 'privacy'],
-  ['Support on Patreon', PATREON_URL, 'patreon'],
+  ['Patreon', PATREON_URL, 'patreon'],
   ['ZIO', ZIO_WEBSITE, 'zio']
 ];
 
