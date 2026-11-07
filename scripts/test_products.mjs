@@ -4,7 +4,7 @@ import { catalogProducts as products } from '../src/catalog.mjs';
 import { notes } from '../src/notes.mjs';
 
 const origin = 'https://www.studiozio.tech';
-const paths = ['index.html', 'products/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml', 'feed.xml'];
+const paths = ['index.html', 'products/index.html', 'products/sonavyr/index.html', 'contact/index.html', 'notes/index.html', 'notes/expected-true-peak/index.html', 'press/index.html', '404.html', 'sitemap.xml', 'feed.xml'];
 const baseline = {
   files: Object.fromEntries(paths.map(path => [path, readFileSync(new URL(`../dist/${path}`, import.meta.url), 'utf8')])),
   hosting: JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'))
@@ -75,6 +75,13 @@ function verify({ files, hosting }) {
   assert.equal(collection.url, origin + '/products/');
   const list = collection.mainEntity;
   const cards = [...page.matchAll(/<article class="panel product-card">([\s\S]*?)<\/article>/g)].map(match => match[1]);
+  const home = files['index.html'];
+  const homeCards = [...home.matchAll(/<article class="panel product-card">([\s\S]*?)<\/article>/g)].map(match => match[1]);
+  assert.deepEqual(homeCards, cards, 'Hub instruments must use the same cards as Products');
+  assert.doesNotMatch(home, /sonavyr-spotlight|id="chroma-preview"|id="sonavyr-title"/, 'Standalone Sonavyr spotlight must stay removed');
+  const sonavyrPage = files['products/sonavyr/index.html'];
+  assert.doesNotMatch(sonavyrPage, /I[’']d consider buying|id="interest-(?:button|count|status|note)"|\/assets\/sonavyr-interest\.js/, 'Removed interest UI must not load or render');
+  assert.match(sonavyrPage, /id="sales-note"[^>]*>Coming soon\. No checkout, payment collection or license issuance\./, 'Sonavyr must remain unavailable for sale');
   assert.equal(cards.length, products.length, 'Visible product count drift');
   assert.equal(list.numberOfItems, cards.length);
   assert.equal(list.itemListElement.length, cards.length);
@@ -121,6 +128,10 @@ const mutations = [
   ['root canonical', data => data.files['products/index.html'] = data.files['products/index.html'].replace(`rel="canonical" href="${origin}/products/"`, `rel="canonical" href="${origin}/"`)],
   ['retired redirect', data => data.hosting.redirects.push({ source: '/products/', destination: '/', permanent: true })],
   ['hidden card', data => data.files['products/index.html'] = data.files['products/index.html'].replace(/<article class="panel product-card">[\s\S]*?<\/article>/, '')],
+  ['missing hub card', data => data.files['index.html'] = data.files['index.html'].replace(/<article class="panel product-card">[\s\S]*?<\/article>/, '')],
+  ['restored spotlight', data => data.files['index.html'] += '<section class="sonavyr-spotlight"></section>'],
+  ['restored interest control', data => data.files['products/sonavyr/index.html'] += '<button id="interest-button">Interest</button>'],
+  ['restored interest listener', data => data.files['products/sonavyr/index.html'] += '<script src="/assets/sonavyr-interest.js"></script>'],
   ['structured name drift', data => data.files['products/index.html'] = data.files['products/index.html'].replace('"name": "StudioZIO MixRack"', '"name": "Unknown"')],
   ['missing contextual link', data => data.files['contact/index.html'] = data.files['contact/index.html'].replace('href="/products/">product catalogue', 'href="/">product catalogue')]
 ];

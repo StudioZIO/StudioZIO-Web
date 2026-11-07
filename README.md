@@ -63,8 +63,11 @@ does not authorize rebuilding or repointing another surface.
 
 ## Sonavyr coming soon and interest counter
 
-The homepage spotlight links to `/products/sonavyr/`. Purchases and trial
-installers remain unavailable. The offer is an expression of interest only.
+The homepage Instruments list and `/products/` share the Sonavyr product card,
+which links to `/products/sonavyr/`. The standalone homepage spotlight and the
+product page's expression-of-interest controls are removed. Purchases and trial
+installers remain unavailable. The existing interest endpoint and records are
+retained, but the product page no longer loads or calls the counter.
 
 `api/interest.js` uses the official integration's server-only
 `KV_REST_API_URL` and `KV_REST_API_TOKEN`. No credentials are built into static

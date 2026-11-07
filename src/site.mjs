@@ -1,5 +1,5 @@
 import {sonavyrContent} from './sonavyr.mjs';
-import {sonavyrTeaser, chromaLens} from './chroma-lens.mjs';
+import {chromaLens} from './chroma-lens.mjs';
 import {
   getProduct,
   products,
@@ -1113,7 +1113,6 @@ export function renderHome() {
         </div>
       </div>
     </section>
-    ${sonavyrTeaser()}
     <section class="section" aria-labelledby="catalog-title">
       <div class="shell">
         <div class="section-head">
@@ -1122,7 +1121,7 @@ export function renderHome() {
           <p class="lede">Each free plug-in here ships as a signed, notarized macOS installer with no account and no registration. The cards say what is available now and what is still coming.</p>
           <p><a href="/products/">Explore all StudioZIO products</a></p>
         </div>
-        <div class="card-grid card-grid--2">${products.map(productCard).join('')}</div>
+        <div class="card-grid card-grid--2">${catalogProducts.map(productCard).join('')}</div>
       </div>
     </section>
     <section class="section" aria-labelledby="through-line-title">
@@ -3501,4 +3500,4 @@ export function renderCommunityRoadmap() {
   });
 }
 
-export function renderProductSonavyr(){return shell({title:"Sonavyr — Vocal Tuning · Coming Soon | StudioZIO",description:"Two vocal tuning engines: expressive Natural correction and low-latency Synthetic hard tune. Hear the demos. Sonavyr is coming soon for macOS.",canonical:`${HUB_ORIGIN}/products/sonavyr/`,current:"products",scripts:`<link rel="stylesheet" href="/assets/sonavyr.css"><script type="module" src="/assets/sonavyr-demo.js"></script><script src="/assets/sonavyr-video.js" defer></script><script type="module" src="/assets/sonavyr-interest.js"></script>${EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''}`,content:sonavyrContent(earlyAccessSignup('sonavyr', 'Sign up for our newsletter so you don’t miss this release.'))});}
+export function renderProductSonavyr(){return shell({title:"Sonavyr — Vocal Tuning · Coming Soon | StudioZIO",description:"Two vocal tuning engines: expressive Natural correction and low-latency Synthetic hard tune. Hear the demos. Sonavyr is coming soon for macOS.",canonical:`${HUB_ORIGIN}/products/sonavyr/`,current:"products",scripts:`<link rel="stylesheet" href="/assets/sonavyr.css"><script type="module" src="/assets/sonavyr-demo.js"></script><script src="/assets/sonavyr-video.js" defer></script>${EARLY_ACCESS_ENABLED ? EARLY_ACCESS_SCRIPT : ''}`,content:sonavyrContent(earlyAccessSignup('sonavyr', 'Sign up for our newsletter so you don’t miss this release.'))});}
