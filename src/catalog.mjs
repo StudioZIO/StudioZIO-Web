@@ -247,8 +247,8 @@ export function getProduct(slug) {
   return product;
 }
 
-// Coming-soon products appear in Products without changing the existing bundle
-// or duplicating the homepage's dedicated Sonavyr spotlight.
+// Coming-soon products appear in Products and the homepage catalogue without
+// changing the existing bundle.
 export const sonavyr = Object.freeze({
   slug: 'sonavyr', name: 'StudioZIO Sonavyr', shortName: 'Sonavyr',
   version: '1.0.0', platform: 'macOS', architecture: 'Universal',

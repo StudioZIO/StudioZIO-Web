@@ -815,8 +815,8 @@ export function validateSource() {
     }
   }
 
-  // The approved homepage spotlight replaces the former A/B cards.
-  if (!home.includes('id="sonavyr-title"') || !home.includes('/products/sonavyr/') || (home.match(/class="lens-note"/g)||[]).length!==12) throw new Error('Sonavyr spotlight contract drift');
+  // Sonavyr belongs in the shared catalogue cards, not a separate spotlight.
+  if (home.includes('sonavyr-spotlight') || home.includes('id="chroma-preview"') || !home.includes('sonavyr-card-visual') || !home.includes('/products/sonavyr/') || (home.match(/class="lens-note"/g)||[]).length!==12) throw new Error('Sonavyr homepage card contract drift');
 
   /* The listener and the cards travel together, in both directions. The script
      does nothing on its own, so a page that loads it without a card pays for it
